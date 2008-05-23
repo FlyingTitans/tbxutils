@@ -1,0 +1,7 @@
+<?xml version='1.0'?>
+<Books xmlns='http://www.oreilly.com/'>
+	abcd    efgh
+	ijkl mnop
+	<fubar>
+	</fubar>
+</Books>

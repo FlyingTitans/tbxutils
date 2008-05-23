@@ -1,0 +1,42 @@
+<?xml version='1.0'?>
+<!-- copied from SALT DXLT doc -->
+<!DOCTYPE martif
+    PUBLIC
+        "ISO 12200:1999A//DTD MARTIF core (DXFcdV04)//EN"
+        "/xml/XLTCDV04.DTD">
+<martif type='TBX' xml:lang='en'>
+    <martifHeader>
+        <fileDesc>
+            <sourceDesc>
+                <p>from an Oracle termBase</p>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p type='DCSName'>/org/ttt/salt/TBXDCSv05.xml</p>
+        </encodingDesc>
+    </martifHeader>
+    <text>
+        <body>
+            <termEntry id='ID67'>
+                <descrip type='subjectField'>manufacturing</descrip>
+                <descrip type='definition'>A value <hi>hello</hi> between 0 and 1 used in ...</descrip>
+                <descripGrp>
+                    <descrip type='classificationCode'>1111</descrip>
+                    <descripNote type='definitionType'>intensionalDefinition</descripNote>
+                </descripGrp>
+                <langSet xml:lang='en'>
+                <tig>
+                    <term>alpha smoothing factor</term>
+                </tig>
+                </langSet>
+                <langSet xml:lang='hu'>
+                    <tig>
+                        <term>
+                            Alfa sim$#x00ED;t$#x00E1;si t$#x00E9;nyez$#x00F5;
+                        </term>
+                    </tig>
+                </langSet>
+            </termEntry>
+        </body>
+    </text>
+</martif>

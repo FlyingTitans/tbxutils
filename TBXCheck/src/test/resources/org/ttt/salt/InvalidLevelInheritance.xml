@@ -1,0 +1,35 @@
+<?xml version='1.0'?>
+<!-- copied from SALT DXLT doc -->
+<!DOCTYPE martif
+	PUBLIC "ISO 12200:1999A//DTD MARTIF core (DXFcdV04)//EN"
+	"XLTCDV04.DTD">
+<martif type='SXLT' xml:lang='en'>
+    <martifHeader>
+        <fileDesc>
+            <sourceDesc>
+                <p>from an Oracle termBase</p>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p type='DCSName'>Demo XCS</p>
+            <p type='DCSName'>/xml/TBXDCSv05.xml</p>
+        </encodingDesc>
+    </martifHeader>
+    <text>
+        <body>
+            <termEntry id='ID67'>
+                <descripGrp>
+                    <descrip type='unit'>tarfu</descrip>
+                </descripGrp>
+                <langSet xml:lang='en'>
+                <ntig>
+                    <termGrp>
+                        <term>alpha smoothing factor</term>
+                        <termNote type='termType'>fullForm</termNote>
+                    </termGrp>
+                </ntig>
+                </langSet>
+            </termEntry>
+        </body>
+    </text>
+</martif>

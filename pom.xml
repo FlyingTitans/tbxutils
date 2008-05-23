@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$
+ Copyright 2000 Lance Finn Helsten (helsten@acm.org)
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <!-- POM Relationships -->
+    <groupId>org.ttt.salt</groupId>
+    <artifactId>tbx</artifactId>
+    <version>1.1-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.flyingtitans</groupId>
+            <artifactId>tools</artifactId>
+            <version>2.0-SNAPSHOT</version>
+            </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+            </dependency>
+        </dependencies>
+    <modules>
+        <module>TBXCheck</module>
+        <module>TBXEdit</module>
+        </modules>
+    
+    <!-- Project Information -->
+    <name>TBX</name>
+    <url>${tbxurl}</url>
+    <description>
+        Term Base eXchange is the open, XML based standard for exchanging
+        structured terminological data. TBX was submitted to the International
+        Organization for Standardization (ISO) on February 21, 2007, for
+        adoption as an ISO standard. It is now being worked on within an
+        ISO context (as ISO DIS 30042) and it is anticipated that it will
+        be accepted by ISO Technical Committee 37 as a draft international
+        standard (DIS) in Q2 2008. The version submitted to ISO is available
+        on-line in XHTML format.
+        </description>
+    <inceptionYear>2001</inceptionYear>
+    <licenses>
+        <license>
+            <name>Apache License</name>
+            <url>LICENSE.txt</url>
+            <distribution>repo</distribution>
+            </license>
+        </licenses>
+    <developers>
+        <developer>
+            <id>lance</id>
+            <name>Lance Finn Helsten</name>
+            <email>helsten@xmission.com</email>
+            <roles>
+                <role>Architect</role>
+                <role>Lead Developer</role>
+                </roles>
+            <organization>Flying Titans, Inc.</organization>
+            <timezone>-7</timezone>
+            </developer>         
+        </developers>
+    <contributors>
+        </contributors>
+    <organization>
+        </organization>
+    
+    <!-- Build Settings -->
+    <packaging>pom</packaging>
+    <properties>
+        <tbxurl>http://www.sourceforce.org/tbxutil</tbxurl>
+        </properties>    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.ttt.salt.utils</groupId>
+                <artifactId>checkstyle</artifactId>
+                <version>1.1</version>
+                </extension>
+            </extensions>
+        </build>
+    <reporting>
+        <plugins>
+        	<!--
+             The Checkstyle plugin generates report regarding the code style
+             used by the developers. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>checkstyle/checkstyle.xml</configLocation>
+                    <headerLocation>checkstyle/LICENSE.txt</headerLocation>
+                    <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
+                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+                    </configuration>
+                </plugin>
+            
+            <!--
+             The Maven Changelog Plugin generates reports regarding the
+             recent changes in your Software Configuration Management or
+             SCM. These reports include the changelog report, developer
+             activity report and the file activity report. -->
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changelog-maven-plugin</artifactId>
+                </plugin>
+            
+			<!--
+             The Javadoc Plugin uses the Javadoc tool to generate javadocs
+             for the specified project. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+					<aggregate>true</aggregate>
+					<author>false</author>
+                	<groups>
+                		<group>
+							<title>CIAPIs</title>
+							<packages>com.avocent.amp.cidefapi:com.avocent.amp.cihistoryapi:com.avocent.amp.ciqueryapi:com.avocent.amp.cirelapi</packages>
+                            </group>
+                        </groups>
+                    </configuration>
+                </plugin>
+            
+			<!--
+             The JXR plugin produces a cross-reference of the project's
+             sources. The generated reports make it easier for the user
+             to reference or find specific lines of code. -->
+            <plugin>
+                <artifactId>maven-jxr-plugin</artifactId>
+                </plugin>
+            
+			<!--
+             The Taglist Maven Plugin generates a report on various tags
+             found in the code, like @todo or //TODO tags. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                </plugin>
+            
+			<!--
+             Maven 2 Mojo Plugin that generates Source Code Management
+             Metrics Reports as part of the mvn site command. This Plugin
+             is a wrapper around StatCVS and StatSVN. -->
+            <plugin>
+                <groupId>net.sf</groupId>
+                <artifactId>stat-scm</artifactId>
+                <version>1.1.0</version>
+                </plugin>
+            </plugins>
+        </reporting>
+    
+    <scm>
+        <connection>${scm-connection}/authorization</connection>
+        <developerConnection>${scm-devconnect}/authorization</developerConnection>
+        <url>${scm-url}/authorization</url>
+        </scm>
+    
+    </project>

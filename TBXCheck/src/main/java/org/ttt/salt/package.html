@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+$Id: package.html 624 2007-10-02 18:05:36Z lance $
+-----------------------------------------------------------------------------
+Copyright 2000 Lance Finn Helsten (helsten@acm.org)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+</head>
+<body bgcolor="white">
+<p>
+This is the root package of SALT's TBX validation and editing library and
+applications. It is designed to be usable not only as a stand-alone
+validation system, but to be linked against to build TBX class graphs in
+other applications.</p>
+
+<h2>Package Specification</h2>
+
+<h2>Large TBX Files</h2>
+<p>
+The TBXFile is a front end interface to the TBX parser and XCS parser system
+to allow quick parsing and validation of TBX documents. The limitations of
+the default implementation is that the entire TBX document is loaded into
+memory during the XML parse and XCS validation phases.</p>
+<p>
+If a large TBX file is to be validated then the following code should be used:
+<code><pre>
+    File file = new File("SampleTBX.xml");
+    TBXFile tbxfile = new TBXFile(file);
+    TBXParser tbxparser = tbxfile.getTBXParser();
+    TBXDocument tbxdocument = new TBXDocument(false);
+    tbxparser.setTBXDocument(tbxdocument);
+    tbxparser.addObserver(myObserver);
+    tbxfile.parseAndValidate();
+</pre></code>
+
+
+<h2>Related Documentation</h2>
+<ul>
+    <li></li>
+</ul>
+
+
+<h2>Copyright and License</h2>
+<p>
+This copyright and license applies to all files in the org.ttt.salt package
+and subpacakges.</p>
+<p>
+Copyright 2000 Lance Finn Helsten (<a href="mailto:helsten@acm.org">helsten@acm.org</a>).</p>
+<p>
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+<a href="http://www.apache.org/licenses/LICENSE-2.0"/>
+http://www.apache.org/licenses/LICENSE-2.0</a>.</p>
+<p>
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+<p>
+Version: $Id: package.html 624 2007-10-02 18:05:36Z lance $</p>
+</body>
+</html>

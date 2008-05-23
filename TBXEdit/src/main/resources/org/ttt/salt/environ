@@ -1,0 +1,53 @@
+Arguments:
+    --environment
+
+Environment:
+awt.toolkit                 = com.apple.mrj.internal.awt.VToolkit
+file.encoding               = MacRoman
+file.encoding.pkg           = sun.io
+file.separator              = /
+gopherProxySet              = false
+java.awt.fonts              =
+java.awt.graphicsenv        = sun.awt.MacGraphicsEnvironment
+java.awt.printerjob         = com.apple.mrj.internal.awt.MacPrinterJob
+java.class.path             = /Users/lance/src
+java.class.version          = 47.0
+java.ext.dirs               = /System/Library/Frameworks/JavaVM.framework/Versions/1.3/Home/lib/ext
+java.home                   = /System/Library/Frameworks/JavaVM.framework/Versions/1.3/Home
+java.io.tmpdir              = /tmp
+java.library.path           = .:/usr/lib:/usr/lib/java:/lib:/System/Library/Frameworks/JavaVM.framework/Versions/1.3/Libraries
+java.runtime.name           = Java(TM) 2 Runtime Environment, Standard Edition
+java.runtime.version        = 1.3
+java.specification.name     = Java Platform API Specification
+java.specification.vendor   = Sun Microsystems Inc.
+java.specification.version  = 1.3
+java.vendor                 = Apple Computer, Inc.
+java.vendor.url             = http://apple.com/
+java.vendor.url.bug         = http://developer.apple.com/java/
+java.version                = 1.3.0
+java.vm.info                = mixed mode
+java.vm.name                = Java HotSpot(TM) Client VM
+java.vm.specification.name  = Java Virtual Machine Specification
+java.vm.specification.vendor = Sun Microsystems Inc.
+java.vm.specification.version = 1.0
+java.vm.vendor              = Apple Computer, Inc.
+java.vm.version             = 1.3.0
+line.separator              =
+
+mrj.version                 = 3.0
+os.arch                     = ppc
+os.name                     = Mac OS X
+os.version                  = 10.0
+path.separator              = :
+sun.boot.class.path         = /System/Library/Frameworks/JavaVM.framework/Versions/1.3/Classes/classes.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.3/Classes/ui.jar:/System/Library/Frameworks/JavaVM.framework/Versions/1.3/Classes/i18n.jar
+sun.boot.library.path       = /System/Library/Frameworks/JavaVM.framework/Versions/1.3/Libraries
+sun.cpu.endian              = big
+sun.cpu.isalist             =
+sun.io.unicode.encoding     = UnicodeBig
+user.dir                    = /Users/lance/src/org/flyingtitans/ide
+user.home                   = /Users/lance
+user.language               = en
+user.name                   = lance
+user.region                 =
+user.timezone               =
+

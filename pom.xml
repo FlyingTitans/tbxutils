@@ -83,7 +83,7 @@
     <!-- Build Settings -->
     <packaging>pom</packaging>
     <properties>
-        <tbxurl>http://www.sourceforce.org/tbxutil</tbxurl>
+        <tbxurl>http://tbxutil.sourceforge.net/</tbxurl>
         </properties>    
     <build>
         <plugins>
@@ -135,16 +135,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-					<aggregate>true</aggregate>
-					<author>false</author>
-                	<groups>
-                		<group>
-							<title>CIAPIs</title>
-							<packages>com.avocent.amp.cidefapi:com.avocent.amp.cihistoryapi:com.avocent.amp.ciqueryapi:com.avocent.amp.cirelapi</packages>
-                            </group>
-                        </groups>
-                    </configuration>
                 </plugin>
             
 			<!--
@@ -167,18 +157,48 @@
              Maven 2 Mojo Plugin that generates Source Code Management
              Metrics Reports as part of the mvn site command. This Plugin
              is a wrapper around StatCVS and StatSVN. -->
-            <plugin>
-                <groupId>net.sf</groupId>
-                <artifactId>stat-scm</artifactId>
-                <version>1.1.0</version>
-                </plugin>
+            <!-- plugin>
+             <groupId>net.sf</groupId>
+             <artifactId>stat-scm</artifactId>
+             <version>1.1.0</version>
+             </plugin -->
             </plugins>
         </reporting>
     
+    
+    <!-- Build Environment -->
+    <!-- Environment Information -->
+    <issueManagement>
+        <system>Bugzilla</system>
+        <url>http://sourceforge.net/tracker/?group_id=228851&amp;atid=1075205</url>
+        </issueManagement>
+    <!-- ciManagement>
+     </ciManagement -->
+    <mailingLists>
+        <mailingList>
+            <name>TBX Utilities Developers Mailing List</name>
+            <subscribe>tbxutil-developers-join@lists.sourceforge.net</subscribe>
+            <unsubscribe>tbxutil-developers-leave@lists.sourceforge.net</unsubscribe>
+            <post>tbxutil-developers@lists.sourceforge.net</post>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=tbxutil-developers</archive>
+            </mailingList>
+        </mailingLists> 
     <scm>
-        <connection>${scm-connection}/authorization</connection>
-        <developerConnection>${scm-devconnect}/authorization</developerConnection>
-        <url>${scm-url}/authorization</url>
+        <connection>scm:svn::https://tbxutil.svn.sourceforge.net/svnroot/tbxutil</connection>
+        <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil</developerConnection>
+        <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/</url>
         </scm>
+    <!-- Maven Environment -->
+    <distributionManagement>
+        <!-- repository>
+            </repository -->
+        <!-- snapshotRepository>
+            </snapshotRepository -->
+        <site>
+            <id>tbx-site</id>
+            <name>SourceForge Website</name>
+            <url>scp://tbxutil.sourceforge.net/home/users/l/la/lanhel/tbxutil/htdocs</url>
+            </site>
+        </distributionManagement>
     
     </project>

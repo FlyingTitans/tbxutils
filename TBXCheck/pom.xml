@@ -40,7 +40,7 @@
     
     <!-- Project Information -->
     <name>TBX :: Check</name>
-    <url>${tbxurl}/check</url>
+    <url>${tbxurl}/tbxcheck</url>
     <description>
         TBXCheck will validate an arbitrary TBX data file for XML well-formedness,
         DTD and Schema validation, and XCS validation.

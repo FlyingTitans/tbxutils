@@ -19,9 +19,9 @@
 
     <!-- POM Relationships -->
     <groupId>org.ttt.salt.utils</groupId>
-    <artifactId>checkstyle</artifactId>
+    <artifactId>analysis</artifactId>
     <version>1.1</version>
-    <name>TBX :: Utils :: Checkstyle</name>
+    <name>TBX :: Utils :: Analysis</name>
     <description>
         Contains TBX source code policy and enforcement configuration files.
         </description>

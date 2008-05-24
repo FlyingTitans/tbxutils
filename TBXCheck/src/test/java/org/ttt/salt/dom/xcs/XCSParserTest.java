@@ -148,5 +148,5 @@ public class XCSParserTest
         InputSource input = new InputSource(instm);
         parser.parse(input);
         LOGGER.setLevel(Level.INFO);
-    }
+    }    
 }

@@ -351,7 +351,8 @@ public class TBXParser
     /** {@inheritDoc} */
     public void setDocumentLocator(Locator loc)
     {
-        LOGGER.entering("TBXParser", "setDocumentLocator", String.format("Line=%d Col=%d", loc.getLineNumber(), loc.getColumnNumber()));
+        LOGGER.entering("TBXParser", "setDocumentLocator",
+                String.format("Line=%d Col=%d", loc.getLineNumber(), loc.getColumnNumber()));
         locator = loc;
     }
     
@@ -372,7 +373,8 @@ public class TBXParser
     /** {@inheritDoc} */
     public void startPrefixMapping(String prefix, String uri) throws SAXException
     {
-        LOGGER.entering("TBXParser", "startPrefixMapping", String.format("prefix='%s', uri='%s'", prefix, uri));
+        LOGGER.entering("TBXParser", "startPrefixMapping",
+                String.format("prefix='%s', uri='%s'", prefix, uri));
         LOGGER.info(String.format("startPrefixMapping: prefix='%s' uri='%s'", prefix, uri));
         try
         {
@@ -387,13 +389,16 @@ public class TBXParser
     /** {@inheritDoc} */
     public void endPrefixMapping(String prefix) throws SAXException
     {
-        LOGGER.entering("TBXParser", "enPrefixMapping", String.format("prefix='%s'", prefix));
+        LOGGER.entering("TBXParser", "enPrefixMapping",
+                String.format("prefix='%s'", prefix));
     }
     
     /** {@inheritDoc} */
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException
+    public void startElement(String uri, String localName, String qName,
+            Attributes atts) throws SAXException
     {
-        LOGGER.entering("TBXParser", "startElement", String.format("Element %d: uri='%s' local='%s' qName='%s'",
+        LOGGER.entering("TBXParser", "startElement",
+                String.format("Element %d: uri='%s' local='%s' qName='%s'",
                     locator.getLineNumber(), uri, localName, qName));
         stack.push(current);
         current = document.createTBXElement(localName, locator);
@@ -540,7 +545,9 @@ public class TBXParser
     /** {@inheritDoc} */
     public void notationDecl(String name, String publicId, String systemId) throws SAXException
     {
-        LOGGER.entering("TBXParser", "notationDecl", String.format("name='%s' publicId='%s' systemId='%s'", name, publicId, systemId));
+        LOGGER.entering("TBXParser", "notationDecl",
+                String.format("name='%s' publicId='%s' systemId='%s'",
+                name, publicId, systemId));
     }
     
     /** {@inheritDoc} */

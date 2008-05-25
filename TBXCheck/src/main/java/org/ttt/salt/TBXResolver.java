@@ -63,7 +63,7 @@ public class TBXResolver implements EntityResolver
     }
     
     /**
-     * @param cwd The current working directory for relative path resolution. 
+     * @param cwd The current working directory for relative path resolution.
      */
     public TBXResolver(String cwd)
     {

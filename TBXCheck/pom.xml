@@ -39,7 +39,7 @@
         </modules>
     
     <!-- Project Information -->
-    <name>TBX :: Check</name>
+    <name>TBXCheck</name>
     <url>${tbxurl}/tbxcheck</url>
     <description>
         TBXCheck will validate an arbitrary TBX data file for XML well-formedness,

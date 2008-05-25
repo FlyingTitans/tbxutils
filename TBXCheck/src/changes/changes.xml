@@ -5,12 +5,7 @@
       <author email="helsten@acm.org">Lance Finn Helsten</author>
    </properties>
    <body>
-      <release version="current" description="Current work version">
-           <action dev="Duke Java" type="add">
-               A new cool feature.
-           </action>         
-         </release>
-      <release version="1.0.1" date="2005-11-18" description="Release fix">
+      <release version="1.1.0" date="2008-02-18" description="Release fix">
            <action dev="Duke Java" type="add">
                Added a cool feature.
            </action>                      
@@ -20,6 +15,15 @@
            <action dev="Duke Java" type="delete">
                Removed a feature that nobody liked.
            </action>        
+         </release>         
+
+      <release version="1.0.9" date="2007-10-16" description="Release fix">
+         </release>         
+
+      <release version="1.0.8" date="2007-10-02" description="Release fix">
+         </release>         
+
+      <release version="1.0.7" date="2007-08-27" description="Release fix">
          </release>         
    </body>
 </document>

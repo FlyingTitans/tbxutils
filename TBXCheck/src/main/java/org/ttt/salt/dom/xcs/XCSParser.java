@@ -179,7 +179,9 @@ public class XCSParser
     /** {@inheritDoc} */
     public void setDocumentLocator(Locator loc)
     {
-        LOGGER.entering("TBXParser", "setDocumentLocator", String.format("Line=%d Col=%d", loc.getLineNumber(), loc.getColumnNumber()));
+        LOGGER.entering("TBXParser", "setDocumentLocator",
+                String.format("Line=%d Col=%d", loc.getLineNumber(),
+                loc.getColumnNumber()));
         locator = loc;
     }
     
@@ -200,7 +202,8 @@ public class XCSParser
     /** {@inheritDoc} */
     public void startPrefixMapping(String prefix, String uri) throws SAXException
     {
-       LOGGER.entering("TBXParser", "startPrefixMapping", String.format("prefix='%s' uri='%s'", prefix, uri));
+        LOGGER.entering("TBXParser", "startPrefixMapping",
+                String.format("prefix='%s' uri='%s'", prefix, uri));
         try
         {
             namespace.put(prefix, new URI(uri));
@@ -214,14 +217,16 @@ public class XCSParser
     /** {@inheritDoc} */
     public void endPrefixMapping(String prefix) throws SAXException
     {
-        LOGGER.entering("TBXParser", "endPrefixMapping", String.format("prefix='%s'", prefix));
+        LOGGER.entering("TBXParser", "endPrefixMapping",
+                String.format("prefix='%s'", prefix));
     }
     
     /** {@inheritDoc} */
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException
     {
-        LOGGER.entering("TBXParser", "startElement", String.format("%d: uri='%s' local='%s' qName='%s'",
-                    locator.getLineNumber(), uri, localName, qName));
+        LOGGER.entering("TBXParser", "startElement",
+                String.format("%d: uri='%s' local='%s' qName='%s'",
+                locator.getLineNumber(), uri, localName, qName));
         stack.push(current);
         current = document.createXCSElement(localName, locator);
         for (int i = 0; i < atts.getLength(); i++)
@@ -244,8 +249,9 @@ public class XCSParser
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName) throws SAXException
     {
-        LOGGER.entering("TBXParser", "endElement", String.format("%d: uri='%s' local='%s' qName='%s'",
-                    locator.getLineNumber(), uri, localName, qName));
+        LOGGER.entering("TBXParser", "endElement",
+                String.format("%d: uri='%s' local='%s' qName='%s'",
+                locator.getLineNumber(), uri, localName, qName));
         current.endElement(locator);
         XCSElement child = current;
         current = stack.pop();
@@ -256,7 +262,8 @@ public class XCSParser
     /** {@inheritDoc} */
     public void characters(char[] ch, int start, int length) throws SAXException
     {
-        LOGGER.entering("TBXParser", "characters", String.format("'%s'", new String(ch, start, length)));
+        LOGGER.entering("TBXParser", "characters",
+                String.format("'%s'", new String(ch, start, length)));
         String data = new String(ch, start, length);
         if (collapseWhitespace)
             data = data.replaceAll("\\s+", " ");
@@ -267,7 +274,8 @@ public class XCSParser
     /** {@inheritDoc} */
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException
     {
-        LOGGER.entering("TBXParser", "ignorableWhitespace", String.format("'%s'", new String(ch, start, length)));
+        LOGGER.entering("TBXParser", "ignorableWhitespace",
+                String.format("'%s'", new String(ch, start, length)));
         if (!collapseWhitespace)
         {
             String data = new String(ch, start, length);
@@ -279,7 +287,8 @@ public class XCSParser
     /** {@inheritDoc} */
     public void processingInstruction(String target, String data) throws SAXException
     {
-        LOGGER.entering("TBXParser", "processingInstruction", String.format("target='%s' data='%s'", target, data));
+        LOGGER.entering("TBXParser", "processingInstruction",
+                String.format("target='%s' data='%s'", target, data));
     }
     
     /** {@inheritDoc} */
@@ -293,15 +302,20 @@ public class XCSParser
     /* org.xml.DTDHandler            */
 
     /** {@inheritDoc} */
-    public void notationDecl(String name, String publicId, String systemId) throws SAXException
+    public void notationDecl(String name, String publicId, String systemId)
+        throws SAXException
     {
-        LOGGER.entering("TBXParser", "notationDecl", String.format("name='%s' publicId='%s' systemId='%s'", name, publicId, systemId));
+        LOGGER.entering("TBXParser", "notationDecl",
+                String.format("name='%s' publicId='%s' systemId='%s'",
+                name, publicId, systemId));
     }
     
     /** {@inheritDoc} */
-    public void unparsedEntityDecl(String name, String publicId, String systemId, String notationName) throws SAXException
+    public void unparsedEntityDecl(String name, String publicId, String systemId,
+        String notationName) throws SAXException
     {
-        LOGGER.entering("TBXParser", "unparsedEntityDecl", String.format("name='%s' publicId='%s' systemId='%s' notationName='%s'",
+        LOGGER.entering("TBXParser", "unparsedEntityDecl",
+                String.format("name='%s' publicId='%s' systemId='%s' notationName='%s'",
                 name, publicId, systemId, notationName));
     }
     

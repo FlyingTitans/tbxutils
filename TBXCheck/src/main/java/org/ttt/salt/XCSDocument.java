@@ -17,26 +17,19 @@
  */
 package org.ttt.salt;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.Collections;
-import java.util.ResourceBundle;
-import java.util.Locale;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -47,7 +40,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.DOMException;
 import org.apache.xerces.dom.DocumentImpl;
 import org.ttt.salt.dom.xcs.XCSParser;
 import org.ttt.salt.dom.xcs.XCSElement;
@@ -276,7 +268,7 @@ public class XCSDocument extends DocumentImpl implements Document
             LOGGER.log(Level.FINE, "SAXException on XCS URI in org.ttt.salt.XCSDocument", err);
             throw err;
         }
-    }    
+    }
     
     /**
      * Create a new XCS element for this document. This should be called
@@ -624,6 +616,7 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * @param key The key to the <em>contents</em> that contains the datcatId.
      */
     public String getPosition(Key key)
     {
@@ -632,6 +625,7 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * @param key The key to the <em>contents</em> that contains the datatype.
      */
     public String getDataType(Key key)
     {
@@ -640,6 +634,7 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * @param key The key to the <em>contents</em> that contains the targetType.
      */
     public String getTargetType(Key key)
     {
@@ -651,6 +646,8 @@ public class XCSDocument extends DocumentImpl implements Document
      * This will return a set of string objects that is in a picklist
      * type contents tag.
      *
+     * @param key The key to the <em>contents</em> that contains the picklist.
+     * @param The set of strings in the picklist.
      * @throws IllegalStateException If the key does not refer to a
      *  spec that is of datatype "picklist".
      */
@@ -676,6 +673,9 @@ public class XCSDocument extends DocumentImpl implements Document
     
     /**
      * Get the set of comments for the key.
+     *
+     * @param key Key to the specification that contains a comment.
+     * @return The desired comment.
      */
     public String getComment(Key key)
     {
@@ -683,6 +683,13 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * Get a <em>contents</em> that is specified by the specific key. This will
+     * only return the first <em>contents</em> element if there is more than
+     * one.
+     *
+     * @param key Key to the specification that contains <em>contents</em>
+     *  elements.
+     * @return The element that contains the <em>contents</em>
      */
     public Element getContents(Key key)
     {
@@ -694,14 +701,17 @@ public class XCSDocument extends DocumentImpl implements Document
     /**
      * Check that the tag is at an allowed level. If the tag should
      * be checked.
+     *
+     * @throws XCSValidationException Exception that describes validation
+     *  problems.
      */
     private void isElementAtProperLevel(Element elem, Key key)
         throws XCSValidationException
     {
         if (LEVELS_CHECK.contains(key.getTag()))
         {
-            Set<String> levels = getLevels(key);
-            if (levels == null)
+            Set<String> lvls = getLevels(key);
+            if (lvls == null)
                 throw new IllegalStateException("Invalid XCS key for levels");
             Element pp = elem;
         SEARCH_TO_BODY:
@@ -710,21 +720,21 @@ public class XCSDocument extends DocumentImpl implements Document
                 String tag = pp.getTagName();
                 if (tag.equals("ntig") || tag.equals("tig"))
                 {
-                    if (levels.contains("term"))
+                    if (lvls.contains("term"))
                         break SEARCH_TO_BODY;
                     else
                         throw new InvalidLevelsException(elem);
                 }
                 else if (tag.equals("langSet"))
                 {
-                    if (levels.contains("langSet"))
+                    if (lvls.contains("langSet"))
                         break SEARCH_TO_BODY;
                     else
                         throw new InvalidLevelsException(elem);
                 }
                 else if (tag.equals("termEntry"))
                 {
-                    if (levels.contains("termEntry"))
+                    if (lvls.contains("termEntry"))
                         break SEARCH_TO_BODY;
                     else
                         throw new InvalidLevelsException(elem);
@@ -781,14 +791,17 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * Build a language code to language name map.
+     *
+     * @return Map of language codes to language names.
      */
     private SortedMap<String, String> buildLangMap()
     {
         SortedMap<String, String> ret = new java.util.TreeMap<String, String>();
-        Element languages = getNamedElement(getDocumentElement(), "languages", 0);
-        if (languages != null)
+        Element langs = getNamedElement(getDocumentElement(), "languages", 0);
+        if (langs != null)
         {
-            NodeList langInfos = languages.getElementsByTagName("langInfo");
+            NodeList langInfos = langs.getElementsByTagName("langInfo");
             for (int i = 0; i < langInfos.getLength(); i++)
             {
                 Element langInfo = (Element) langInfos.item(i);
@@ -803,6 +816,13 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * Utility method to search for the nth named node.
+     *
+     * @param elem Element to search for a named node.
+     * @param name The name of the element tag.
+     * @param index The index of the desired named node in the ordered set of
+     *  all named nodes in elem.
+     * @return The {@link org.w3c.dom.Element} node found.
      */
     private Element getNamedElement(Element elem, String name, int index)
     {
@@ -814,6 +834,12 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * Utility method to search for the nth text node.
+     *
+     * @param elem Element to search for a text node.
+     * @param index The index of the desired text node in the ordered set of
+     *  all text nodes in elem.
+     * @return The {@link org.w3c.dom.Text} node found.
      */
     private Text getTextNode(Element elem, int index)
     {
@@ -829,7 +855,10 @@ public class XCSDocument extends DocumentImpl implements Document
         return (Text) node;
     }
     
+//CHECKSTYLE: MethodName OFF
     /**
+     * @throws XCSValidationException Exception that describes validation
+     *  problems.
      */
     private void check_geoList(Element elem) throws XCSValidationException
     {
@@ -837,6 +866,8 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * @throws XCSValidationException Exception that describes validation
+     *  problems.
      */
     private void check_picklist(Element elem) throws XCSValidationException
     {
@@ -855,6 +886,8 @@ public class XCSDocument extends DocumentImpl implements Document
     }
 
     /**
+     * @throws XCSValidationException Exception that describes validation
+     *  problems.
      */
     private void check_plainText(Element elem) throws XCSValidationException
     {
@@ -868,6 +901,8 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * @throws XCSValidationException Exception that describes validation
+     *  problems.
      */
     private void check_basicText(Element elem) throws XCSValidationException
     {
@@ -889,6 +924,8 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * @throws XCSValidationException Exception that describes validation
+     *  problems.
      */
     private void check_noteText(Element elem) throws XCSValidationException
     {
@@ -918,9 +955,12 @@ public class XCSDocument extends DocumentImpl implements Document
     }
     
     /**
+     * @throws XCSValidationException Exception that describes validation
+     *  problems.
      */
     private void check_elements(Element elem) throws XCSValidationException
     {
         throw new UnsupportedOperationException("elements");
     }
+//CHECKSTYLE: MethodName ON
 }

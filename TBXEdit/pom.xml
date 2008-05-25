@@ -39,7 +39,7 @@
         </modules>
     
     <!-- Project Information -->
-    <name>TBX :: Edit</name>
+    <name>TBXEdit</name>
     <url>${tbxurl}/tbxedit</url>
     <description>
         TBXEdit is a simple validating editor for TBX files.

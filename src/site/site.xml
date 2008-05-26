@@ -2,8 +2,8 @@
 <project name="${project.name}">
     <bannerLeft>
         <name>TBX</name>
-        <src>http://maven.apache.org/images/apache-maven-project.png</src>
-        <href>http://maven.apache.org/</href>
+        <!-- src>http://maven.apache.org/images/apache-maven-project.png</src>
+        <href>http://maven.apache.org/</href -->
         </bannerLeft>
     <bannerRight>
         <src>http://sflogo.sourceforge.net/sflogo.php?group_id=228851&amp;type=2</src>

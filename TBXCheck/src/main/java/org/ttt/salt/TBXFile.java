@@ -234,9 +234,7 @@ public class TBXFile
     {
         if (!parsed)
         {
-            boolean ok = true;
-            if (ok)
-                ok = preParseCheck();
+            boolean ok = preParseCheck();
             if (ok)
                 ok = parseDocument();
             if (ok)
@@ -398,8 +396,9 @@ public class TBXFile
         {
             if (type == ElementalParser.Token.EOF)
             {
-                exceptions.add(new TBXException(TBXException.Priority.PRE_PARSE,
-                    new StreamCorruptedException(bundle.getString("PreParse_EOF"))));
+                Exception cause = new StreamCorruptedException(bundle.getString("PreParse_EOF"));
+                TBXException err = new TBXException(TBXException.Priority.PRE_PARSE, cause);
+                exceptions.add(err);
                 fileType = Type.CORRUPT;
                 stage = stageDONE;
             }

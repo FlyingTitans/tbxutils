@@ -630,7 +630,10 @@ public class XCSDocument extends DocumentImpl implements Document
     public String getDataType(Key key)
     {
         Element contents = getContents(key);
-        return contents.getAttribute("datatype");
+        String ret = contents.getAttribute("datatype");
+        if ("".equals(ret))
+            ret = "basicText";
+        return ret;
     }
     
     /**

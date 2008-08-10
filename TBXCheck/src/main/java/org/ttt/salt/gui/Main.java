@@ -26,9 +26,12 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.ResourceBundle;
 import java.util.Locale;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import javax.swing.UIManager;
 import org.flyingtitans.util.GetOpt;
-import org.flyingtitans.util.RcsId;
 
 /**
  * This is the main entry point for the "TBX Editor" IDE.
@@ -132,7 +135,7 @@ public final class Main
             System.err.println("Use -h for more information.");
             System.exit(2);
         }
-        bundle = ResourceBundle.getBundle("org.ttt.salt.editor.Main",
+        bundle = ResourceBundle.getBundle("org.ttt.salt.gui.Main",
                 Locale.getDefault());
     }
 
@@ -169,10 +172,26 @@ public final class Main
 
         if (options.containsOption("--version"))
         {
-            RcsId rcs = new RcsId(RCSID);
-            String msg = bundle.getString("Version");
-            Object[] parms = {rcs.getVersion(), rcs.getState(), rcs.getDate()};
-            System.out.println(MessageFormat.format(msg, parms));
+            String rcsidpat = "^\\$Id(: (\\S+) (\\d+) (\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})Z (\\S+))?\\s*\\$$";
+            Matcher matcher = Pattern.compile(rcsidpat).matcher(RCSID);
+            if (matcher.matches() && matcher.group(1) != null)
+            {
+                String version = matcher.group(3);
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                cal.set(Integer.parseInt(matcher.group(4)),
+                        Integer.parseInt(matcher.group(5)),
+                        Integer.parseInt(matcher.group(6)),
+                        Integer.parseInt(matcher.group(7)),
+                        Integer.parseInt(matcher.group(8)),
+                        Integer.parseInt(matcher.group(9)));
+                String msg = bundle.getString("Version");
+                System.out.println(MessageFormat.format(msg, matcher.group(3), cal.getTime()));
+            }
+            else
+            {
+                String msg = bundle.getString("VersionBad");
+                System.out.println(MessageFormat.format(msg, RCSID));
+            }
             exit = true;
         }
 

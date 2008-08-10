@@ -120,6 +120,6 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
     /** {@inheritDoc} */
     public boolean accept(File dir, String name)
     {
-        return name.endsWith(".xml");
+        return name.matches(".+?\\.((xml)|(tbx))");
     }
 }

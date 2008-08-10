@@ -165,7 +165,7 @@
             </mailingList>
         </mailingLists> 
     <scm>
-        <connection>scm:svn::https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</connection>
+        <connection>scm:svn:http://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</connection>
         <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</developerConnection>
         <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/trunk</url>
         </scm>

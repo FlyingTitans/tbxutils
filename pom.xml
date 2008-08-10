@@ -4,7 +4,7 @@
     <!-- POM Relationships -->
     <groupId>org.ttt.salt</groupId>
     <artifactId>tbx</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.2-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -165,9 +165,9 @@
             </mailingList>
         </mailingLists> 
     <scm>
-        <connection>scm:svn::https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/tags/tbx-1.1.2</connection>
-        <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/tags/tbx-1.1.2</developerConnection>
-        <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/tags/tbx-1.1.2</url>
+        <connection>scm:svn::https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</connection>
+        <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</developerConnection>
+        <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/trunk</url>
         </scm>
     <!-- Maven Environment -->
     <repositories>

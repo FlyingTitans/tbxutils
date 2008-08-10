@@ -193,15 +193,19 @@
     <pluginRepositories>
         </pluginRepositories>
     <distributionManagement>
-        <!-- repository>
-         </repository -->
-        <!-- snapshotRepository>
-         </snapshotRepository -->
         <site>
             <id>tbx-site</id>
             <name>SourceForge Website</name>
             <url>scp://tbxutil.sourceforge.net/home/users/l/la/lanhel/tbxutil/htdocs</url>
             </site>
+        <repository>
+            <id>tbx-repository</id>
+            <name>SourceForge FRS</name>
+            <url>sftp://frs.sourceforge.net/uploads</url>
+            <layout>default</layout>
+         </repository>
+        <!-- snapshotRepository>
+         </snapshotRepository -->
         </distributionManagement>
     
     </project>

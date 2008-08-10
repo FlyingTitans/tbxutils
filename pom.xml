@@ -183,8 +183,8 @@
             </mailingList>
         </mailingLists> 
     <scm>
-        <connection>scm:svn::https://tbxutil.svn.sourceforge.net/svnroot/tbxutil</connection>
-        <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil</developerConnection>
+        <connection>scm:svn::https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</connection>
+        <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</developerConnection>
         <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/</url>
         </scm>
     <!-- Maven Environment -->

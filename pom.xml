@@ -33,7 +33,7 @@
         </dependencies>
     <modules>
         <module>TBXCheck</module>
-        <module>TBXEdit</module>
+        <!-- module>TBXEdit</module -->
         </modules>
     
     <!-- Project Information -->

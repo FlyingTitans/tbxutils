@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="TBXCheck">
+    <bannerLeft>
+        <name>TBXCheck</name>
+        <!-- src>http://maven.apache.org/images/apache-maven-project.png</src>
+        <href>http://maven.apache.org/</href -->
+        </bannerLeft>
+    <bannerRight>
+        <src>http://sflogo.sourceforge.net/sflogo.php?group_id=228851&amp;type=2</src>
+        <href>http://sourceforge.net</href>
+        </bannerRight>
     <body>
+        <links>
+            <item name="TBX" href="http://tbxutil.sourceforge.net/" />
+            <item name="TBXCheck" href="http://tbxutil.sourceforge.net/tbxcheck/index.html"/>
+            </links>
+        
+        <menu>
+            <item name="Introduction" href="index.html"/>
+            <item name="Wiki" href="http://tbxutil.wiki.sourceforge.net/"/>
+            <item name="Download" href="http://sourceforge.net/project/showfiles.php?group_id=228851"/>
+            <item name="Release Notes" href="changes-report.html"/>
+            </menu>
+        
+        <menu ref="modules"/>
+        <menu ref="reports"/>
         
         </body>
     </project>

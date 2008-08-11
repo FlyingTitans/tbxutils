@@ -20,7 +20,6 @@
 package org.flyingtitans.xml;
 
 import java.io.*;
-
 import java.util.*;
 
 
@@ -54,30 +53,41 @@ public class ElementalParser
      */
     public enum Token
     {
-	/** There is no token data */
-	NONE,
+        /** There is no token data. */
+        NONE,
+        
+        /** Type of token when in the &lt;xml?...?&gt; declaration. */
+        XMLDECL,
+        
+        /** Type of token when in a comment. */
+        COMMENT,
+        
+        /** Type of token when in processing instruction. */
+        PI,
+        
+        /** Type of token for the &lt;!DOCTYPE section. */
+        DOCTYPEDECL,
+        
+        /** Type of token when in CDATA block. */
+        CDATA,
+        
+        /** Type of token for the start of an element. */
+        START,
+        
+        /** Type of token for the end of an element. */
+        END,
 
-	XMLDECL,
+        /** Type of token for an empty element. */
+        EMPTY,
 
-	COMMENT,
-
-	PI,
-
-	DOCTYPEDECL,
-
-	CDATA,
-
-	START,
-
-	END,
-
-	EMPTY,
-
-	CONTENT,
-
-	EOF,
-
-	ILLFORMED;
+        /** Type of token for the contents of an element. */
+        CONTENT,
+    
+        /** Type of token when end of file is reached. */
+        EOF,
+        
+        /** Type of token when an malformed construct is encountered. */
+        ILLFORMED;
     }
 
     /** Type of token that was read by last parser action. */
@@ -96,6 +106,10 @@ public class ElementalParser
     private final StringBuffer buf = new StringBuffer();
 
     /**
+     * Create a new elemental parser.
+     *
+     * @param in The file stream to parse from.
+     * @throws IOException Any I/O exceptions during processing.
      */
     public ElementalParser(InputStream in) throws IOException
     {
@@ -106,9 +120,9 @@ public class ElementalParser
         int b0 = in.read();
         int b1 = in.read();
         in.reset();
-	
-	//TODO: This needs to be more robust. The UTF-8 BOM, and UTF-32 BOM
-	//needs to be handled.
+    
+        //TODO: This needs to be more robust. The UTF-8 BOM, and UTF-32 BOM
+        //needs to be handled.
         if ((b0 == 0xfe) && (b1 == 0xff))
             reader = new InputStreamReader(in, "UTF-16");
         else
@@ -116,13 +130,21 @@ public class ElementalParser
     }
 
     /**
+     * Create a new elemental parser.
+     *
+     * @param rdr The file reader to parse from.
+     * @throws IOException Any I/O exceptions during processing.
      */
-    public ElementalParser(Reader reader) throws IOException
+    public ElementalParser(Reader rdr) throws IOException
     {
-        this.reader = reader;
+        reader = rdr;
     }
 
     /**
+     * Get the next token from the stream.
+     *
+     * @return The token type of the current parse token.
+     * @throws IOException Any I/O exceptions during processing.
      */
     public Token next() throws IOException
     {
@@ -160,6 +182,9 @@ public class ElementalParser
     }
 
     /**
+     * Read a single character.
+     *
+     * @throws IOException Any I/O exceptions during processing.
      */
     private void read() throws IOException
     {
@@ -187,6 +212,9 @@ public class ElementalParser
     }
 
     /**
+     * Read a comment until reaching the "-->" terminator.
+     *
+     * @throws IOException Any I/O exceptions during processing.
      */
     private void readToEndOfComment() throws IOException
     {
@@ -205,6 +233,9 @@ public class ElementalParser
     }
 
     /**
+     * Read CDATA until reaching the "]]>" terminator.
+     *
+     * @throws IOException Any I/O exceptions during processing.
      */
     private void readToEndOfCDATA() throws IOException
     {

@@ -176,6 +176,7 @@ public final class Main
             Matcher matcher = Pattern.compile(rcsidpat).matcher(RCSID);
             if (matcher.matches() && matcher.group(1) != null)
             {
+                //CHECKSTYLE: MagicNumber OFF
                 String version = matcher.group(3);
                 Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 cal.set(Integer.parseInt(matcher.group(4)),
@@ -186,6 +187,7 @@ public final class Main
                         Integer.parseInt(matcher.group(9)));
                 String msg = bundle.getString("Version");
                 System.out.println(MessageFormat.format(msg, matcher.group(3), cal.getTime()));
+                //CHECKSTYLE: MagicNumber ON
             }
             else
             {

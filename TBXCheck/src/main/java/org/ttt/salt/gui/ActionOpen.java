@@ -114,8 +114,9 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
                         getResourceBundle().getString("IOExceptionTitle"),
                         JOptionPane.ERROR_MESSAGE);
                 }
+                //CHECKSTYLE: IllegalCatch OFF
                 catch (Throwable err)
-                {                
+                {
                     String msg = MessageFormat.format(
                             getResourceBundle().getString("UnknownError"),
                             err.getLocalizedMessage(), file);
@@ -125,6 +126,7 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
                     System.err.format("Unknown error for file %s%n", file);
                     err.printStackTrace();
                 }
+                //CHECKSTYLE: IllegalCatch ON
             }
         }
     }

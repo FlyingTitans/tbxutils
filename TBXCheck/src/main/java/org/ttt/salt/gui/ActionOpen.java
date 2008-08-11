@@ -107,11 +107,23 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
                 }
                 catch (IOException err)
                 {
-                    Object[] earg = {err.getLocalizedMessage(), file};
-                    JOptionPane.showMessageDialog(null,
-                        MessageFormat.format(getResourceBundle().getString("IOException"), earg),
+                    String msg = MessageFormat.format(
+                            getResourceBundle().getString("IOException"),
+                            err.getLocalizedMessage(), file);
+                    JOptionPane.showMessageDialog(null, msg,
                         getResourceBundle().getString("IOExceptionTitle"),
                         JOptionPane.ERROR_MESSAGE);
+                }
+                catch (Throwable err)
+                {                
+                    String msg = MessageFormat.format(
+                            getResourceBundle().getString("UnknownError"),
+                            err.getLocalizedMessage(), file);
+                    JOptionPane.showMessageDialog(null, msg,
+                        getResourceBundle().getString("UnknownErrorTitle"),
+                        JOptionPane.ERROR_MESSAGE);
+                    System.err.format("Unknown error for file %s%n", file);
+                    err.printStackTrace();
                 }
             }
         }

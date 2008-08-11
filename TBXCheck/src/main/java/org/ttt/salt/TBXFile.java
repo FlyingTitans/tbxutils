@@ -238,10 +238,9 @@ public class TBXFile
             if (ok)
                 ok = parseDocument();
             if (ok)
-            {
                 valid = validate();
+            if (valid)
                 buildTermEntriesMap();
-            }
         }
     }
     

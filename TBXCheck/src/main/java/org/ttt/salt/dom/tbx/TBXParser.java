@@ -439,45 +439,63 @@ public class TBXParser
             for (int i = 0; i < plist.getLength(); i++)
             {
                 Element p = (Element) plist.item(i);
-                if (p.hasAttribute("type")
-                    && (p.getAttribute("type").equals("DCSName")
-                        || p.getAttribute("type").equals("XCSName")))
-                {
-                    Node text = p.getFirstChild();
-                    if (text.getNodeType() == Node.TEXT_NODE)
+                String xcsURI = null;
+                if (p.hasAttribute("type"))
+                {                    
+                    if (p.getAttribute("type").equals("XCSURI"))
                     {
-                        String xcsURI = text.getNodeValue().trim();
-                        try
-                        {
-                            xcsDocument = new XCSDocument(xcsURI, resolver);
-                            break GOT_XCS;
-                        }
-                        catch (FileNotFoundException err)
-                        {
-                            String msg = String.format("XCS file '%s' not found. Because of error: %s", xcsURI, err.getMessage());
-                            LOGGER.info(msg);
-                            LOGGER.log(Level.FINE, msg, err);
-                        }
-                        catch (IOException err)
-                        {
-                            LOGGER.log(Level.WARNING, "Exception building XCS", err);
-                        }
-                        catch (ParserConfigurationException err)
-                        {
-                            LOGGER.log(Level.WARNING, "Exception building XCS", err);
-                        }
-                        catch (SAXException err)
-                        {
-                            LOGGER.log(Level.WARNING, "Exception building XCS", err.getMessage());
-                            LOGGER.log(Level.FINE, "Exception building XCS", err);
-                        }
+                        xcsURI = p.getTextContent().trim();
+                    }
+                    else if (p.getAttribute("type").equals("XCSContent"))
+                    {
+                        throw new UnsupportedOperationException("XCSContent location type unsupported.");
+                    }
+                    else if (p.getAttribute("type").equals("DCSName"))
+                    {
+                        xcsURI = p.getTextContent().trim();
+                    }
+                    else if (p.getAttribute("type").equals("XCSName"))
+                    {
+                        xcsURI = p.getTextContent().trim();
                     }
                 }
-                if (xcsDocument == null)
+                
+                if (xcsURI == null)
                 {
-                    IOException err = new FileNotFoundException("XCS not built.");
+                    LOGGER.warning("XCS not specified.");
+                    IOException err = new FileNotFoundException("XCS not specified.");
                     TBXException tbxerr = new TBXException(TBXException.Priority.XCS, err);
                     document.addParseException(tbxerr);
+                }
+                else
+                {
+                    try
+                    {
+                        LOGGER.info("Using XCS at URI: " + xcsURI);
+                        xcsDocument = new XCSDocument(xcsURI, resolver);
+                        break GOT_XCS;
+                    }
+                    catch (FileNotFoundException err)
+                    {
+                        String msg = String.format("XCS file '%s' not found. Because of error: %s", xcsURI, err.getMessage());
+                        LOGGER.info(msg);
+                        LOGGER.log(Level.FINE, msg, err);
+                        TBXException tbxerr = new TBXException(TBXException.Priority.XCS, err);
+                        document.addParseException(tbxerr);
+                    }
+                    catch (IOException err)
+                    {
+                        LOGGER.log(Level.WARNING, "Exception building XCS", err);
+                    }
+                    catch (ParserConfigurationException err)
+                    {
+                        LOGGER.log(Level.WARNING, "Exception building XCS", err);
+                    }
+                    catch (SAXException err)
+                    {
+                        LOGGER.log(Level.WARNING, "Exception building XCS", err.getMessage());
+                        LOGGER.log(Level.FINE, "Exception building XCS", err);
+                    }
                 }
             }
         }

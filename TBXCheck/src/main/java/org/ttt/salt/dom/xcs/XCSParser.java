@@ -74,13 +74,13 @@ public class XCSParser
      */
     public static final Set<String> KNOWN_MISSING = new java.util.TreeSet<String>(
             java.util.Arrays.asList(
-                "header", "languages", "langInfo", "langCode", "langName",
+                "header", "title", "languages", "langInfo", "langCode", "langName",
                 "datCatSet", "termNoteSpec", "descripSpec", "adminSpec",
                 "descripNoteSpec", "xrefSpec", "refSpec", "termCompListSpec",
                 "termCompListSpec", "transacNoteSpec", "adminNoteSpec",
                 "transacSpec", "hiSpec",
-                "refObjectSet", "refObjectDef", "refObjectType",
-                "contents", "levels", "item", "itemSet"
+                "refObjectDefSet", "refObjectDef", "refObjectType",
+                "contents", "levels", "itemSpec", "itemSpecSet"
             ));
 
     /** Logger for this package. */

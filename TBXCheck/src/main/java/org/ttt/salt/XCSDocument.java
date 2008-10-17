@@ -249,10 +249,12 @@ public class XCSDocument extends DocumentImpl implements Document
         //NOTDONE: should I switch to DOM2
         try
         {
+            LOGGER.info("Parsing XCS file: " + xcsURI);
             InputSource source = resolver.resolveEntity(xcsURI, xcsURI);
             XCSParser parser = new XCSParser();
             parser.parse(this, source);
             languages = buildLangMap();
+            LOGGER.info("    Success");
         }
         catch (SAXParseException err)
         {   //TODO: Need to put string in properties file for i18l.
@@ -740,7 +742,10 @@ public class XCSDocument extends DocumentImpl implements Document
                     if (lvls.contains("termEntry"))
                         break SEARCH_TO_BODY;
                     else
+                    {
+                        System.err.println(lvls);
                         throw new InvalidLevelsException(elem);
+                    }
                 }
                 pp = (Element) pp.getParentNode();
             }
@@ -762,26 +767,12 @@ public class XCSDocument extends DocumentImpl implements Document
             Element spec = getSpec(key);
             StringBuffer buf = new StringBuffer();
             NodeList nodes = spec.getElementsByTagName("levels");
-            for (int i = 0; i < nodes.getLength(); i++)
-            {
-                Element elem = (Element) nodes.item(i);
-                Node node = elem.getFirstChild();
-                while (node != null)
-                {
-                    if (node.getNodeType() == Node.TEXT_NODE)
-                    {
-                        buf.append(node.getNodeValue());
-                        buf.append(' ');
-                    }
-                    node = node.getNextSibling();
-                }
-            }
+            Element lvlselem = (Element) nodes.item(0);
+            String levelstr = lvlselem.getTextContent();
+            String[] lvls = levelstr.split("\\s+");
             Set<String> set = new java.util.HashSet<String>();
-            StringTokenizer tok = new StringTokenizer(buf.toString());
-            while (tok.hasMoreTokens())
-            {
-                set.add(tok.nextToken());
-            }
+            for (int i = 0; i < lvls.length; i++)
+                set.add(lvls[i]);
             if (set.isEmpty())
             {
                 set.add("termEntry");

@@ -44,6 +44,8 @@ public class TBXValidatorPanel extends javax.swing.JPanel
     /** Main logger for this panel. */
     private static Logger LOGGER;
     
+    
+    
     //These variables define the various parts of the panel. Since this will
     //change the javadoc is not required on each, but the name of the variable
     //should be highly descriptive.
@@ -67,6 +69,10 @@ public class TBXValidatorPanel extends javax.swing.JPanel
      */
     public TBXValidatorPanel(ResourceBundle bndl)
     {
+        boxLogging = new javax.swing.JComboBox();
+        boxLanguage = new javax.swing.JComboBox();
+        boxCountry = new javax.swing.JComboBox();
+
         setLayout(new BorderLayout());
 
         layoutButtons(bndl);
@@ -96,8 +102,10 @@ public class TBXValidatorPanel extends javax.swing.JPanel
      */
     private void layoutButtons(ResourceBundle bndl)
     {
-        buttonValidate = new javax.swing.JButton(TBXAbstractAction.getAction(ActionOpen.class));
-
+        ActionOpen action = (ActionOpen) TBXAbstractAction.getAction(ActionOpen.class);
+        buttonValidate = new javax.swing.JButton(action);
+        boxLogging.addActionListener(action);
+        
         panelButtons = new javax.swing.JPanel();
         panelButtons.setLayout(new FlowLayout());
         panelButtons.add(buttonValidate);
@@ -115,14 +123,11 @@ public class TBXValidatorPanel extends javax.swing.JPanel
         labelLogging = new javax.swing.JLabel("Logging");
         labelLanguage = new javax.swing.JLabel("Language");
         labelCountry = new javax.swing.JLabel("Country");
-        boxLogging = new javax.swing.JComboBox();
-        boxLanguage = new javax.swing.JComboBox();
-        boxCountry = new javax.swing.JComboBox();
 
         //Configure
         String[] logvals = {"SEVERE", "WARNING", "INFO", "CONFIG", "FINE", "FINER", "FINEST"};
         boxLogging.setModel(new javax.swing.DefaultComboBoxModel(logvals));
-        boxLogging.setSelectedItem("WARNING"); //TODO: this needs to based on preferences
+        boxLogging.setSelectedItem("INFO"); //TODO: this needs to based on preferences
         
         SortedSet<String> iso639 = ISOReference.getInstance().get639alpha2();
         boxLanguage.setModel(new javax.swing.DefaultComboBoxModel(iso639.toArray()));

@@ -61,22 +61,29 @@ public class TBXResults extends javax.swing.JFrame implements WindowListener
      *
      * @param file The file that was checked.
      * @param tbx The TBX validator that operated on the file.
-     * @throws  IOException Any I/O exceptions that occur.
+     * @param log The full log of all that happened in the parse.
      */
-    public TBXResults(File file, TBXFile tbx) throws IOException
+    public TBXResults(File file, TBXFile tbx, String log)
     {
         ResourceBundle bndl = ResourceBundle.getBundle("org.ttt.salt.gui.TBXValidator");
         
         setTitle(String.format("%1s %2$tF %2$tT", file.getName(), new Date()));
         javax.swing.JTextArea text = new javax.swing.JTextArea();
-        Iterator<TBXException> errs = tbx.getInvalidatingExceptions().iterator();
-        while (errs.hasNext())
+        if (tbx != null)
         {
-            TBXException err = errs.next();
-            text.append(err.getLocalizedMessage());
-            text.append("\n");
-            text.append("========================================\n\n");
+            Iterator<TBXException> errs = tbx.getInvalidatingExceptions().iterator();
+            while (errs.hasNext())
+            {
+                TBXException err = errs.next();
+                text.append(err.getLocalizedMessage());
+                text.append("\n");
+                text.append("========================================\n\n");
+            }
         }
+        text.append("\n\n");
+        text.append("****************************************\n");
+        text.append("Log messages.\n\n");
+        text.append(log);
         setTextProperties(text);
 
         javax.swing.JScrollPane scroll = new javax.swing.JScrollPane(text,
@@ -93,6 +100,8 @@ public class TBXResults extends javax.swing.JFrame implements WindowListener
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
         pack();
+        scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMinimum());
+        scroll.getHorizontalScrollBar().setValue(scroll.getHorizontalScrollBar().getMinimum());
         setVisible(true);
     }
     

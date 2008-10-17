@@ -609,44 +609,52 @@ public class TBXFile
                 item(0);
         if (header.getElementsByTagName("encodingDesc").getLength() == 1)
         {
+            String xcsUriStr = null;
             Element encoding = (Element) header.getElementsByTagName("encodingDesc").item(0);
             NodeList plist = encoding.getElementsByTagName("p");
         GOT_XCS:
             for (int i = 0; i < plist.getLength(); i++)
             {
                 Element p = (Element) plist.item(i);
-                if (p.hasAttribute("type")
-                && (p.getAttribute("type").equals("DCSName") || p.getAttribute("type").equals("XCSName")))
+                if (p.hasAttribute("type"))
                 {
-                    Node text = p.getFirstChild();
-                    if (text.getNodeType() == Node.TEXT_NODE)
+                    if (p.getAttribute("type").equals("DCSName")
+                        || p.getAttribute("type").equals("XCSName"))
                     {
-                        String xcsURI = text.getNodeValue().trim();
-                        try
-                        {
-                            xcsDocument = new XCSDocument(xcsURI);
-                            break GOT_XCS;
-                        }
-                        catch (FileNotFoundException err)
-                        {
-                            String msg = String.format("On TBX file '%s' XCS file '%s' not found.", uri, xcsURI);
-                            LOGGER.info(msg);
-                        }
-                        catch (IOException err)
-                        {
-                            LOGGER.log(Level.WARNING, "Exception building XCS", err);
-                        }
-                        catch (SAXException err)
-                        {
-                            LOGGER.log(Level.WARNING, "Exception building XCS", err);
-                        }
+                        xcsUriStr = p.getTextContent().trim();
+                        break GOT_XCS;
+                    }
+                    else if (p.getAttribute("type").equals("XCSURI"))
+                    {
+                    }
+                    else if (p.getAttribute("type").equals("XCSContent"))
+                    {
+                        throw new UnsupportedOperationException("XCSContent location type unsupported.");
                     }
                 }
             }
-            if (xcsDocument == null)
+
+            if (xcsUriStr == null)
+                throw new FileNotFoundException(
+                    String.format("XCS unspecified for TBX file: %s.", uri));
+
+            try
             {
-                String msg = String.format("XCS was not found for TBX file: %s", uri);
-                throw new FileNotFoundException(msg);
+                LOGGER.info("Using XCS files at URI: " + xcsUriStr);
+                xcsDocument = new XCSDocument(xcsUriStr);
+            }
+            catch (FileNotFoundException err)
+            {
+                String msg = String.format("On TBX file '%s' XCS file '%s' not found.", uri, xcsUriStr);
+                LOGGER.info(msg);
+            }
+            catch (IOException err)
+            {
+                LOGGER.log(Level.WARNING, "Exception building XCS", err);
+            }
+            catch (SAXException err)
+            {
+                LOGGER.log(Level.WARNING, "Exception building XCS", err);
             }
         }
     }

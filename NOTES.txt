@@ -1,0 +1,11 @@
+$Id$
+
+RELEASE:
+
+mvn -Dusername=<admin> -Dpassword=<pass> release:prepare
+mvn release:perform
+
+rsync -rlptv --progress
+	/Library/WebServer/Documents/tbxutil/
+	lanhel,tbxutil@web.sourceforge.net:/home/groups/t/tb/tbxutil/
+

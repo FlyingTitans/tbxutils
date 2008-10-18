@@ -225,19 +225,10 @@
                 <groupId>net.sf</groupId>
                 <artifactId>stat-scm</artifactId>
                 <configuration>
-                    <!-- includes>
-                        <include>**/*.java</include>
-                        </includes -->
                     <excludes>
                         <exclude>**/*.pdf</exclude>
                         <exclude>**/qalab.xml</exclude>
                         </excludes>
-                    <!-- nonDeveloperLogins>
-                        <nonDeveloperLogin>Admin Smith</nonDeveloperLogin>
-                        <nonDeveloperLogin>Oleg Developer</nonDeveloperLogin>
-                        </nonDeveloperLogins>
-                    <tags>3.0</tags>
-                    <tagsDir>/releases/</tagsDir -->
                     </configuration>
                 </plugin>
             <plugin>
@@ -285,23 +276,27 @@
     <pluginRepositories>
         </pluginRepositories>
     <distributionManagement>
-        <site>
-            <id>TBX :: SourceForge</id>
+        <!-- site>
+            <id>TBX :: SourceForge :: Site</id>
             <name>SourceForge Website</name>
-            <url>scp://tbxutil.sourceforge.net/home/users/l/la/lanhel/tbxutil/htdocs</url>
+            <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/</url>
+            </site -->
+        <site>
+            <id>TBX :: SourceForge :: Site</id>
+            <name>SourceForge Website</name>
+            <url>scp://localhost/Library/WebServer/Documents/tbxutil</url>
             </site>
-        <repository>
+        <snapshotRepository>
             <name>SourceForge Local</name>
             <url>file://${basedir}/target/deploy</url>
-         </repository>
-        <!-- repository>
-            <id>TBX :: SourceForge</id>
+        </snapshotRepository>
+        <repository>
+            <id>TBX :: SourceForge :: Files</id>
             <name>SourceForge FRS</name>
-            <url>sftp://frs.sourceforge.net/uploads</url>
+            <url>sftp://frs.sourceforge.net/uploads/</url>
             <layout>default</layout>
-         </repository -->
-        <!-- snapshotRepository>
-         </snapshotRepository -->
+         </repository>
         </distributionManagement>
     
     </project>
+

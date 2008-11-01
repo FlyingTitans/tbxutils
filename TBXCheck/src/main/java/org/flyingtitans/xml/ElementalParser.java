@@ -228,6 +228,7 @@ public class ElementalParser
             }
             buf.append('>');
             c = reader.read();
+            sval = buf.toString();
         }
         sval = buf.toString();
     }

@@ -4,7 +4,7 @@
     <!-- POM Relationships -->
     <groupId>org.ttt.salt</groupId>
     <artifactId>tbx</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -266,9 +266,9 @@
             </mailingList>
         </mailingLists> 
     <scm>
-        <connection>scm:svn:http://tbxutil.svn.sourceforge.net/svnroot/tbxutil/tags/tbx-1.2.2</connection>
-        <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/tags/tbx-1.2.2</developerConnection>
-        <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/tags/tbx-1.2.2</url>
+        <connection>scm:svn:http://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</connection>
+        <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</developerConnection>
+        <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/trunk</url>
         </scm>
     <!-- Maven Environment -->
     <repositories>
@@ -279,10 +279,10 @@
         <!-- site>
             <id>TBX :: SourceForge :: Site</id>
             <name>SourceForge Website</name>
-            <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/</url>
+            <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/htdocs</url>
             </site -->
         <site>
-            <id>TBX :: SourceForge :: Site</id>
+            <id>TBX :: Files :: Localhost</id>
             <name>SourceForge Website</name>
             <url>scp://localhost/Library/WebServer/Documents/tbxutil</url>
             </site>

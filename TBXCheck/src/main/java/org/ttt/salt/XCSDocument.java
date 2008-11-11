@@ -666,7 +666,6 @@ public class XCSDocument extends DocumentImpl implements Document
         StringTokenizer tok = new StringTokenizer(val);
         while (tok.hasMoreElements())
             ret.add(tok.nextToken());
-        System.err.println(ret);
         return ret;
     }
     

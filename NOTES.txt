@@ -9,6 +9,7 @@ rsync -rlptv --progress
 	/Library/WebServer/Documents/tbxutil/
 	lanhel,tbxutil@web.sourceforge.net:/home/groups/t/tb/tbxutil/htdocs
 
+mvn source:aggregate
 sftp USER@frs.sourceforge.net
 cd uploads
 put FILE

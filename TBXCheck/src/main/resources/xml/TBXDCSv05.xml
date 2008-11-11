@@ -100,7 +100,12 @@
         <levels>langSet termEntry term </levels>
     </descripSpec>
     <descripNoteSpec name="definitionType" datcatId="ISO12620A-0802">
-        <contents datatype="picklist" targetType="element">intensionalDefinition extensionalDefinition partitiveDefinition translatedDefinition </contents>
+        <contents datatype="picklist" targetType="element">
+            intensionalDefinition
+            extensionalDefinition
+            partitiveDefinition
+            translatedDefinition
+            </contents>
     </descripNoteSpec>
     <descripNoteSpec name="descriptionType" datcatId="ISO12620A-0801">
         <contents datatype="picklist" targetType="element"/>

@@ -23,6 +23,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import javax.xml.parsers.*;
 import org.ttt.salt.*;
 import org.w3c.dom.*;
@@ -43,9 +45,22 @@ public class TBXFileTest
     /** */
     private Document doc;
     
-    /** Main constructor. */
-    public TBXFileTest()
+    
+    @BeforeClass
+    public static void initialize() throws Exception
     {
+        factory.setNamespaceAware(true);
+        factory.setValidating(false);
+
+/*
+        java.util.logging.LogManager.getLogManager().reset();
+        java.util.logging.Formatter simplefmt = new java.util.logging.SimpleFormatter();
+        java.util.logging.Handler handler = new java.util.logging.ConsoleHandler();
+        handler.setLevel(Level.FINEST);
+        handler.setFormatter(simplefmt);
+        Logger.getLogger("org.ttt.salt").addHandler(handler);
+        Logger.getLogger("org.ttt.salt").setLevel(Level.INFO);
+*/
     }
     
     private File getFile(String name) throws IOException, URISyntaxException
@@ -70,8 +85,7 @@ public class TBXFileTest
     @Before
     public void setUp() throws Exception
     {
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
+        Logger.getLogger("org.ttt.salt").setLevel(Level.INFO);
     }
     
     @After

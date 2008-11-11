@@ -2,10 +2,14 @@ $Id$
 
 RELEASE:
 
-mvn -Dusername=<admin> -Dpassword=<pass> release:prepare
+mvn -Dusername=USER -Dpassword=PASS release:prepare
 mvn release:perform
 
 rsync -rlptv --progress
 	/Library/WebServer/Documents/tbxutil/
-	lanhel,tbxutil@web.sourceforge.net:/home/groups/t/tb/tbxutil/
+	lanhel,tbxutil@web.sourceforge.net:/home/groups/t/tb/tbxutil/htdocs
+
+sftp USER@frs.sourceforge.net
+cd uploads
+put FILE
 

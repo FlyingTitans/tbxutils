@@ -662,10 +662,11 @@ public class XCSDocument extends DocumentImpl implements Document
         Element contents = getContents(key);
         if (!contents.getAttribute("datatype").equals("picklist"))
             throw new IllegalStateException("datatype != picklist");
-        String val = contents.getFirstChild().getNodeValue();
+        String val = contents.getTextContent();
         StringTokenizer tok = new StringTokenizer(val);
         while (tok.hasMoreElements())
             ret.add(tok.nextToken());
+        System.err.println(ret);
         return ret;
     }
     
@@ -866,7 +867,7 @@ public class XCSDocument extends DocumentImpl implements Document
     private void check_picklist(Element elem) throws XCSValidationException
     {
         Key key = new Key(elem.getTagName(), elem.getAttribute("type"));
-        Set pick = getPicklist(key);
+        Set<String> pick = getPicklist(key);
         NodeList nodes = elem.getChildNodes();
         Node node = elem.getFirstChild();
         while (node != null)

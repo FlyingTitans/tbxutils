@@ -4,25 +4,21 @@ RELEASE:
 
 mvn -Dusername=USER -Dpassword=PASS release:prepare
 ---BUG WORKAROUND---
-svn up -r head
-mvn relase:prepare -Dresume
-
-
-OR
 
 svn cp https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk
-    https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/tag/tbxutil.1.2.x
-Edit release.properties to mark that tag phase is done
+    https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/tags/tbxutil.1.2.x
+svn up -r head
+mvn release:prepare -Dresume
 
 ---END WORKAROUND---
 mvn release:perform
+
+sftp USER@frs.sourceforge.net
+cd uploads
+put FILE
 
 rsync -rlptv --progress
 	/Library/WebServer/Documents/tbxutil/
 	lanhel,tbxutil@web.sourceforge.net:/home/groups/t/tb/tbxutil/htdocs
 
-mvn source:aggregate
-sftp USER@frs.sourceforge.net
-cd uploads
-put FILE
 

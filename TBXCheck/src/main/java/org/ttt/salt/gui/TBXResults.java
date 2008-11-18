@@ -31,6 +31,8 @@ import java.awt.print.Pageable;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
+import javax.swing.JScrollPane;
+import javax.swing.BorderFactory;
 import org.ttt.salt.TBXFile;
 import org.ttt.salt.TBXException;
 
@@ -55,6 +57,9 @@ public class TBXResults extends javax.swing.JFrame implements WindowListener
 
     /** Observer argument that indicates a title change. */
     public static final String TITLE_CHANGE = "TitleChange";
+    
+    /* Components */
+    private JScrollPane scroll;
 
     /**
      * This will display the results of validating the file.
@@ -65,10 +70,10 @@ public class TBXResults extends javax.swing.JFrame implements WindowListener
      */
     public TBXResults(File file, TBXFile tbx, String log)
     {
+        super(String.format("%1s %2$tF %2$tT", file.getName(), new Date()));
         ResourceBundle bndl = ResourceBundle.getBundle("org.ttt.salt.gui.TBXValidator");
-        
-        setTitle(String.format("%1s %2$tF %2$tT", file.getName(), new Date()));
         javax.swing.JTextArea text = new javax.swing.JTextArea();
+        text.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         if (tbx != null)
         {
             Iterator<TBXException> errs = tbx.getInvalidatingExceptions().iterator();
@@ -77,16 +82,15 @@ public class TBXResults extends javax.swing.JFrame implements WindowListener
                 TBXException err = errs.next();
                 text.append(err.getLocalizedMessage());
                 text.append("\n");
-                text.append("========================================\n\n");
             }
         }
-        text.append("\n\n");
+        text.append("\n");
         text.append("****************************************\n");
         text.append("Log messages.\n\n");
         text.append(log);
         setTextProperties(text);
 
-        javax.swing.JScrollPane scroll = new javax.swing.JScrollPane(text,
+        scroll = new JScrollPane(text,
                     javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                     javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         //scroll.setRowHeaderView(new javax.swing.Box.Filler(
@@ -98,10 +102,8 @@ public class TBXResults extends javax.swing.JFrame implements WindowListener
         addWindowListener(this);
         addWindowListener(TBXValidator.getInstance());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        
         pack();
-        scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMinimum());
-        scroll.getHorizontalScrollBar().setValue(scroll.getHorizontalScrollBar().getMinimum());
+        setLocationByPlatform(true);
         setVisible(true);
     }
     
@@ -127,6 +129,8 @@ public class TBXResults extends javax.swing.JFrame implements WindowListener
     /** {@inheritDoc} */
     public void windowOpened(WindowEvent evt)
     {
+        scroll.getVerticalScrollBar().setValue(scroll.getVerticalScrollBar().getMinimum());
+        scroll.getHorizontalScrollBar().setValue(scroll.getHorizontalScrollBar().getMinimum());
     }
 
     /** {@inheritDoc} */

@@ -19,6 +19,7 @@ package org.ttt.salt.dom.tbx;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
@@ -234,15 +235,16 @@ public class TBXParser
     /**
      * Create a new parser for TBX document parsing.
      *
+     * @param r The XML entity resolver the parser should use.
      * @param xcsvalidate Validate each termEntry against the XCS when it
      *  is built.
      * @throws SAXNotRecognizedException Requried parser feature is unavailable.
      * @throws SAXNotSupportedException Could not set required parser feature.
      */
-    public TBXParser(boolean xcsvalidate) throws SAXNotRecognizedException,
+    public TBXParser(TBXResolver r, boolean xcsvalidate) throws SAXNotRecognizedException,
         SAXNotSupportedException
     {
-        setWorkingDirectory(null);
+        resolver = r;
         xcsValidate = xcsvalidate;
         try
         {
@@ -290,21 +292,6 @@ public class TBXParser
         return getTBXDocument();
     }
     
-    /**
-     * Set the working directory for this parser. This is the directory all
-     * relative URLs will be resolved from.
-     *
-     * @param wd The working directory for this parser. If null this will use
-     *  the system current working directory.
-     */
-    public void setWorkingDirectory(String wd)
-    {
-        if (wd == null)
-            resolver = new TBXResolver(System.getProperty("user.dir"));
-        else
-            resolver = new TBXResolver(wd);
-    }
-
     /**
      * Set a custom TBXDocument to use when parsing the TBX XML input source.
      * If parsing has started then {@link java.lang.IllegalStateException}
@@ -471,7 +458,7 @@ public class TBXParser
                 {
                     try
                     {
-                        LOGGER.info("Using XCS at URI: " + xcsURI);
+                        LOGGER.info("Using XCS: " + xcsURI);
                         xcsDocument = new XCSDocument(xcsURI, resolver);
                         break GOT_XCS;
                     }

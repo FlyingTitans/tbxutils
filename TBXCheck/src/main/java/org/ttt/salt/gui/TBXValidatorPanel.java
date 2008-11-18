@@ -69,6 +69,7 @@ public class TBXValidatorPanel extends javax.swing.JPanel
      */
     public TBXValidatorPanel(ResourceBundle bndl)
     {
+        LOGGER = Logger.getLogger("org.ttt.salt");
         boxLogging = new javax.swing.JComboBox();
         boxLanguage = new javax.swing.JComboBox();
         boxCountry = new javax.swing.JComboBox();
@@ -91,7 +92,6 @@ public class TBXValidatorPanel extends javax.swing.JPanel
             err.printStackTrace();
             System.exit(1);
         }
-        LOGGER = Logger.getLogger("org.ttt.salt");
     }
         
     /**

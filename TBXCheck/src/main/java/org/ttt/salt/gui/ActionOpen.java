@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.prefs.Preferences;
@@ -43,6 +44,36 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
 {
     /*
      */
+    
+    /**
+     * Format log messages in a manner that is easier for non-programmer
+     * (i.e. normal humans) to read.
+     *
+     * @author Lance Finn Helsten
+     * @version $Id$
+     * @license Licensed under the Apache License, Version 2.0.
+     */
+    private class LogFormatter extends Formatter
+    {
+        /** Builder to use on each log record. */
+        private StringBuilder builder = new StringBuilder();
+        
+        /** {@inheritDoc} */
+        public String format(LogRecord record)
+        {
+            System.err.format("%d %s%n", record.getLevel().intValue(), record.getLevel());
+            String fmt;
+            if (record.getLevel().intValue() > Level.FINE.intValue())
+                fmt = "#%3$2d  %4$s---%5$s%n";
+            else
+                fmt = "#%3$2d  %4$s---[%1$s#%2$s] %5$s%n";
+            return String.format(fmt,
+                    record.getSourceClassName(), record.getSourceMethodName(),
+                    record.getSequenceNumber(),
+                    record.getLevel().getLocalizedName(),
+                    formatMessage(record));
+        }
+    }
 
     /** SCM information. */
     public static final String RCSID = "$Id$";
@@ -70,8 +101,10 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
         try
         {
             logbuffer = new ByteArrayOutputStream();
-            formatter = new java.util.logging.SimpleFormatter();
+            //formatter = new java.util.logging.SimpleFormatter();
+            formatter = new LogFormatter();
             handler = new java.util.logging.StreamHandler(logbuffer, formatter);
+            handler.setLevel(Level.FINEST);
             handler.setEncoding("UTF-8");
         }
         catch (java.io.UnsupportedEncodingException err)
@@ -125,12 +158,11 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
                     Logger.getLogger("org.ttt.salt").setLevel(level);
                     Logger.getLogger("org.ttt.salt.dom.tbx").setLevel(level);
                     Logger.getLogger("org.ttt.salt.dom.xcs").setLevel(level);
-                    handler.setLevel(level);
                     
                     TBXFile dv = null;
                     try
                     {
-                        dv = new TBXFile(file);
+                        dv = new TBXFile(file.toURI().toURL());
                         dv.parseAndValidate();
                         if (dv.isValid())
                         {
@@ -166,9 +198,10 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
                     {
                         try
                         {
+                            handler.flush();
                             String log = logbuffer.toString("UTF-8");
-                            new TBXResults(file, dv, log);
                             Logger.getLogger("org.ttt.salt").removeHandler(handler);
+                            new TBXResults(file, dv, log);
                         }
                         catch (java.io.UnsupportedEncodingException err)
                         {   //Ignore: UTF-8 is always available

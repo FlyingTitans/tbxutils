@@ -220,22 +220,6 @@ public class XCSDocument extends DocumentImpl implements Document
      * @param xcsURI The XCS's URI string. This may be a URI name or a URL
      *  path. If it is a URI name it will be resolved to a URL if the name
      *  is known, otherwise it will be assumed to be a URL.
-     * @throws IOException Any I/O exceptions building this document.
-     * @throws ParserConfigurationException Problems with building the parser.
-     * @throws SAXException Any parse exceptions building this document.
-     */
-    public XCSDocument(String xcsURI) throws IOException,
-        ParserConfigurationException, SAXException
-    {
-        this(xcsURI, new TBXResolver());
-    }
-    
-    /**
-     * Create an XCS document for the third stage TBX XCS validation.
-     *
-     * @param xcsURI The XCS's URI string. This may be a URI name or a URL
-     *  path. If it is a URI name it will be resolved to a URL if the name
-     *  is known, otherwise it will be assumed to be a URL.
      * @param resolver The resolver this XCS document should use to find
      *  files.
      * @throws IOException Any I/O exceptions building this document.
@@ -254,7 +238,7 @@ public class XCSDocument extends DocumentImpl implements Document
             XCSParser parser = new XCSParser();
             parser.parse(this, source);
             languages = buildLangMap();
-            LOGGER.info("    Success");
+            LOGGER.info("Success");
         }
         catch (SAXParseException err)
         {   //TODO: Need to put string in properties file for i18l.
@@ -866,17 +850,10 @@ public class XCSDocument extends DocumentImpl implements Document
     private void check_picklist(Element elem) throws XCSValidationException
     {
         Key key = new Key(elem.getTagName(), elem.getAttribute("type"));
-        Set<String> pick = getPicklist(key);
-        NodeList nodes = elem.getChildNodes();
-        Node node = elem.getFirstChild();
-        while (node != null)
-        {
-            if (node.getNodeType() != Node.TEXT_NODE)
-                throw new InvalidSpecificationException(elem);
-            if (!pick.contains(node.getNodeValue()))
-                throw new InvalidPickListException(elem, node.getNodeValue());
-            node = node.getNextSibling();
-        }
+        Set<String> picklist = getPicklist(key);
+        String pick = elem.getTextContent();
+        if (!picklist.contains(pick))
+            throw new InvalidPickListException(elem, pick);
     }
 
     /**

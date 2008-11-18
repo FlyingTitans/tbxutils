@@ -3,6 +3,18 @@ $Id$
 RELEASE:
 
 mvn -Dusername=USER -Dpassword=PASS release:prepare
+---BUG WORKAROUND---
+svn up -r head
+mvn relase:prepare -Dresume
+
+
+OR
+
+svn cp https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk
+    https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/tag/tbxutil.1.2.x
+Edit release.properties to mark that tag phase is done
+
+---END WORKAROUND---
 mvn release:perform
 
 rsync -rlptv --progress

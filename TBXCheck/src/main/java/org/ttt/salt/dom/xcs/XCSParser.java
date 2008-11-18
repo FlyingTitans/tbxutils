@@ -327,7 +327,6 @@ public class XCSParser
     {   //TODO: Need to check if I know the publicID
         LOGGER.entering("TBXParser", "resolveEntity", String.format("publicId='%s' systemId='%s'", publicId, systemId));
         URL url = new URL(systemId);
-        LOGGER.info("Resolve Entity Generated URL: " + url.toString());
         try
         {
             InputStream stream = url.openStream();

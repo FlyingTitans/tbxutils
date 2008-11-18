@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -52,22 +53,18 @@ public class TBXResolver implements EntityResolver
     /** Localized resource bundle to be used for this object. */
     private final Map<String, String> uri2url = new java.util.HashMap<String, String>();
     
-    /** Current working directory to use when resolving relative paths. */
-    private String currentDir;
-
-    /**
-     */
-    public TBXResolver()
-    {
-        this(System.getProperty("user.dir"));
-    }
+    /** Fallback search location. */
+    private URL fallbackSearchLoc;
     
     /**
-     * @param cwd The current working directory for relative path resolution.
+     * @param fallback The final location to look for an entity.
      */
-    public TBXResolver(String cwd)
+    public TBXResolver(URL fallback) throws IOException
     {
-        currentDir = cwd;
+        String path = fallback.getPath();
+        String ppath = path.substring(0, path.lastIndexOf('/') + 1);
+        fallbackSearchLoc = new URL(fallback.getProtocol(), fallback.getHost(),
+                fallback.getPort(), ppath);
         addPublicId("ISO 12200:1999A//DTD MARTIF core (DXFcdV04)//EN", "/xml/XLTCDV04.DTD");
         addPublicId("Demo XCS", "/xml/TBXDCSv05.xml");
     }
@@ -93,21 +90,21 @@ public class TBXResolver implements EntityResolver
             InputStream input;
             if (uri2url.containsKey(publicId))
             {   //Check to see if it is a named resource
-                LOGGER.info("Mapped URI to URL publicId: " + publicId);
+                LOGGER.info("Entity is a known publicId: " + publicId);
                 input = getClass().getResourceAsStream(uri2url.get(publicId));
             }
             else if (systemId.matches("\\w+:.+"))
             {   //Do the full URI parsing
-                LOGGER.info("Valid URI systemId: " + systemId);
+                LOGGER.info("Entity is a URI: " + systemId);
                 URI uri = new URI(systemId);
                 input = uri.toURL().openStream();
             }
             else
             {   //Check the relative URI location
-                LOGGER.info("Unknown schema systemId: " + systemId);
+                LOGGER.fine("Unknown schema systemId: " + systemId);
                 if (systemId.startsWith("/"))
                 {
-                    LOGGER.info("Absolute path systemId: " + systemId);
+                    LOGGER.info("Entity is an absolute path: " + systemId);
                     File file = new File(systemId);
                     if (file.exists())
                         input = new FileInputStream(file);
@@ -116,10 +113,12 @@ public class TBXResolver implements EntityResolver
                 }
                 else
                 {
-                    LOGGER.info("Relative path systemId: " + systemId);
-                    File file = new File(currentDir, systemId);
-                    LOGGER.info("Resolved path: " + file.toString());
-                    input = new FileInputStream(file);
+                    String path = fallbackSearchLoc.getPath() + systemId;
+                    URL locurl = new URL(fallbackSearchLoc.getProtocol(),
+                        fallbackSearchLoc.getHost(), fallbackSearchLoc.getPort(),
+                        path);
+                    LOGGER.info("Entity relative path resolved: " + locurl.toString());
+                    input = locurl.openStream();
                 }
                 
                 if (input == null)
@@ -145,7 +144,6 @@ public class TBXResolver implements EntityResolver
         {
             throw new SAXException("Invalid System ID format", err);
         }
-        Logger.getLogger("org.ttt.salt").log(Level.INFO, "EntityResolved", publicId);
         return new InputSource(reader);
     }
 

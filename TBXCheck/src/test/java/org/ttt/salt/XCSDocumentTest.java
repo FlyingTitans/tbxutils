@@ -39,28 +39,27 @@ public class XCSDocumentTest
      * 1) Add a check for invalid XCS files where file has empty picklist.
      */
 
-    private static final String SYSTEM_ID
+    private static String SYSTEM_ID
             = "file:" + System.getProperty("user.dir") + "/";
 
-    private static final TBXResolver RESOLVER
-            = new TBXResolver(System.getProperty("user.dir"));
+    private static TBXResolver RESOLVER;
 
-    private static final String DXLT_XCS
+    private static String DXLT_XCS
             = "Demo XCS";
     
-    private static final XCSDocument.Key KEY_GOOD
+    private static XCSDocument.Key KEY_GOOD
             = new XCSDocument.Key("termNote", "abbreviatedFormFor");
     
-    private static final XCSDocument.Key KEY_PICKLIST
+    private static XCSDocument.Key KEY_PICKLIST
             = new XCSDocument.Key("termNote", "animacy");
     
-    private static final XCSDocument.Key KEY_BAD_0
+    private static XCSDocument.Key KEY_BAD_0
             = new XCSDocument.Key("FUBAR", "TARFU");
     
-    private static final XCSDocument.Key KEY_BAD_1
+    private static XCSDocument.Key KEY_BAD_1
             = new XCSDocument.Key("FUBAR", "commonNameFor");
     
-    private static final XCSDocument.Key KEY_BAD_2
+    private static XCSDocument.Key KEY_BAD_2
             = new XCSDocument.Key("termNote", "TARFU");
         
     private XCSDocument dcsdoc;
@@ -68,6 +67,7 @@ public class XCSDocumentTest
     @BeforeClass
     public static void classSetup() throws IOException
     {
+        RESOLVER = new TBXResolver(new File(System.getProperty("user.dir")).toURI().toURL());
         LogManager.getLogManager().reset();
         Formatter simplefmt = new SimpleFormatter();
         Handler logfile = new FileHandler(System.getProperty("user.dir")

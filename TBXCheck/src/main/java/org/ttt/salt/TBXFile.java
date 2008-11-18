@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.StreamCorruptedException;
+import java.net.URL;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.Map;
@@ -110,17 +111,17 @@ public class TBXFile
     private Type fileType = Type.UNKNOWN;
     
     /** URI for the input file. */
-    private java.net.URI uri;
-    
-    /** */
-    private String systemId = "file:" + System.getProperty("user.dir") + "/";
-    
+    private URL url;
+        
     /** */
     private Reader reader;
     
     /** */
     private XCSDocument xcsDocument;
-    
+
+    /** The entity resolver that I use. */
+    private TBXResolver resolver;
+        
     /** TBXParser that will build the TBXDocument. */
     private TBXParser tbxParser;
     
@@ -143,83 +144,23 @@ public class TBXFile
     private SortedSet<TBXException> exceptions = new java.util.TreeSet<TBXException>();
     
     /**
-     * Wrap a pre-parsed TBXDocument with a TBXFile. This will validate the
-     * the TBX document against the XCS file.
      *
-     * @param document The XML DOM Document to attach this object to.
+     * @param u The URL to the TBX file to process.
      * @throws IOException Any unhandled I/O exceptions.
+     * @throws SAXExcetion Any SAX issues in creating the file.
      */
-    public TBXFile(TBXDocument document) throws IOException
+    public TBXFile(URL u) throws IOException, SAXException
     {
-        if (document == null)
-            throw new NullPointerException();
-        tbxDocument = document;
-        parsed = true;
-        valid = validate();
-        buildTermEntriesMap();
-    }
-    
-    /**
-     *
-     * @param input The stream to read XML data from.
-     * @param sysid The systemId from which to search for entities.
-     * @throws IOException Any unhandled I/O exceptions.
-     */
-    public TBXFile(InputStream input, String sysid) throws IOException
-    {
-        if (input == null)
-            throw new IllegalArgumentException("input cannot be null");
-        if (sysid != null)
-            systemId = sysid;
+        if (u == null)
+            throw new IllegalArgumentException("URL argument cannot be null");
+        url = u;
+        resolver = new TBXResolver(url);
+        tbxParser = new TBXParser(resolver, true);
+        InputStream input = url.openStream();
         if (!input.markSupported())
-        {   //CHECKSTYLE: ParameterAssignment OFF
             input = new BufferedInputStream(input);
-            //CHECKSTYLE: ParameterAssignment ON
-        }
         InputStreamReader inread = new InputStreamReader(input, TBXResolver.getEncoding(input));
         reader = new BufferedReader(inread);
-    }
-
-    /**
-     *
-     * @param file The file to read the XML data from.
-     * @throws IOException Any unhandled I/O exceptions.
-     */
-    public TBXFile(File file) throws IOException
-    {
-        super();
-        if (file == null)
-            throw new IllegalArgumentException("File argument cannot be null");
-        if (!file.exists())
-            throw new IllegalArgumentException("File does not exist: " + file);
-        if (!file.isFile())
-            throw new IllegalArgumentException("File argument is not normal file: " + file);
-        if (!file.canRead())
-            throw new IllegalArgumentException("Cannot read from file: " + file);
-        if (file.length() == 0)
-            throw new IllegalArgumentException("File has no data: " + file);
-        if (file.getParent() != null)
-            this.systemId = file.getParentFile().toURL().toExternalForm();
-        LOGGER.log(Level.INFO, "Log_FileCheck", file);
-        uri = file.toURI();
-        InputStream input = new BufferedInputStream(
-                new java.io.FileInputStream(file));
-        InputStreamReader inread = new InputStreamReader(input, TBXResolver.getEncoding(input));
-        reader = new BufferedReader(inread);
-    }
-    
-    /**
-     *
-     * @param file The file to read the XML data from.
-     * @param sysid The systemId from which to search for entities.
-     * @throws IOException Any unhandled I/O exceptions.
-     */
-    public TBXFile(File file, String sysid) throws IOException
-    {
-        this(file);
-        //TODO -- need better checking of systemId
-        if (sysid != null)
-            systemId = sysid;
     }
     
     /**
@@ -243,24 +184,7 @@ public class TBXFile
                 buildTermEntriesMap();
         }
     }
-    
-    /**
-     * Get the TBXParser that will build the TBXDocument associated with this
-     * TBXFile. This is to allow custom modifications of the parser to be
-     * handled. Any changes to the TBXParser after {@link #parseAndValidate}
-     * has started will result in undefined behavior.
-     *
-     * @return TBXParser that will create the TBXDocument in {@link #parseAndValidate}.
-     * @throws SAXNotRecognizedException Requried parser feature is unavailable.
-     * @throws SAXNotSupportedException Could not set required parser feature.
-     */
-    public TBXParser getTBXParser() throws SAXNotRecognizedException, SAXNotSupportedException
-    {
-        if (tbxParser == null)
-            tbxParser = new TBXParser(true);
-        return tbxParser;
-    }
-    
+        
     /**
      * Get the TBXDocument that was built.
      *
@@ -516,17 +440,9 @@ public class TBXFile
     private void buildDocumentWithDTD() throws IOException,
         ParserConfigurationException, SAXException
     {
-        TBXParser parser = getTBXParser();
-        if (uri != null && (uri.getScheme() == null || uri.getScheme().equals("file")))
-        {
-            File f = new File(uri);
-            if (f.isFile())
-                f = f.getParentFile();
-            parser.setWorkingDirectory(f.getAbsolutePath());
-        }
         InputSource insource = new InputSource(reader);
-        insource.setSystemId(systemId);
-        tbxDocument = parser.parse(insource);
+        insource.setSystemId(url.toString());
+        tbxDocument = tbxParser.parse(insource);
         exceptions.addAll(tbxDocument.getParseExceptions());
     }
     
@@ -540,10 +456,9 @@ public class TBXFile
     private void buildDocumentWithSchema() throws IOException,
         ParserConfigurationException, SAXException
     {
-        TBXParser parser = getTBXParser();
         InputSource insource = new InputSource(reader);
-        insource.setSystemId(systemId);
-        tbxDocument = parser.parse(insource);
+        insource.setSystemId(url.toString());
+        tbxDocument = tbxParser.parse(insource);
         exceptions.addAll(tbxDocument.getParseExceptions());
     }
 
@@ -636,16 +551,16 @@ public class TBXFile
 
             if (xcsUriStr == null)
                 throw new FileNotFoundException(
-                    String.format("XCS unspecified for TBX file: %s.", uri));
+                    String.format("XCS unspecified for TBX file: %s.", url));
 
             try
             {
-                LOGGER.info("Using XCS files at URI: " + xcsUriStr);
-                xcsDocument = new XCSDocument(xcsUriStr);
+                LOGGER.info("Using XCS file: " + xcsUriStr);
+                xcsDocument = new XCSDocument(xcsUriStr, resolver);
             }
             catch (FileNotFoundException err)
             {
-                String msg = String.format("On TBX file '%s' XCS file '%s' not found.", uri, xcsUriStr);
+                String msg = String.format("On TBX file '%s' XCS file '%s' not found.", url, xcsUriStr);
                 LOGGER.info(msg);
             }
             catch (IOException err)

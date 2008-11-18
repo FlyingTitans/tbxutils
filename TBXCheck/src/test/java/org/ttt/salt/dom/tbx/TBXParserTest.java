@@ -20,9 +20,11 @@ package org.ttt.salt.dom.tbx;
 import org.junit.*;
 import static org.junit.Assert.*;
 import java.io.*;
+import java.net.URL;
 import java.util.logging.*;
 import org.xml.sax.*;
 import org.ttt.salt.XCSDocument;
+import org.ttt.salt.TBXResolver;
 
 /**
  * @author  Lance Finn Helsten
@@ -36,8 +38,8 @@ public class TBXParserTest
     /** Logger for this package. */
     private static final Logger LOGGER = Logger.getLogger("org.ttt.salt.dom.xcs");
 
+    TBXResolver resolver;
     TBXParser parser;
-    
     TBXParser.TestAccess access;
     
     final int line = (int) (Math.random() * 10000);
@@ -77,10 +79,12 @@ public class TBXParserTest
     }
 
     @Before
-    public void setUp() throws SAXNotRecognizedException, SAXNotSupportedException
+    public void setUp() throws Exception
     {
         Logger.getLogger("org.ttt.salt.dom.tbx").setLevel(Level.INFO);
-        parser = new TBXParser(false);
+        URL cwd = new File(System.getProperty("user.dir")).toURI().toURL();
+        resolver = new TBXResolver(cwd);
+        parser = new TBXParser(resolver, false);
         access = parser.new TestAccess();
     }
 

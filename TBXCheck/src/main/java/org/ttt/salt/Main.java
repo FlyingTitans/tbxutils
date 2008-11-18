@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import org.xml.sax.SAXException;
 import org.flyingtitans.util.GetOpt;
 
 /**
@@ -109,6 +110,10 @@ public final class Main
         {
             System.err.println(err);
         }
+        catch (SAXException err)
+        {
+            System.err.println(err);
+        }
     }
 
     /**
@@ -159,7 +164,7 @@ public final class Main
      *
      * @throws IOException Any I/O exceptions that occur.
      */
-    private void dispatch() throws IOException
+    private void dispatch() throws IOException, SAXException
     {
         boolean exit = false;
         ResourceBundle bundle = ResourceBundle.getBundle("org.ttt.salt.Main");
@@ -301,13 +306,13 @@ public final class Main
      * @param files List of {@link java.io.File} objects to process.
      * @throws IOException Any I/O exceptions that occur.
      */
-    private void processFiles(List<File> files) throws IOException
+    private void processFiles(List<File> files) throws IOException, SAXException
     {
         Iterator<File> iter = files.iterator();
         while (iter.hasNext())
         {
             File file = iter.next();
-            TBXFile dv = new TBXFile(file);
+            TBXFile dv = new TBXFile(file.toURI().toURL());
             dv.parseAndValidate();
             if (dv.isValid())
             {

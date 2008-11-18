@@ -46,11 +46,11 @@ public class Aqua extends ApplicationAdapter
     {
         super();
         System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-                    "TBXGui");
+                    "TBXCheck");
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("apple.awt.showGrowBox", "true");
         //System.setProperty("apple.awt.brushMetalLook", "true");
-        System.setProperty("dock:name", "TBXGui");
+        System.setProperty("dock:name", "TBXCheck");
         Application.getApplication().setEnabledPreferencesMenu(true);
         Application.getApplication().addApplicationListener(this);
     }

@@ -63,25 +63,13 @@ public class TBXFileTest
 */
     }
     
-    private File getFile(String name) throws IOException, URISyntaxException
+    private URL getFileURL(String name) throws IOException, URISyntaxException
     {
         URL url = getClass().getResource("/org/ttt/salt/" + name);
         assertNotNull("/org/ttt/salt/" + name + " not found.", url);
-        return new File(url.toURI());
+        return url;
     }
-    
-    private TBXDocument buildRawDocument(String resname) throws IOException, URISyntaxException, SAXException
-    {
-        File srcfile = getFile(resname);
-        InputStream infile = new FileInputStream(srcfile);
-        InputStream input = new BufferedInputStream(infile);
-        Reader inreader = new InputStreamReader(input, TBXResolver.getEncoding(input));
-        Reader reader = new BufferedReader(inreader);
-        InputSource insource = new InputSource(reader);
-        TBXParser parser = new TBXParser(false);
-        return parser.parse(insource);
-    }
-        
+            
     @Before
     public void setUp() throws Exception
     {
@@ -96,7 +84,7 @@ public class TBXFileTest
     @Test
     public void getType() throws Exception
     {
-        TBXFile dv = new TBXFile(getFile("ValidDTD.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"));
         dv.parseAndValidate();
         assertEquals(TBXFile.Type.DTD, dv.getType());
     }
@@ -104,7 +92,7 @@ public class TBXFileTest
     @Test(expected=NoSuchElementException.class)
     public void getInvalidatingException() throws Exception
     {
-        TBXFile dv = new TBXFile(getFile("ValidDTD.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"));
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!errs.isEmpty())
@@ -130,7 +118,7 @@ public class TBXFileTest
     public void xmlParser() throws Exception
     {
         DocumentBuilder build = factory.newDocumentBuilder();
-        doc = build.parse(getFile("ValidParser.xml"));
+        doc = build.parse(getFileURL("ValidParser.xml").openStream());
         Element root = doc.getDocumentElement();
         
         Node node = root.getElementsByTagName("fubar").item(0);
@@ -154,127 +142,22 @@ public class TBXFileTest
     {
         //factory.setValidating(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        builder.setEntityResolver(new TBXResolver());
-        builder.parse(getFile("ValidDTD.xml"));
+        URL url = new File(System.getProperty("user.dir")).toURI().toURL();
+        builder.setEntityResolver(new TBXResolver(url));
+        builder.parse(getFileURL("ValidDTD.xml").openStream());
     }
-   
-    @Test
-    public void validateDocumentDTD() throws Exception
-    {
-        TBXDocument doc = buildRawDocument("ValidDTD.xml");
-        TBXFile dv = new TBXFile(doc);
-        dv.parseAndValidate();
-        assertTrue("First check", dv.isValid());
-        assertTrue("Second check", dv.isValid());
-        assertEquals("Incorrect type", TBXFile.Type.UNKNOWN,
-                dv.getType());
-    }
-    
-    @Test
-    public void validateDocumentSchema() throws Exception
-    {
-        TBXDocument doc = buildRawDocument("ValidSchema.xml");
-        TBXFile dv = new TBXFile(doc);
-        dv.parseAndValidate();
-        assertTrue("First check", dv.isValid());
-        assertTrue("Second check", dv.isValid());
-        assertEquals("Incorrect type", TBXFile.Type.UNKNOWN,
-                dv.getType());
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void readerInvalidNull() throws Exception
-    {
-        TBXFile dv = new TBXFile((InputStream) null, (String) null);
-        dv.parseAndValidate();
-    }
-    
-    @Test
-    public void inputStreamValid() throws Exception
-    {
-        File file = getFile("ValidDTD.xml");
-        InputStream input = new FileInputStream(file);
-        TBXFile dv = new TBXFile(input, null);
-        dv.parseAndValidate();
-        boolean valid = dv.isValid();
-        assertEquals("Incorrect type", TBXFile.Type.DTD, dv.getType());
-        List<TBXException> errs = dv.getInvalidatingExceptions();
-        if (!valid && errs.get(0) != null)
-        {
-            throw errs.get(0);
-        }
-        try
-        {
-            input.read();
-            fail("The java.io.Reader object not closed.");
-        }
-        catch (IOException err)
-        {
-            if (!err.getMessage().equals("Bad file descriptor"))
-                throw err;
-        }
-    }
-    
+        
     @Test(expected=IllegalArgumentException.class)
     public void fileInvalidNull() throws Exception
     {
-        File file = null;
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(null);
         dv.parseAndValidate();
     }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void fileInvalidNotExists() throws Exception
-    {
-        File file = new File("filenameshouldnotexist.test");
-        TBXFile dv = new TBXFile(file);
-        dv.parseAndValidate();
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void fileInvalidUnreadable() throws Exception
-    {
-        File file = new File("/etc/ssh_host_dsa_key");
-        TBXFile dv = new TBXFile(file);
-        dv.parseAndValidate();
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void fileInvalidEmptyFile() throws Exception
-    {
-        File file = getFile("EmptyFile.xml");
-        TBXFile dv = new TBXFile(file);
-        dv.parseAndValidate();
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void fileInvalidFileType() throws Exception
-    {
-        File file = new File(System.getProperty("user.dir"));
-        TBXFile dv = new TBXFile(file);
-        dv.parseAndValidate();
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void fileInvalidPerms() throws Exception
-    {
-        File file = new File("");
-        TBXFile dv = new TBXFile(file);
-        dv.parseAndValidate();
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void fileInvalidLength() throws Exception
-    {
-        File file = new File("");
-        TBXFile dv = new TBXFile(file);
-        dv.parseAndValidate();
-    }
-    
+            
     @Test
     public void fileValid() throws Exception
     {
-        TBXFile dv = new TBXFile(getFile("ValidDTD.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"));
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -287,9 +170,8 @@ public class TBXFileTest
     @Test
     public void xmlFindLocalXCS() throws Exception
     {
-        File file = getFile("LocalXCS.xml");
+        URL file = getFileURL("LocalXCS.xml");
         TBXFile dv = new TBXFile(file);
-        assertFalse(System.getProperty("user.dir").equals(file.getParent()));
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -302,7 +184,7 @@ public class TBXFileTest
     @Test
     public void xcsNameNoPublic() throws Exception
     {
-        TBXFile dv = new TBXFile(getFile("ValidXCS_NoPUBLIC.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidXCS_NoPUBLIC.xml"));
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -312,7 +194,7 @@ public class TBXFileTest
     @Test(expected=StreamCorruptedException.class)
     public void preParseCorruptStreamEOF() throws Exception
     {
-        TBXFile dv = new TBXFile(getFile("CorruptStreamEOF.xml"));
+        TBXFile dv = new TBXFile(getFileURL("CorruptStreamEOF.xml"));
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -322,7 +204,7 @@ public class TBXFileTest
     @Test(expected=StreamCorruptedException.class)
     public void preParseCorruptStreamIllform() throws Exception
     {
-        TBXFile dv = new TBXFile(getFile("CorruptStreamIllform.xml"));
+        TBXFile dv = new TBXFile(getFileURL("CorruptStreamIllform.xml"));
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -332,7 +214,7 @@ public class TBXFileTest
     @Test(expected=StreamCorruptedException.class)
     public void preParseCorruptStreamNoXml() throws Exception
     {
-        TBXFile dv = new TBXFile(getFile("CorruptStreamNoXml.xml"));
+        TBXFile dv = new TBXFile(getFileURL("CorruptStreamNoXml.xml"));
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -346,7 +228,7 @@ public class TBXFileTest
     public void preParseOverflow() throws Exception
     {
     /*
-        TBXFile dv = new TBXFile(getFile("PreParseOverflow.xml"));
+        TBXFile dv = new TBXFile(getFileURL("PreParseOverflow.xml"));
         dv.parseAndValidate();
         assertTrue("preParseCheck overflow not caught", !dv.preParseCheck());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -361,7 +243,7 @@ public class TBXFileTest
     @Test
     public void badDTDPath() throws Exception
     {
-        File file = getFile("BadDTDPath.xml");
+        URL file = getFileURL("BadDTDPath.xml");
         TBXFile dv = new TBXFile(file);
         dv.parseAndValidate();
         assertTrue("Bad DTD path not reported", !dv.isValid());
@@ -379,7 +261,7 @@ public class TBXFileTest
     @Test
     public void invalidTagName() throws Exception
     {
-        File file = getFile("InvalidTagName.xml");
+        URL file = getFileURL("InvalidTagName.xml");
         TBXFile dv = new TBXFile(file);
         dv.parseAndValidate();
         assertTrue("Invalid tag name not reported", !dv.isValid());
@@ -394,7 +276,7 @@ public class TBXFileTest
     @Test
     public void invalidDescrip() throws Exception
     {
-        File file = getFile("InvalidDescrip.xml");
+        URL file = getFileURL("InvalidDescrip.xml");
         TBXFile dv = new TBXFile(file);
         dv.parseAndValidate();
         assertTrue("Invalid description spec not reported", !dv.isValid());
@@ -409,7 +291,7 @@ public class TBXFileTest
     @Test
     public void invalidLanguage() throws Exception
     {
-        File file = getFile("InvalidLanguage.xml");
+        URL file = getFileURL("InvalidLanguage.xml");
         TBXFile dv = new TBXFile(file);
         dv.parseAndValidate();
         assertTrue("Invalid language spec not reported", !dv.isValid());
@@ -424,7 +306,7 @@ public class TBXFileTest
     @Test
     public void invalidPickList() throws Exception
     {
-        File file = getFile("InvalidPickList.xml");
+        URL file = getFileURL("InvalidPickList.xml");
         TBXFile dv = new TBXFile(file);
         dv.parseAndValidate();
         assertTrue("Invalid pick in picklist not reported", !dv.isValid());
@@ -439,7 +321,7 @@ public class TBXFileTest
     @Test
     public void invalidLevel() throws Exception
     {
-        File file = getFile("InvalidLevel.xml");
+        URL file = getFileURL("InvalidLevel.xml");
         TBXFile dv = new TBXFile(file);
         dv.parseAndValidate();
         assertTrue("Invalid level nesting not reported", !dv.isValid());
@@ -454,7 +336,7 @@ public class TBXFileTest
     @Test
     public void invalidLevelInheritance() throws Exception
     {
-        File file = getFile("InvalidLevelInheritance.xml");
+        URL file = getFileURL("InvalidLevelInheritance.xml");
         TBXFile dv = new TBXFile(file);
         dv.parseAndValidate();
         assertTrue("Invalid level nesting not reported", !dv.isValid());
@@ -469,16 +351,12 @@ public class TBXFileTest
     @Test
     public void termEntryMap() throws Exception
     {
-        TBXDocument doc = buildRawDocument("ValidDTD.xml");
-        TBXFile dv = new TBXFile(doc);
+        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"));
         dv.parseAndValidate();
         dv.isValid();
-        
         assertTrue("Term entry map is empty", !dv.getTermEntryMap().isEmpty());
-        
         Element elem = (Element) dv.getTermEntryMap().get("ID67");
         assertTrue("No term entry for ID", elem != null);
-        
         Element clone = (Element) elem.cloneNode(true);
         clone.removeAttribute("id");
         /*

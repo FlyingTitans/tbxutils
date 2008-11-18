@@ -4,11 +4,11 @@
     <!-- POM Relationships -->
     <groupId>org.ttt.salt</groupId>
     <artifactId>tbxcheck</artifactId>
-    <version>1.2.3-SNAPSHOT</version>
+    <version>1.2.3</version>
     <parent>
         <groupId>org.ttt.salt</groupId>
         <artifactId>tbx</artifactId>
-        <version>1.2.3-SNAPSHOT</version>
+        <version>1.2.3</version>
         </parent>
     <dependencies>
         <dependency>

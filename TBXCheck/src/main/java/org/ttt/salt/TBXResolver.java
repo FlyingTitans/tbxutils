@@ -84,6 +84,7 @@ public class TBXResolver implements EntityResolver
     public InputSource resolveEntity(String publicId, String systemId)
         throws SAXException, IOException
     {
+        LOGGER.fine(String.format("Resolve entity PublicID=%s SystemId=%s", publicId, systemId));
         InputStreamReader reader = null;
         try
         {
@@ -91,6 +92,7 @@ public class TBXResolver implements EntityResolver
             if (uri2url.containsKey(publicId))
             {   //Check to see if it is a named resource
                 LOGGER.info("Entity is a known publicId: " + publicId);
+                systemId = uri2url.get(publicId);
                 input = getClass().getResourceAsStream(uri2url.get(publicId));
             }
             else if (systemId.matches("\\w+:.+"))
@@ -113,11 +115,11 @@ public class TBXResolver implements EntityResolver
                 }
                 else
                 {
-                    String path = fallbackSearchLoc.getPath() + systemId;
+                    systemId = fallbackSearchLoc.getPath() + systemId;
                     URL locurl = new URL(fallbackSearchLoc.getProtocol(),
                         fallbackSearchLoc.getHost(), fallbackSearchLoc.getPort(),
-                        path);
-                    LOGGER.info("Entity relative path resolved: " + locurl.toString());
+                        systemId);
+                    LOGGER.info("Entity is a relative path: " + locurl.toString());
                     input = locurl.openStream();
                 }
                 
@@ -144,7 +146,10 @@ public class TBXResolver implements EntityResolver
         {
             throw new SAXException("Invalid System ID format", err);
         }
-        return new InputSource(reader);
+        InputSource ret = new InputSource(reader);
+        ret.setPublicId(publicId);
+        ret.setSystemId(systemId);
+        return ret;
     }
 
 

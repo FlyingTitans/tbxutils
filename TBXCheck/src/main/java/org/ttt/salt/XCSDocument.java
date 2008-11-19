@@ -235,7 +235,7 @@ public class XCSDocument extends DocumentImpl implements Document
         {
             LOGGER.info("Parsing XCS file: " + xcsURI);
             InputSource source = resolver.resolveEntity(xcsURI, xcsURI);
-            XCSParser parser = new XCSParser();
+            XCSParser parser = new XCSParser(resolver);
             parser.parse(this, source);
             languages = buildLangMap();
             LOGGER.info("Success");

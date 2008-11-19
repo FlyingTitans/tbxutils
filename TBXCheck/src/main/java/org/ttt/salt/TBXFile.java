@@ -567,10 +567,6 @@ public class TBXFile
             {
                 LOGGER.log(Level.WARNING, "Exception building XCS", err);
             }
-            catch (SAXException err)
-            {
-                LOGGER.log(Level.WARNING, "Exception building XCS", err);
-            }
         }
     }
     

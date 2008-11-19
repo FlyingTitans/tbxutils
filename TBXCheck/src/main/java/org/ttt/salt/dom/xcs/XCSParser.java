@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.Set;
 import java.util.Map;
 import java.util.Stack;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import org.xml.sax.XMLReader;
@@ -43,6 +45,7 @@ import org.xml.sax.SAXNotSupportedException;
 import org.w3c.dom.Text;
 import org.w3c.dom.DOMException;
 import org.ttt.salt.XCSDocument;
+import org.ttt.salt.TBXResolver;
 
 /**
  * This handler will build a {@link org.w3c.dom.Document} from a well-formed
@@ -75,7 +78,8 @@ public class XCSParser
     public static final Set<String> KNOWN_MISSING = new java.util.TreeSet<String>(
             java.util.Arrays.asList(
                 "header", "title", "languages", "langInfo", "langCode", "langName",
-                "datCatSet", "termNoteSpec", "descripSpec", "adminSpec",
+                "datCatSet", "datCatDoc", "datCatMap", "datCatToken", "datCatDisplay",
+                "termNoteSpec", "descripSpec", "adminSpec",
                 "descripNoteSpec", "xrefSpec", "refSpec", "termCompListSpec",
                 "termCompListSpec", "transacNoteSpec", "adminNoteSpec",
                 "transacSpec", "hiSpec",
@@ -88,6 +92,9 @@ public class XCSParser
         
     /** The {@link org.xml.sax.XMLReader} this parser works through. */
     private XMLReader reader;
+    
+    /** The entity resolver that I use. */
+    private TBXResolver resolver;
     
     /** Namespace mappings. */
     private Map<String, URI> namespace = new java.util.HashMap<String, URI>();
@@ -110,11 +117,13 @@ public class XCSParser
     /**
      * Create a new parser for XCS document parsing.
      *
+     * @param r The XML entity resolver the parser should use.
      * @throws SAXNotRecognizedException Requried parser feature is unavailable.
      * @throws SAXNotSupportedException Could not set required parser feature.
      */
-    public XCSParser() throws SAXNotRecognizedException, SAXNotSupportedException
+    public XCSParser(TBXResolver r) throws SAXNotRecognizedException, SAXNotSupportedException
     {
+        resolver = r;
         try
         {
             reader = new org.apache.xerces.parsers.SAXParser();
@@ -122,7 +131,7 @@ public class XCSParser
             reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
             reader.setContentHandler(this);
             reader.setDTDHandler(this);
-            reader.setEntityResolver(this);
+            reader.setEntityResolver(resolver);
             reader.setErrorHandler(this);
         }
         catch (SAXNotRecognizedException err)
@@ -179,7 +188,7 @@ public class XCSParser
     /** {@inheritDoc} */
     public void setDocumentLocator(Locator loc)
     {
-        LOGGER.entering("TBXParser", "setDocumentLocator",
+        LOGGER.entering("XCSParser", "setDocumentLocator",
                 String.format("Line=%d Col=%d", loc.getLineNumber(),
                 loc.getColumnNumber()));
         locator = loc;
@@ -188,21 +197,21 @@ public class XCSParser
     /** {@inheritDoc} */
     public void startDocument() throws SAXException
     {
-        LOGGER.entering("TBXParser", "startDocument");
+        LOGGER.entering("XCSParser", "startDocument");
         assert stack.isEmpty() : "XCSParser stack is not empty.";
     }
     
     /** {@inheritDoc} */
     public void endDocument() throws SAXException
     {
-        LOGGER.entering("TBXParser", "endDocument");
+        LOGGER.entering("XCSParser", "endDocument");
         assert stack.isEmpty() : "XCSParser stack is not empty.";
     }
     
     /** {@inheritDoc} */
     public void startPrefixMapping(String prefix, String uri) throws SAXException
     {
-        LOGGER.entering("TBXParser", "startPrefixMapping",
+        LOGGER.entering("XCSParser", "startPrefixMapping",
                 String.format("prefix='%s' uri='%s'", prefix, uri));
         try
         {
@@ -217,14 +226,14 @@ public class XCSParser
     /** {@inheritDoc} */
     public void endPrefixMapping(String prefix) throws SAXException
     {
-        LOGGER.entering("TBXParser", "endPrefixMapping",
+        LOGGER.entering("XCSParser", "endPrefixMapping",
                 String.format("prefix='%s'", prefix));
     }
     
     /** {@inheritDoc} */
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException
     {
-        LOGGER.entering("TBXParser", "startElement",
+        LOGGER.entering("XCSParser", "startElement",
                 String.format("%d: uri='%s' local='%s' qName='%s'",
                 locator.getLineNumber(), uri, localName, qName));
         stack.push(current);
@@ -249,7 +258,7 @@ public class XCSParser
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName) throws SAXException
     {
-        LOGGER.entering("TBXParser", "endElement",
+        LOGGER.entering("XCSParser", "endElement",
                 String.format("%d: uri='%s' local='%s' qName='%s'",
                 locator.getLineNumber(), uri, localName, qName));
         current.endElement(locator);
@@ -262,7 +271,7 @@ public class XCSParser
     /** {@inheritDoc} */
     public void characters(char[] ch, int start, int length) throws SAXException
     {
-        LOGGER.entering("TBXParser", "characters",
+        LOGGER.entering("XCSParser", "characters",
                 String.format("'%s'", new String(ch, start, length)));
         String data = new String(ch, start, length);
         if (collapseWhitespace)
@@ -274,7 +283,7 @@ public class XCSParser
     /** {@inheritDoc} */
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException
     {
-        LOGGER.entering("TBXParser", "ignorableWhitespace",
+        LOGGER.entering("XCSParser", "ignorableWhitespace",
                 String.format("'%s'", new String(ch, start, length)));
         if (!collapseWhitespace)
         {
@@ -287,14 +296,14 @@ public class XCSParser
     /** {@inheritDoc} */
     public void processingInstruction(String target, String data) throws SAXException
     {
-        LOGGER.entering("TBXParser", "processingInstruction",
+        LOGGER.entering("XCSParser", "processingInstruction",
                 String.format("target='%s' data='%s'", target, data));
     }
     
     /** {@inheritDoc} */
     public void skippedEntity(String name) throws SAXException
     {
-        LOGGER.entering("TBXParser", "skippedEntity", name);
+        LOGGER.entering("XCSParser", "skippedEntity", name);
     }
     
     
@@ -305,7 +314,7 @@ public class XCSParser
     public void notationDecl(String name, String publicId, String systemId)
         throws SAXException
     {
-        LOGGER.entering("TBXParser", "notationDecl",
+        LOGGER.entering("XCSParser", "notationDecl",
                 String.format("name='%s' publicId='%s' systemId='%s'",
                 name, publicId, systemId));
     }
@@ -314,7 +323,7 @@ public class XCSParser
     public void unparsedEntityDecl(String name, String publicId, String systemId,
         String notationName) throws SAXException
     {
-        LOGGER.entering("TBXParser", "unparsedEntityDecl",
+        LOGGER.entering("XCSParser", "unparsedEntityDecl",
                 String.format("name='%s' publicId='%s' systemId='%s' notationName='%s'",
                 name, publicId, systemId, notationName));
     }
@@ -325,18 +334,9 @@ public class XCSParser
     /** {@inheritDoc} */
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
     {   //TODO: Need to check if I know the publicID
-        LOGGER.entering("TBXParser", "resolveEntity", String.format("publicId='%s' systemId='%s'", publicId, systemId));
-        URL url = new URL(systemId);
-        try
-        {
-            InputStream stream = url.openStream();
-            return new InputSource(stream);
-        }
-        catch (FileNotFoundException err)
-        {
-            LOGGER.log(Level.SEVERE, "Resolved Entity Error: {0}", err.getMessage());
-            throw new FileNotFoundException("Entity URL not found: " + url.toString());
-        }
+        LOGGER.entering("XCSParser", "resolvedEntity",
+                String.format("publicId='%s' systemId='%s'", publicId, systemId));
+        return resolver.resolveEntity(publicId, systemId);
     }
         
     /*********************************/
@@ -345,19 +345,38 @@ public class XCSParser
     /** {@inheritDoc} */
     public void warning(SAXParseException exception) throws SAXException
     {
-        LOGGER.log(Level.INFO, "SAX Warning", exception);
+        LOGGER.log(Level.WARNING, "XCSParser SAX Warning", exception);
+        throw exception;
     }
     
     /** {@inheritDoc} */
     public void error(SAXParseException exception) throws SAXException
     {
-        LOGGER.log(Level.INFO, "SAX Error", exception);
+        LOGGER.log(Level.SEVERE, "XCSParser SAX Error", exception);
+        throw exception;
+        /*
+        ResourceBundle bundle = ResourceBundle.getBundle("org.ttt.salt.dom.xcs.XCSParser");
+        String msg = MessageFormat.format(bundle.getString("SaxError"),
+                exception.getMessage(),
+                exception.getLineNumber(),
+                exception.getColumnNumber());
+        throw new SAXException(msg);
+        */
     }
     
     /** {@inheritDoc} */
     public void fatalError(SAXParseException exception) throws SAXException
     {
-        LOGGER.log(Level.INFO, "SAX Fatal", exception);
+        LOGGER.log(Level.SEVERE, "XCSParser SAX Fatal", exception);
+        throw exception;
+        /*
+        ResourceBundle bundle = ResourceBundle.getBundle("org.ttt.salt.dom.xcs.XCSParser");
+        String msg = MessageFormat.format(bundle.getString("SaxFatalError"),
+                exception.getMessage(),
+                exception.getLineNumber(),
+                exception.getColumnNumber());
+        throw new SAXException(msg);
+        */
     }
 
     /**

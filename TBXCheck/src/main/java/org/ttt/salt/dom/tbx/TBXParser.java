@@ -254,7 +254,7 @@ public class TBXParser
             reader.setFeature("http://xml.org/sax/features/validation", true);
             reader.setContentHandler(this);
             reader.setDTDHandler(this);
-            reader.setEntityResolver(this);
+            reader.setEntityResolver(resolver);
             reader.setErrorHandler(this);
         }
         catch (SAXNotRecognizedException err)
@@ -478,11 +478,6 @@ public class TBXParser
                     {
                         LOGGER.log(Level.WARNING, "Exception building XCS", err);
                     }
-                    catch (SAXException err)
-                    {
-                        LOGGER.log(Level.WARNING, "Exception building XCS", err.getMessage());
-                        LOGGER.log(Level.FINE, "Exception building XCS", err);
-                    }
                 }
             }
         }
@@ -580,7 +575,7 @@ public class TBXParser
     /** {@inheritDoc} */
     public void warning(SAXParseException exception) throws SAXException
     {
-        LOGGER.log(Level.SEVERE, "SAX Warning", exception);
+        LOGGER.log(Level.SEVERE, "TBXParser SAX Warning", exception);
         document.addParseException(
                 new TBXException(TBXException.Priority.XMLVALID_MINOR, exception));
     }
@@ -588,7 +583,7 @@ public class TBXParser
     /** {@inheritDoc} */
     public void error(SAXParseException exception) throws SAXException
     {
-        LOGGER.log(Level.SEVERE, "SAX Error", exception);
+        LOGGER.log(Level.SEVERE, "TBXParser SAX Error", exception);
         document.addParseException(
                 new TBXException(TBXException.Priority.XMLVALID_MAJOR, exception));
     }
@@ -596,7 +591,7 @@ public class TBXParser
     /** {@inheritDoc} */
     public void fatalError(SAXParseException exception) throws SAXException
     {
-        LOGGER.log(Level.SEVERE, "SAX Fatal", exception);
+        LOGGER.log(Level.SEVERE, "TBXParser SAX Fatal", exception);
         document.addParseException(
                 new TBXException(TBXException.Priority.WELLFORMED, exception));
     }

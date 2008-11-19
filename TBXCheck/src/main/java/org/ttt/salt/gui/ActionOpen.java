@@ -61,17 +61,26 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
         /** {@inheritDoc} */
         public String format(LogRecord record)
         {
-            System.err.format("%d %s%n", record.getLevel().intValue(), record.getLevel());
+            String errmsg = "";
             String fmt;
-            if (record.getLevel().intValue() > Level.FINE.intValue())
+            if (record.getThrown() != null)
+            {
+                fmt = "#%3$2d  %4$s---[%1$s#%2$s] %5$s%n\tException: %6$s%n";
+                errmsg = record.getThrown().getLocalizedMessage();
+            }
+            else if (record.getLevel().intValue() > Level.FINE.intValue())
+            {
                 fmt = "#%3$2d  %4$s---%5$s%n";
+            }
             else
+            {
                 fmt = "#%3$2d  %4$s---[%1$s#%2$s] %5$s%n";
+            }
             return String.format(fmt,
                     record.getSourceClassName(), record.getSourceMethodName(),
                     record.getSequenceNumber(),
                     record.getLevel().getLocalizedName(),
-                    formatMessage(record));
+                    formatMessage(record), errmsg);
         }
     }
 

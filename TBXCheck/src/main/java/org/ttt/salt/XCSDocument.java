@@ -727,7 +727,6 @@ public class XCSDocument extends DocumentImpl implements Document
                         break SEARCH_TO_BODY;
                     else
                     {
-                        System.err.println(lvls);
                         throw new InvalidLevelsException(elem);
                     }
                 }

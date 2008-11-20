@@ -5,20 +5,23 @@ RELEASE:
 mvn -Dusername=USER -Dpassword=PASS release:prepare
 ---BUG WORKAROUND---
 
-svn cp https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk
+svn cp https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk \
     https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/tags/tbxutil.1.2.x
 svn up -r head
 mvn release:prepare -Dresume
 
 ---END WORKAROUND---
 mvn release:perform
-
-sftp USER@frs.sourceforge.net
-cd uploads
-put FILE
-
-rsync -rlptv --progress
-	/Library/WebServer/Documents/tbxutil/
+---BUG WORKAROUND---
+	Pause right after the checkout of the root POM occurs and
+	comment out the statsvn stuff.
+---END WORKAROUND---
+cd target/checkout/TBXCheck/target
+sftp lanhel@frs.sourceforge.net
+	cd uploads
+	put tbxcheck-1.2.x.jar
+	put tbxcheck-1.2.x-sources.jar
+rsync -rlptv --progress /Library/WebServer/Documents/tbxutil/ \
 	lanhel,tbxutil@web.sourceforge.net:/home/groups/t/tb/tbxutil/htdocs
 
 

@@ -91,7 +91,7 @@ public class TBXValidatorPanel extends javax.swing.JPanel
         {
             err.printStackTrace();
             System.exit(1);
-        }
+        }        
     }
         
     /**
@@ -145,6 +145,7 @@ public class TBXValidatorPanel extends javax.swing.JPanel
         panelOptions.add(labelLogging);
         panelOptions.add(boxLogging);
         
+        /* TODO: Remove when localization returns
         labelLanguage.setLabelFor(boxLanguage);
         panelOptions.add(labelLanguage);
         panelOptions.add(boxLanguage);
@@ -152,8 +153,9 @@ public class TBXValidatorPanel extends javax.swing.JPanel
         labelCountry.setLabelFor(boxCountry);
         panelOptions.add(labelCountry);
         panelOptions.add(boxCountry);
+        */
         
-        final int rows = 3;
+        final int rows = 1; //TODO: Change to 3 when language and country return
         final int cols = 2;
         final int initX = 6;
         final int initY = 6;

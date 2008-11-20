@@ -129,6 +129,7 @@ public class XCSParser
             reader = new org.apache.xerces.parsers.SAXParser();
             reader.setFeature("http://xml.org/sax/features/namespaces", true);
             reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+            reader.setFeature("http://xml.org/sax/features/validation", true);
             reader.setContentHandler(this);
             reader.setDTDHandler(this);
             reader.setEntityResolver(resolver);

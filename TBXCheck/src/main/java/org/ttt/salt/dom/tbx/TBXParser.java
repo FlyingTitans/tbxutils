@@ -470,9 +470,18 @@ public class TBXParser
                         TBXException tbxerr = new TBXException(TBXException.Priority.XCS, err);
                         document.addParseException(tbxerr);
                     }
+                    catch (java.net.UnknownHostException err)
+                    {
+                        String msg = String.format("XCS file '%s' not found. Unknown host: %s", xcsURI, err.getMessage());
+                        LOGGER.info(msg);
+                        LOGGER.log(Level.FINE, msg, err);
+                        TBXException tbxerr = new TBXException(TBXException.Priority.XCS, err);
+                        document.addParseException(tbxerr);
+                    }
                     catch (IOException err)
                     {
-                        LOGGER.log(Level.WARNING, "Exception building XCS", err);
+                        LOGGER.log(Level.SEVERE, "Exception building XCS", err.toString());
+                        throw new SAXException("Could not build XCS.", err);
                     }
                     catch (ParserConfigurationException err)
                     {

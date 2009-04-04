@@ -1,8 +1,8 @@
 <?xml version='1.0'?>
 <!-- copied from SALT DXLT doc -->
 <!DOCTYPE martif
-	PUBLIC "ISO 12200:1999A//DTD MARTIF core (DXFcdV04)//EN"
-	"XLTCDV04.DTD">
+        "ISO 30042:2008A//DTD TBX core//EN"
+        "/xml/TBXcoreStructV02.dtd">
 <martif type='SXLT' xml:lang='en'>
     <martifHeader>
         <fileDesc>

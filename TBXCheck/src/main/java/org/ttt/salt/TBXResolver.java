@@ -65,8 +65,8 @@ public class TBXResolver implements EntityResolver
         String ppath = path.substring(0, path.lastIndexOf('/') + 1);
         fallbackSearchLoc = new URL(fallback.getProtocol(), fallback.getHost(),
                 fallback.getPort(), ppath);
-        addPublicId("ISO 12200:1999A//DTD MARTIF core (DXFcdV04)//EN", "/xml/XLTCDV04.DTD");
-        addPublicId("ISO 12200:1999A//DTD XCS (tbxxcsdtd)//EN", "/xml/tbxxcsdtd.dtd");
+        addPublicId("ISO 30042:2008A//DTD TBX core//EN", "/xml/TBXcoreStructV02.dtd");
+        addPublicId("ISO 30042:2008A//DTD TBX XCS//EN", "/xml/tbxxcsdtd.dtd");                
         addPublicId("Demo XCS", "/xml/TBXDCSv05.xml");
     }
     

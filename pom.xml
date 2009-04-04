@@ -271,10 +271,10 @@
         <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/trunk</url>
         </scm>
     <!-- Maven Environment -->
-    <repositories>
-        </repositories>
-    <pluginRepositories>
-        </pluginRepositories>
+    <!-- NOT ALLOWED FOR MAVEN CENTRAL REPOSITORY
+    <repositories></repositories>
+    <pluginRepositories></pluginRepositories>
+    -->
     <distributionManagement>
         <!-- site>
             <id>TBX :: SourceForge :: Site</id>
@@ -287,6 +287,7 @@
             <url>scp://localhost/Library/WebServer/Documents/tbxutil</url>
             </site>
         <snapshotRepository>
+            <id>TBX :: Site :: Localhost</id>
             <name>SourceForge Local</name>
             <url>file://${basedir}/target/deploy</url>
         </snapshotRepository>

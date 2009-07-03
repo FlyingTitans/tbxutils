@@ -490,6 +490,15 @@ public class TBXParser
                 }
             }
         }
+        else if (xcsValidate && localName.equals("martifHeader"))
+        {
+            if (xcsDocument == null)
+            {
+                IOException err = new FileNotFoundException("XCS not specified.");
+                TBXException tbxerr = new TBXException(TBXException.Priority.XCS, err);
+                document.addParseException(tbxerr);
+            }
+        }
         else if (xcsValidate && localName.equals("termEntry"))
         {   //VALIDATE the term entry
             try
@@ -505,6 +514,15 @@ public class TBXParser
                 exceptions.add(err);
                 TBXException tbxerr = new TBXException(TBXException.Priority.XCS, err);
                 document.addParseException(tbxerr);
+            }
+        }
+        else if (localName.equals("date"))
+        {   //Do cursory date format checking
+            if (!current.getTextContent().trim().matches("\\d{4}-\\d{2}-\\d{2}"))
+            {
+                IllegalArgumentException err = new IllegalArgumentException(
+                    String.format("Unrecognized date string %s: ISO 8601 yyyy-mm-dd required.",
+                        current.getTextContent().trim()));
             }
         }
         Event evt = new Event(child, valid);

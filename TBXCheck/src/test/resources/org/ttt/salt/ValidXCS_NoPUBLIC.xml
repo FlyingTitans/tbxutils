@@ -23,6 +23,10 @@
                 <descripGrp>
                     <descrip type='classificationCode'>1111</descrip>
                     <descripNote type='definitionType'>intensionalDefinition</descripNote>
+                    <transacGrp>
+                        <transac>simple transac</transac>
+                        <date>abcdef</date>
+                    </transacGrp>
                 </descripGrp>
                 <langSet xml:lang='en'>
                 <tig>

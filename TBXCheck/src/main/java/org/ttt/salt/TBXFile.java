@@ -537,10 +537,13 @@ public class TBXFile
                         || p.getAttribute("type").equals("XCSName"))
                     {
                         xcsUriStr = p.getTextContent().trim();
+                        LOGGER.info("<p type='DCSName'> is deprecated: use <p type='XCSURI'>.");
                         break GOT_XCS;
                     }
                     else if (p.getAttribute("type").equals("XCSURI"))
                     {
+                        xcsUriStr = p.getTextContent().trim();
+                        break GOT_XCS;
                     }
                     else if (p.getAttribute("type").equals("XCSContent"))
                     {
@@ -548,7 +551,7 @@ public class TBXFile
                     }
                 }
             }
-
+            
             if (xcsUriStr == null)
                 throw new FileNotFoundException(
                     String.format("XCS unspecified for TBX file: %s.", url));

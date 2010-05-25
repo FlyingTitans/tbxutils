@@ -56,8 +56,11 @@ public final class Main
     private static final String OPTIONS = "h";
 
     /** Long options. */
-    private static final String[] LONG_OPTIONS = {"help", "version",
-            "environment", "lang=", "country=", "variant=", "loglevel="};
+    private static final String[] LONG_OPTIONS = {
+            "nolang",
+            "help", "version", "environment",
+            "lang=", "country=", "variant=", "loglevel="
+        };
 
     /** Main logger for this class. */
     private static final Logger LOGGER;
@@ -308,11 +311,14 @@ public final class Main
      */
     private void processFiles(List<File> files) throws IOException, SAXException
     {
+        Configuration config = new Configuration();
+        config.setCheckLang(!options.containsOption("--nolang"));
+    
         Iterator<File> iter = files.iterator();
         while (iter.hasNext())
         {
             File file = iter.next();
-            TBXFile dv = new TBXFile(file.toURI().toURL());
+            TBXFile dv = new TBXFile(file.toURI().toURL(), (Configuration) config.clone());
             dv.parseAndValidate();
             if (dv.isValid())
             {

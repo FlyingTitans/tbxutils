@@ -110,6 +110,9 @@ public class TBXFile
     /** */
     private Type fileType = Type.UNKNOWN;
     
+    /** Validation and compliance configuration. */
+    private Configuration config;
+    
     /** URI for the input file. */
     private URL url;
         
@@ -143,19 +146,28 @@ public class TBXFile
     /** The exceptions that invalidated the file. */
     private SortedSet<TBXException> exceptions = new java.util.TreeSet<TBXException>();
     
+    /** The exceptions that are warnings and do not invaidate the file. */
+    private SortedSet<TBXException> warnings = new java.util.TreeSet<TBXException>();
+    
     /**
      *
      * @param u The URL to the TBX file to process.
+     * @param c The configuration for validation and compliance.
      * @throws IOException Any unhandled I/O exceptions.
      * @throws SAXExcetion Any SAX issues in creating the file.
      */
-    public TBXFile(URL u) throws IOException, SAXException
+    public TBXFile(URL u, Configuration c) throws IOException, SAXException
     {
+        if (c == null)
+            throw new IllegalArgumentException("Configuration cannot be null");
+        config = c;
+        
         if (u == null)
             throw new IllegalArgumentException("URL argument cannot be null");
         url = u;
+        
         resolver = new TBXResolver(url);
-        tbxParser = new TBXParser(resolver, true);
+        tbxParser = new TBXParser(resolver, c);
         InputStream input = url.openStream();
         if (!input.markSupported())
             input = new BufferedInputStream(input);
@@ -270,7 +282,7 @@ public class TBXFile
     }
     
     /**
-     * Return the exception that caused the file to be invalid.
+     * Return the exceptions that caused the file to be invalid.
      *
      * @return The list of exceptions that describe why the document is invalid.
      */
@@ -281,7 +293,20 @@ public class TBXFile
         //return Arrays.asList(ret);
         return new java.util.ArrayList<TBXException>(exceptions);
     }
-               
+    
+    /**
+     * Return the exceptions that are warnings on the file.
+     *
+     * @return The list of exceptions that describe why the document is invalid.
+     */
+    public List<TBXException> getWarningExceptions()
+    {
+        //Throwable[] ret = (Throwable[]) exceptions.toArray();
+        //Arrays.sort(ret);
+        //return Arrays.asList(ret);
+        return new java.util.ArrayList<TBXException>(warnings);
+    }
+    
     /**
      * Get an appropriate localized resource bundle for this particular
      * TBX file.
@@ -559,7 +584,7 @@ public class TBXFile
             try
             {
                 LOGGER.info("Using XCS file: " + xcsUriStr);
-                xcsDocument = new XCSDocument(xcsUriStr, resolver);
+                xcsDocument = new XCSDocument(xcsUriStr, resolver, config);
             }
             catch (FileNotFoundException err)
             {

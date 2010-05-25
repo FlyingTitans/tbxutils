@@ -62,7 +62,8 @@ public class XCSDocumentTest
     private static XCSDocument.Key KEY_BAD_2
             = new XCSDocument.Key("termNote", "TARFU");
         
-    private XCSDocument dcsdoc;
+    Configuration config;
+    XCSDocument dcsdoc;
 
     @BeforeClass
     public static void classSetup() throws IOException
@@ -83,7 +84,8 @@ public class XCSDocumentTest
     public void setUp() throws Exception
     {
         Logger.getLogger("org.ttt.salt").setLevel(Level.INFO);
-        dcsdoc = new XCSDocument(DXLT_XCS, RESOLVER);
+        config = new Configuration();
+        dcsdoc = new XCSDocument(DXLT_XCS, RESOLVER, config);
     }
     
     @Test

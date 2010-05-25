@@ -23,8 +23,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.logging.*;
 import org.xml.sax.*;
-import org.ttt.salt.XCSDocument;
-import org.ttt.salt.TBXResolver;
+import org.ttt.salt.*;
 
 /**
  * @author  Lance Finn Helsten
@@ -34,10 +33,9 @@ public class TBXParserTest
 {
     /** SCM information. */
     public static final String RCSID = "$Id$";
-
-    /** Logger for this package. */
     private static final Logger LOGGER = Logger.getLogger("org.ttt.salt.dom.xcs");
 
+    Configuration config;
     TBXResolver resolver;
     TBXParser parser;
     TBXParser.TestAccess access;
@@ -82,9 +80,12 @@ public class TBXParserTest
     public void setUp() throws Exception
     {
         Logger.getLogger("org.ttt.salt.dom.tbx").setLevel(Level.INFO);
+        config = new Configuration();
+        config.setCheckEachTerm(false);
+        
         URL cwd = new File(System.getProperty("user.dir")).toURI().toURL();
         resolver = new TBXResolver(cwd);
-        parser = new TBXParser(resolver, false);
+        parser = new TBXParser(resolver, config);
         access = parser.new TestAccess();
     }
 

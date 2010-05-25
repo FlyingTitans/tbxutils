@@ -32,6 +32,7 @@ import java.util.logging.Handler;
 import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
+import org.ttt.salt.Configuration;
 import org.ttt.salt.TBXFile;
 
 /**
@@ -171,7 +172,8 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
                     TBXFile dv = null;
                     try
                     {
-                        dv = new TBXFile(file.toURI().toURL());
+                        Configuration config = new Configuration();
+                        dv = new TBXFile(file.toURI().toURL(), config);
                         dv.parseAndValidate();
                         if (dv.isValid())
                         {

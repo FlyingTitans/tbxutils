@@ -47,6 +47,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.DOMException;
+import org.ttt.salt.Configuration;
 import org.ttt.salt.XCSDocument;
 import org.ttt.salt.TBXResolver;
 import org.ttt.salt.TBXException;
@@ -195,6 +196,9 @@ public class TBXParser
 
     /** Logger for this package. */
     private static final Logger LOGGER = Logger.getLogger("org.ttt.salt.dom.tbx");
+    
+    /** The validation and compliance checks. */
+    private Configuration config;
         
     /** The {@link org.xml.sax.XMLReader} this parser works through. */
     private XMLReader reader;
@@ -223,9 +227,6 @@ public class TBXParser
     /** Indicates that whitespace is not significant (xml:space="default"). */
     private boolean collapseWhitespace;
     
-    /** Validate each termEntry element against the XCS. */
-    private boolean xcsValidate;
-    
     /** Holds the current set of validation exceptions. This will be cleared
      * each time a new termEntry has completed parsing in preparation for XCS
      * validation.
@@ -236,16 +237,15 @@ public class TBXParser
      * Create a new parser for TBX document parsing.
      *
      * @param r The XML entity resolver the parser should use.
-     * @param xcsvalidate Validate each termEntry against the XCS when it
-     *  is built.
+     * @param c The validation and compliance configuration.
      * @throws SAXNotRecognizedException Requried parser feature is unavailable.
      * @throws SAXNotSupportedException Could not set required parser feature.
      */
-    public TBXParser(TBXResolver r, boolean xcsvalidate) throws SAXNotRecognizedException,
+    public TBXParser(TBXResolver r, Configuration c) throws SAXNotRecognizedException,
         SAXNotSupportedException
     {
         resolver = r;
-        xcsValidate = xcsvalidate;
+        config = c;
         try
         {
             reader = new org.apache.xerces.parsers.SAXParser();
@@ -419,7 +419,7 @@ public class TBXParser
         
         boolean valid = false;
         exceptions.clear();
-        if (xcsValidate && localName.equals("encodingDesc"))
+        if (config.getCheckEachTerm() && localName.equals("encodingDesc"))
         {   //It is possible now to build an XCS document to validate against
             NodeList plist = child.getElementsByTagName("p");
         GOT_XCS:
@@ -459,7 +459,7 @@ public class TBXParser
                     try
                     {
                         LOGGER.info("Using XCS: " + xcsURI);
-                        xcsDocument = new XCSDocument(xcsURI, resolver);
+                        xcsDocument = new XCSDocument(xcsURI, resolver, config);
                         break GOT_XCS;
                     }
                     catch (FileNotFoundException err)
@@ -490,7 +490,7 @@ public class TBXParser
                 }
             }
         }
-        else if (xcsValidate && localName.equals("martifHeader"))
+        else if (config.getCheckEachTerm() && localName.equals("martifHeader"))
         {
             if (xcsDocument == null)
             {
@@ -499,7 +499,7 @@ public class TBXParser
                 document.addParseException(tbxerr);
             }
         }
-        else if (xcsValidate && localName.equals("termEntry"))
+        else if (config.getCheckEachTerm() && localName.equals("termEntry"))
         {   //VALIDATE the term entry
             try
             {

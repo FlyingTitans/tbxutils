@@ -194,6 +194,9 @@ public class XCSDocument extends DocumentImpl implements Document
     
     /** Timestampt when document was created. */
     private final Date created = new Date();
+    
+    /** Configuration for validation and compliance. */
+    private Configuration config;
         
     /** */
     private SortedMap<String, String> languages;
@@ -222,15 +225,17 @@ public class XCSDocument extends DocumentImpl implements Document
      *  is known, otherwise it will be assumed to be a URL.
      * @param resolver The resolver this XCS document should use to find
      *  files.
+     * @param c The validation and compliance configuration.
      * @throws IOException Any I/O exceptions building this document.
      * @throws ParserConfigurationException Problems with building the parser.
      * @throws SAXException Any parse exceptions building this document.
      */
-    public XCSDocument(String xcsURI, TBXResolver resolver) throws IOException,
+    public XCSDocument(String xcsURI, TBXResolver resolver, Configuration c) throws IOException,
         ParserConfigurationException, SAXException
     {   //Open the input for the XCS file
         //Parse the XCS file
         //NOTDONE: should I switch to DOM2
+        config = c;
         try
         {
             LOGGER.info("Parsing XCS file: " + xcsURI);
@@ -540,17 +545,21 @@ public class XCSDocument extends DocumentImpl implements Document
                     validateXCSElement(e);
                 else
                     validateTermEntry0(e);
-                if (elem.hasAttribute("xml:lang"))
+                
+                if (config.getCheckLang())
                 {
-                    String lang = elem.getAttribute("xml:lang");
-                    if (!languages.containsKey(lang))
-                        throw new InvalidLanguageException(elem);
-                }
-                else if (elem.hasAttribute("lang"))
-                {
-                    String lang = elem.getAttribute("lang");
-                    if (!languages.containsKey(lang))
-                        throw new InvalidLanguageException(elem);
+                    if (elem.hasAttribute("xml:lang"))
+                    {
+                        String lang = elem.getAttribute("xml:lang");
+                        if (!languages.containsKey(lang))
+                            throw new InvalidLanguageException(elem);
+                    }
+                    else if (elem.hasAttribute("lang"))
+                    {
+                        String lang = elem.getAttribute("lang");
+                        if (!languages.containsKey(lang))
+                            throw new InvalidLanguageException(elem);
+                    }
                 }
             }
             node = node.getNextSibling();

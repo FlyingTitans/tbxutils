@@ -39,13 +39,11 @@ import org.ttt.salt.dom.tbx.*;
  */
 public class TBXFileTest
 {
-    /** */
     private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     
-    /** */
-    private Document doc;
-    
-    
+    Document doc;
+    Configuration config;
+        
     @BeforeClass
     public static void initialize() throws Exception
     {
@@ -74,6 +72,7 @@ public class TBXFileTest
     public void setUp() throws Exception
     {
         Logger.getLogger("org.ttt.salt").setLevel(Level.INFO);
+        config = new Configuration();
     }
     
     @After
@@ -84,7 +83,7 @@ public class TBXFileTest
     @Test
     public void getType() throws Exception
     {
-        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"), config);
         dv.parseAndValidate();
         assertEquals(TBXFile.Type.DTD, dv.getType());
     }
@@ -92,7 +91,7 @@ public class TBXFileTest
     @Test(expected=NoSuchElementException.class)
     public void getInvalidatingException() throws Exception
     {
-        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"), config);
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!errs.isEmpty())
@@ -150,14 +149,14 @@ public class TBXFileTest
     @Test(expected=IllegalArgumentException.class)
     public void fileInvalidNull() throws Exception
     {
-        TBXFile dv = new TBXFile(null);
+        TBXFile dv = new TBXFile(null, config);
         dv.parseAndValidate();
     }
             
     @Test
     public void fileValid() throws Exception
     {
-        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"), config);
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -169,7 +168,7 @@ public class TBXFileTest
     public void xmlFindLocalXCS() throws Exception
     {
         URL file = getFileURL("LocalXCS.xml");
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(file, config);
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -180,7 +179,7 @@ public class TBXFileTest
     @Test
     public void xcsNameNoPublic() throws Exception
     {
-        TBXFile dv = new TBXFile(getFileURL("ValidXCS_NoPUBLIC.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidXCS_NoPUBLIC.xml"), config);
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -190,7 +189,7 @@ public class TBXFileTest
     @Test(expected=StreamCorruptedException.class)
     public void preParseCorruptStreamEOF() throws Exception
     {
-        TBXFile dv = new TBXFile(getFileURL("CorruptStreamEOF.xml"));
+        TBXFile dv = new TBXFile(getFileURL("CorruptStreamEOF.xml"), config);
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -200,7 +199,7 @@ public class TBXFileTest
     @Test(expected=StreamCorruptedException.class)
     public void preParseCorruptStreamIllform() throws Exception
     {
-        TBXFile dv = new TBXFile(getFileURL("CorruptStreamIllform.xml"));
+        TBXFile dv = new TBXFile(getFileURL("CorruptStreamIllform.xml"), config);
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -210,7 +209,7 @@ public class TBXFileTest
     @Test(expected=StreamCorruptedException.class)
     public void preParseCorruptStreamNoXml() throws Exception
     {
-        TBXFile dv = new TBXFile(getFileURL("CorruptStreamNoXml.xml"));
+        TBXFile dv = new TBXFile(getFileURL("CorruptStreamNoXml.xml"), config);
         dv.parseAndValidate();
         List<TBXException> errs = dv.getInvalidatingExceptions();
         if (!dv.isValid() && errs.get(0) != null)
@@ -224,7 +223,7 @@ public class TBXFileTest
     public void preParseOverflow() throws Exception
     {
     /*
-        TBXFile dv = new TBXFile(getFileURL("PreParseOverflow.xml"));
+        TBXFile dv = new TBXFile(getFileURL("PreParseOverflow.xml"), config);
         dv.parseAndValidate();
         assertTrue("preParseCheck overflow not caught", !dv.preParseCheck());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -240,7 +239,7 @@ public class TBXFileTest
     public void badDTDPath() throws Exception
     {
         URL file = getFileURL("BadDTDPath.xml");
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(file, config);
         dv.parseAndValidate();
         assertTrue("Bad DTD path not reported", !dv.isValid());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -258,7 +257,7 @@ public class TBXFileTest
     public void invalidTagName() throws Exception
     {
         URL file = getFileURL("InvalidTagName.xml");
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(file, config);
         dv.parseAndValidate();
         assertTrue("Invalid tag name not reported", !dv.isValid());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -273,7 +272,7 @@ public class TBXFileTest
     public void invalidDescrip() throws Exception
     {
         URL file = getFileURL("InvalidDescrip.xml");
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(file, config);
         dv.parseAndValidate();
         assertTrue("Invalid description spec not reported", !dv.isValid());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -288,7 +287,7 @@ public class TBXFileTest
     public void invalidLanguage() throws Exception
     {
         URL file = getFileURL("InvalidLanguage.xml");
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(file, config);
         dv.parseAndValidate();
         assertTrue("Invalid language spec not reported", !dv.isValid());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -303,7 +302,7 @@ public class TBXFileTest
     public void invalidPickList() throws Exception
     {
         URL file = getFileURL("InvalidPickList.xml");
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(file, config);
         dv.parseAndValidate();
         assertTrue("Invalid pick in picklist not reported", !dv.isValid());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -318,7 +317,7 @@ public class TBXFileTest
     public void invalidLevel() throws Exception
     {
         URL file = getFileURL("InvalidLevel.xml");
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(file, config);
         dv.parseAndValidate();
         assertTrue("Invalid level nesting not reported", !dv.isValid());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -333,7 +332,7 @@ public class TBXFileTest
     public void invalidLevelInheritance() throws Exception
     {
         URL file = getFileURL("InvalidLevelInheritance.xml");
-        TBXFile dv = new TBXFile(file);
+        TBXFile dv = new TBXFile(file, config);
         dv.parseAndValidate();
         assertTrue("Invalid level nesting not reported", !dv.isValid());
         TBXException err = (TBXException) dv.getInvalidatingExceptions().get(0);
@@ -347,7 +346,7 @@ public class TBXFileTest
     @Test
     public void termEntryMap() throws Exception
     {
-        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"));
+        TBXFile dv = new TBXFile(getFileURL("ValidDTD.xml"), config);
         dv.parseAndValidate();
         dv.isValid();
         assertTrue("Term entry map is empty", !dv.getTermEntryMap().isEmpty());

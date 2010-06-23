@@ -11,7 +11,7 @@ svn up -r head
 mvn release:prepare -Dresume
 
 ---END WORKAROUND---
-mvn release:perform
+mvn -Dusername=USER -Dpassword=PASS release:perform
 ---BUG WORKAROUND---
 	Pause right after the checkout of the root POM occurs and
 	comment out the statsvn stuff.

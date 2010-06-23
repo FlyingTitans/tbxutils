@@ -293,12 +293,13 @@
         <site>
             <id>TBX :: Files :: Localhost</id>
             <name>SourceForge Website</name>
-            <url>scp://localhost/Library/WebServer/Documents/tbxutil</url>
+            <url>file://${basedir}/target/sitedeploy</url>
+            <!-- url>scp://localhost/Library/WebServer/Documents/tbxutil</url -->
         </site>
         <snapshotRepository>
             <id>TBX :: Site :: Localhost</id>
             <name>SourceForge Local</name>
-            <url>file://${basedir}/target/deploy</url>
+            <url>file://${basedir}/target/snapshots</url>
         </snapshotRepository>
         <repository>
             <id>TBX :: SourceForge :: Files</id>

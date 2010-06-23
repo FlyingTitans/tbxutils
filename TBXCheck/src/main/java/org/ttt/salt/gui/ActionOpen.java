@@ -32,6 +32,7 @@ import java.util.logging.Handler;
 import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import org.ttt.salt.Configuration;
 import org.ttt.salt.TBXFile;
 
@@ -99,6 +100,9 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
     
     /** Level for the logging. */
     private Level level;
+    
+    /** Flag for xml:lang validation. */
+    private boolean checkXmlLang = true;
     
     /** Buffer for log messages. */
     private ByteArrayOutputStream logbuffer;
@@ -173,6 +177,8 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
                     try
                     {
                         Configuration config = new Configuration();
+                        config.setCheckLang(checkXmlLang);
+                        
                         dv = new TBXFile(file.toURI().toURL(), config);
                         dv.parseAndValidate();
                         if (dv.isValid())
@@ -221,6 +227,11 @@ public class ActionOpen extends TBXAbstractAction implements FilenameFilter
                     }
                 }
             }
+        }
+        else if (e.getActionCommand().equals("NoLangCheckChanged"))
+        {
+            JCheckBox check = (JCheckBox) e.getSource();
+            checkXmlLang = !check.isSelected();
         }
         else if (e.getActionCommand().equals("comboBoxChanged"))
         {

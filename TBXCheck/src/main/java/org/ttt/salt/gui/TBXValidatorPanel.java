@@ -53,6 +53,7 @@ public class TBXValidatorPanel extends javax.swing.JPanel
     private javax.swing.JComboBox boxCountry;
     private javax.swing.JComboBox boxLanguage;
     private javax.swing.JComboBox boxLogging;
+    private javax.swing.JCheckBox cbNoLangCheck;
     private javax.swing.JButton buttonValidate;
     private javax.swing.JLabel labelCountry;
     private javax.swing.JLabel labelLanguage;
@@ -70,6 +71,10 @@ public class TBXValidatorPanel extends javax.swing.JPanel
     public TBXValidatorPanel(ResourceBundle bndl)
     {
         LOGGER = Logger.getLogger("org.ttt.salt");
+
+        cbNoLangCheck = new javax.swing.JCheckBox("No xml:lang validation.");
+        cbNoLangCheck.setActionCommand("NoLangCheckChanged");
+
         boxLogging = new javax.swing.JComboBox();
         boxLanguage = new javax.swing.JComboBox();
         boxCountry = new javax.swing.JComboBox();
@@ -104,6 +109,7 @@ public class TBXValidatorPanel extends javax.swing.JPanel
     {
         ActionOpen action = (ActionOpen) TBXAbstractAction.getAction(ActionOpen.class);
         buttonValidate = new javax.swing.JButton(action);
+        cbNoLangCheck.addActionListener(action);
         boxLogging.addActionListener(action);
         
         panelButtons = new javax.swing.JPanel();
@@ -123,8 +129,9 @@ public class TBXValidatorPanel extends javax.swing.JPanel
         labelLogging = new javax.swing.JLabel("Logging");
         labelLanguage = new javax.swing.JLabel("Language");
         labelCountry = new javax.swing.JLabel("Country");
-
-        //Configure
+        
+        
+        //Configure        
         String[] logvals = {"SEVERE", "WARNING", "INFO", "CONFIG", "FINE", "FINER", "FINEST"};
         boxLogging.setModel(new javax.swing.DefaultComboBoxModel(logvals));
         boxLogging.setSelectedItem("INFO"); //TODO: this needs to based on preferences
@@ -141,6 +148,9 @@ public class TBXValidatorPanel extends javax.swing.JPanel
         //Layout
         panelOptions.setLayout(new SpringLayout());
         
+        panelOptions.add(new javax.swing.JLabel(" "));
+        panelOptions.add(cbNoLangCheck);
+        
         labelLogging.setLabelFor(boxLogging);
         panelOptions.add(labelLogging);
         panelOptions.add(boxLogging);
@@ -155,7 +165,7 @@ public class TBXValidatorPanel extends javax.swing.JPanel
         panelOptions.add(boxCountry);
         */
         
-        final int rows = 1; //TODO: Change to 3 when language and country return
+        final int rows = 2; //TODO: Change to 4 when language and country return
         final int cols = 2;
         final int initX = 6;
         final int initY = 6;

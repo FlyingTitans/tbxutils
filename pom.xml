@@ -11,12 +11,12 @@
             <artifactId>junit</artifactId>
             <version>4.4</version>
             <scope>test</scope>
-            </dependency>
-        </dependencies>
+        </dependency>
+    </dependencies>
     <modules>
         <module>TBXCheck</module>
         <!-- module>TBXEdit</module -->
-        </modules>
+    </modules>
     
     <!-- Project Information -->
     <name>TBX</name>
@@ -30,15 +30,15 @@
         be accepted by ISO Technical Committee 37 as a draft international
         standard (DIS) in Q2 2008. The version submitted to ISO is available
         on-line in XHTML format.
-        </description>
+    </description>
     <inceptionYear>2001</inceptionYear>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
             <url>LICENSE.txt</url>
             <distribution>repo</distribution>
-            </license>
-        </licenses>
+        </license>
+    </licenses>
     <developers>
         <developer>
             <id>lance</id>
@@ -47,45 +47,45 @@
             <roles>
                 <role>Architect</role>
                 <role>Lead Developer</role>
-                </roles>
+            </roles>
             <organization>Flying Titans, Inc.</organization>
             <timezone>-7</timezone>
-            </developer>         
-        </developers>
+        </developer>         
+    </developers>
     <contributors>
-        </contributors>
+    </contributors>
     <organization>
-        </organization>
+    </organization>
     
     <!-- Build Settings -->
     <packaging>pom</packaging>
     <properties>
         <tbxurl>http://tbxutil.sourceforge.net/</tbxurl>
-        </properties>    
+    </properties>    
     <build>
         <extensions>
             <extension>
                 <groupId>org.ttt.salt.utils</groupId>
                 <artifactId>analysis</artifactId>
                 <version>1.1</version>
-                </extension>
-            </extensions>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.5</source>
                     <target>1.5</target>
-                    </configuration>
-                </plugin>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                </plugin>
+            </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.5</version>
-                </plugin>
+            </plugin>
             <plugin>
                 <groupId>net.objectlab</groupId>
                 <artifactId>mvn-qalab-plugin</artifactId>
@@ -96,22 +96,22 @@
                         <phase>site</phase>
                         <goals>
                             <goal>merge-all</goal>
-                            </goals>
-                        </execution>
+                        </goals>
+                    </execution>
                     <execution>
                         <id>qalab-movers</id>
                         <phase>site</phase>
                         <goals>
                             <goal>movers</goal>
-                            </goals>
+                        </goals>
                         <configuration>
                             <startTimeHoursOffset>480</startTimeHoursOffset>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </build>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <reporting>
         <plugins>
             <!-- Code analysis and reporting plugins. -->
@@ -123,8 +123,8 @@
                     <headerLocation>checkstyle/LICENSE.txt</headerLocation>
                     <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
                     <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                    </configuration>
-                </plugin>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
@@ -137,24 +137,24 @@
                         <!-- ruleset>/rulesets/optimizations.xml</ruleset -->
                         <ruleset>/rulesets/strings.xml</ruleset>
                         <!-- ruleset>/rulesets/controversial.xml</ruleset -->
-                        </rulesets>
+                    </rulesets>
                     <excludes>
                         <exclude>**/*Bean.java</exclude>
                         <exclude>**/generated/*.java</exclude>
-                        </excludes>
+                    </excludes>
                     <format>xml</format>
                     <targetJdk>1.6</targetJdk>
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
-                    </configuration>
-                </plugin>
-
-
+                </configuration>
+            </plugin>
+            
+            
             <!-- Test reporting plugins. -->
             <plugin>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                </plugin>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
@@ -162,14 +162,14 @@
                     <formats>
                         <format>xml</format> 
                         <format>html</format> 
-                        </formats>
-                    </configuration>
-                </plugin>
+                    </formats>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-jxr-plugin</artifactId>
-                </plugin>
-
-
+            </plugin>
+            
+            
             <!-- Documentation plugins. -->
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -178,49 +178,50 @@
                     <links>
                         <link>http://java.sun.com/javase/6/docs/api/</link>
                         <link>http://java.sun.com/javaee/5/docs/api/</link>
-                        </links>
+                    </links>
                     <tags>
                         <tag>
                             <name>license</name>
                             <placement>opt</placement>
                             <head>License:</head>
-                            </tag>
-                        </tags>
-                    </configuration>
+                        </tag>
+                    </tags>
+                </configuration>
                 <reportSets>
                     <reportSet>
                         <id>non-aggregate</id>
                         <configuration>
-                            </configuration>
+                        </configuration>
                         <reports>
                             <report>javadoc</report>
-                            </reports>
-                        </reportSet>
+                        </reports>
+                    </reportSet>
                     <reportSet>
                         <id>aggregate</id>
                         <configuration>
-                            </configuration>
+                        </configuration>
                         <reports>
                             <report>aggregate</report>
-                            </reports>
-                        </reportSet>
-                    </reportSets>
-                </plugin>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>changes-maven-plugin</artifactId>
-                </plugin>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>changelog-maven-plugin</artifactId>
-                </plugin>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
-                </plugin>
+            </plugin>
             
             
             <!-- Other reports -->
+            <!--
             <plugin>
                 <groupId>net.sf</groupId>
                 <artifactId>stat-scm</artifactId>
@@ -228,9 +229,9 @@
                     <excludes>
                         <exclude>**/*.pdf</exclude>
                         <exclude>**/qalab.xml</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
+                    </excludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>net.objectlab</groupId>
                 <artifactId>mvn-qalab-plugin</artifactId>
@@ -240,12 +241,13 @@
                         <reports>
                             <report>report-merge-chart</report>
                             <report>report-movers-all</report>
-                            </reports>
-                        </reportSet>
-                    </reportSets>
-                </plugin>
-            </plugins>
-        </reporting>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            -->
+        </plugins>
+    </reporting>
     
     
     <!-- Build Environment -->
@@ -253,7 +255,7 @@
     <issueManagement>
         <system>Bugzilla</system>
         <url>http://sourceforge.net/tracker/?group_id=228851&amp;atid=1075205</url>
-        </issueManagement>
+    </issueManagement>
     <!-- ciManagement>
      </ciManagement -->
     <mailingLists>
@@ -263,29 +265,29 @@
             <unsubscribe>tbxutil-developers-leave@lists.sourceforge.net</unsubscribe>
             <post>tbxutil-developers@lists.sourceforge.net</post>
             <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=tbxutil-developers</archive>
-            </mailingList>
-        </mailingLists> 
+        </mailingList>
+    </mailingLists> 
     <scm>
         <connection>scm:svn:http://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</connection>
         <developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</developerConnection>
         <url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/trunk</url>
-        </scm>
+    </scm>
     <!-- Maven Environment -->
     <!-- NOT ALLOWED FOR MAVEN CENTRAL REPOSITORY
-    <repositories></repositories>
-    <pluginRepositories></pluginRepositories>
-    -->
+     <repositories></repositories>
+     <pluginRepositories></pluginRepositories>
+     -->
     <distributionManagement>
         <!-- site>
-            <id>TBX :: SourceForge :: Site</id>
-            <name>SourceForge Website</name>
-            <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/htdocs</url>
-            </site -->
+         <id>TBX :: SourceForge :: Site</id>
+         <name>SourceForge Website</name>
+         <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/htdocs</url>
+         </site -->
         <site>
             <id>TBX :: Files :: Localhost</id>
             <name>SourceForge Website</name>
             <url>scp://localhost/Library/WebServer/Documents/tbxutil</url>
-            </site>
+        </site>
         <snapshotRepository>
             <id>TBX :: Site :: Localhost</id>
             <name>SourceForge Local</name>
@@ -298,8 +300,8 @@
             <!-- Need the above until the maven relase plugin is fixed for SourceForge. -->
             <!-- url>sftp://frs.sourceforge.net/uploads/</url -->
             <layout>default</layout>
-         </repository>
-        </distributionManagement>
+        </repository>
+    </distributionManagement>
     
-    </project>
+</project>
 

@@ -15,11 +15,22 @@
  */
 package org.ttt.salt.tbxreader;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import org.xml.sax.ContentHandler;
+import javax.xml.parsers.SAXParser;
 import org.xml.sax.XMLReader;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
+//import org.xml.sax.ext.DefaultHandler2;
 
 /**
  * This is used by TBXReader to do the parsing of the TBX XML stream.
@@ -28,81 +39,265 @@ import org.xml.sax.XMLReader;
  * @version 2.0-SNAPSHOT
  * @license Licensed under the Apache License, Version 2.0.
  */
-class TBXParser implements ContentHandler
-{    
-    /** Logger for all classes in this package. */
-    static final Logger LOGGER = Logger.getLogger("org.ttt.salt.tbxparser");
+class TBXParser extends DefaultHandler implements Runnable
+{
+    /** Map of PUBLIC names to entities. */
+    private static Map<String, String> names2rsrc
+            = new java.util.HashMap<String, String>();
     
-    /** URL to the TBX file to be parsed. */
-    private URL url;
+    static
+    {
+        names2rsrc.put("ISO 30042:2008A//DTD TBX core//EN", "/xml/TBXcoreStructV02.dtd");
+        names2rsrc.put("ISO 30042:2008A//DTD TBX XCS//EN", "/xml/tbxxcsdtd.dtd");                
+    }
     
-    /** Properties for this parser. */
-    private Map<String, Object> properties;
+    /** XML data source to parse. */
+    private InputStream source;
     
+    /** SAX parser that will handle XML parsing and validation. */
+    private SAXParser parser;
+    
+    /** Thread that will handle the parsing of the XML file. */
+    private Thread thread;
+    
+    /** Indicator that the thread should be stopped. */
+    private boolean stop;
+    
+    /** The martif header element. */
+    private MartifHeader martifheader;
+    
+    /** The martif header exception. */
+    private TBXException martifheaderexception;
+    
+    /** Queue of term entry elements that have been parsed. */
+    private BlockingQueue<TermEntry> termentries
+            = new java.util.concurrent.ArrayBlockingQueue<TermEntry>(32);
+    
+    /** The fatal parse exception that occurred after last TermEntry in the queue. */
+    private SAXParseException fatalerror;
+        
     /**
      * Create a new TBX parser.
      *
-     * @param tbx URL to the TBX file to process.
+     * @param saxparser The configured XML SAX parser to use in parsing the
+     *  TBX file.
+     * @param data The XML data source to be parsed.
      */
-    public TBXParser(URL tbx)
+    public TBXParser(SAXParser saxparser, InputStream data)
     {
-        url = tbx;
-        properties = new java.util.HashMap<String, Object>();
+        source = data;
+        parser = saxparser;
+        thread = new Thread(this);
+        thread.setName("TBXParser");
+        thread.setDaemon(true);
+        thread.start();
     }
     
     /**
-     * Get the value of a property on this parser to control the parsing,
-     * validation, and conformance checking.
-     *
-     * @param name The name of the property to get. If the name is not known
-     *  by the parser then an {@link java.lang.IllegalArgumentException} will
-     *  be thrown.
-     * @return The value of the named property.
+     * Stop all parsing of the XML file and interrupt any threads that are
+     * waiting for something to become available (e.g. {@link getMartifHeader}.
      */
-    public Object getProperty(String name)
+    public synchronized void stop()
+    {
+        stop = true;
+        if (thread != null)
+            thread.interrupt();
+    }
+    
+    /**
+     * Get the {@link MartifHeader} from the XML after it has been parsed.
+     * This may block the first time until the header has been parsed. If this
+     * is called a second time it will not block and will either return the
+     * same object or throw the same exception as the first call.
+     *
+     * @return The martif header object for the TBX file.
+     * @throws TBXException Indicates a well-formed or validation error in
+     *  the XML has occurred.
+     * @throws InterruptedException While waiting for the martif header to
+     *  become available this thread was interrupted, or the parsing has
+     *  been stopped without the header being parsed.
+     */
+    public synchronized MartifHeader getMartifHeader()
+        throws TBXException, InterruptedException
+    {
+        while (martifheader == null && martifheaderexception == null)
+        {
+            if (!stop)
+                wait();
+            if (stop)
+                throw new InterruptedException();
+        }
+        if (martifheaderexception != null)
+            throw martifheaderexception;
+        return martifheader;
+    }
+    
+    /**
+     * Get the next {@link TermEntry} from the XML after it has been parsed,
+     * validated, and checked.
+     *
+     * @return The term entry object from the TBX file or <code>null</code>
+     *  if there are no more entries.
+     */
+    public TermEntry getNextTermEntry()
+    {
+        return termentries.poll();
+    }
+    
+    /** {@inheritDoc} */
+    public void run()
+    {
+        try
+        {
+            parser.parse(source, this);
+        }
+        catch (SAXException err)
+        {
+            if (err.getCause() instanceof InterruptedException)
+                TBXReader.LOGGER.info("TBXParser thread interrupted.");
+            else
+                TBXReader.LOGGER.log(Level.SEVERE, "TBXParser had unhandled SAXException.", err);
+        }
+        catch (IOException err)
+        {
+            TBXReader.LOGGER.log(Level.SEVERE, "TBXParser had unhandled IOException.", err);
+        }
+        catch (Throwable err)
+        {
+            TBXReader.LOGGER.log(Level.SEVERE, "Exception in TBXParser thread.", err);
+        }
+        finally
+        {
+            thread = null;
+            synchronized (this)
+            {
+                notifyAll();
+            }
+        }
+    }
+    
+    //===========================================
+    // org.xml.sax.EntityResolver
+    //===========================================
+    
+    /** {@inheritDoc} */
+    public InputSource resolveEntity(String publicId, String systemId)
+        throws IOException, SAXException
     {
         throw new UnsupportedOperationException();
     }
     
-    /**
-     * Set a property on this parser to control the parsing, validation, and
-     * conformance checking.
-     *
-     * @param name The name of the property to set. If the name is not known
-     *  by the parser then an {@link java.lang.IllegalArgumentException} will
-     *  be thrown.
-     * @param value The new value of the property. If the value is invalid for
-     *  the parser then an {@link java.lang.IllegalArgumentException} will
-     *  be thrown. If the value is not an appropriate type for the property
-     *  then an {@link java.lang.ClassCastException} will be thrown.
-     */
-    public void setProperty(String name, Object value)
+    //===========================================
+    // org.xml.sax.DTDHandler
+    //===========================================
+    
+    /** {@inheritDoc} */
+    public void notationDecl(String name, String publicId, String systemId)
+        throws SAXException
     {
         throw new UnsupportedOperationException();
     }
     
-    /**
-     * Get the {@link MartifHeader} for the TBX file's <code>martifHeader</code>
-     * element.
-     *
-     * @return The martif header object.
-     * @throws TBXException Contains the information on why the martif
-     *  header could not be returned.
-     */
-    public MartifHeader getMartifHeader() throws TBXException
+    /** {@inheritDoc} */
+    public void unparsedEntityDecl(String name, String publicId,
+        String systemId, String notationName) throws SAXException
     {
         throw new UnsupportedOperationException();
     }
     
-    /**
-     * Get the next {@link TermEntry} for the next <code>termEntry</code>
-     * element in the TBX file.
-     *
-     * @return The next term object.
-     * @throws TBXException Contains the information on why the next term
-     *  entry could not be returned.
-     */
-    public TermEntry getNextTermEntry() throws TBXException
+    //===========================================
+    // org.xml.sax.ContentHandler
+    //===========================================
+
+    /** {@inheritDoc} */
+    public void setDocumentLocator(Locator locator)
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void startDocument() throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void endDocument() throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void startPrefixMapping(String prefix, String uri) throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public void endPrefixMapping(String prefix) throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void startElement(String uri, String localName, String qName,
+        Attributes atts) throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void endElement(String uri, String localName, String qName)
+         throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void characters(char[] ch, int start, int length) throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
+    public void ignorableWhitespace(char[] ch, int start, int length)
+        throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void processingInstruction(String target, String data)
+        throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void skippedEntity(String name) throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    
+    //===========================================
+    // org.xml.sax.ErrorHandler
+    //===========================================
+    
+    /** {@inheritDoc} */
+    public void warning(SAXParseException exception) throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void error(SAXParseException exception) throws SAXException
+    {
+        throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public void fatalError(SAXParseException exception) throws SAXException
     {
         throw new UnsupportedOperationException();
     }

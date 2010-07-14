@@ -15,9 +15,14 @@
  */
 package org.ttt.salt.tbxreader;
 
+import java.net.URL;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  * A TBX reader that will check that a file is well-formed, valid, and
@@ -30,7 +35,40 @@ import java.util.logging.Level;
 public class TBXReader
 {    
     /** Logger for all classes in this package. */
-    static final Logger LOGGER = Logger.getLogger("org.ttt.salt.tbxparser");
+    static final Logger LOGGER = Logger.getLogger("org.ttt.salt.tbxreader");
+    
+    /** The SAX parser factory that is used to generate all XML parsers. */
+    private static SAXParserFactory saxfactory;
+    
+    static
+    {
+        saxfactory = SAXParserFactory.newInstance();
+        saxfactory.setNamespaceAware(true);
+    }
+    
+    /**
+     * Get an XML parser that is properly configured to parse a TBX file.
+     *
+     * @return The SAXParser for TBX files.
+     */
+    static SAXParser getTBXFileSAXParser() throws SAXException
+    {
+        SAXParser ret;
+        synchronized (saxfactory)
+        {
+            try
+            {
+                //TODO: set the validation state for the parser
+                //TODO: set the schema for the parser
+                ret = saxfactory.newSAXParser();
+            }
+            catch (ParserConfigurationException err)
+            {
+                throw new SAXException(err);
+            }
+        }
+        return ret;
+    }
     
     /** URL to the TBX file to be parsed. */
     private URL url;

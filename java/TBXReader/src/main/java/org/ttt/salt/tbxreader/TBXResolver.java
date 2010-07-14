@@ -41,6 +41,9 @@ import org.xml.sax.SAXException;
  */
 public class TBXResolver implements EntityResolver
 {    
+    /** Logger for all classes in this package. */
+    static final Logger LOGGER = Logger.getLogger("org.ttt.salt.tbxreader");
+
     /** Localized resource bundle to be used for this object. */
     private final Map<String, String> uri2url = new java.util.HashMap<String, String>();
     

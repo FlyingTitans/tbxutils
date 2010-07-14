@@ -27,7 +27,7 @@ import java.util.logging.Level;
  */
 public class MartifHeader
 {
-    /** The parser that generated this object. */
-    private TBXParser parser;
+    /** The reader that generated this object. */
+    private TBXReader reader;
 }
 

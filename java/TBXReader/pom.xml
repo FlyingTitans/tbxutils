@@ -3,7 +3,7 @@
     
     <!-- POM Relationships -->
     <groupId>org.ttt.salt</groupId>
-    <artifactId>tbxparser</artifactId>
+    <artifactId>tbxreader</artifactId>
     <version>2.0-SNAPSHOT</version>
     <parent>
         <groupId>org.ttt.salt</groupId>
@@ -16,14 +16,14 @@
     </modules>
     
     <!-- Project Information -->
-    <name>TBXParser</name>
-    <url>${tbxurl}/tbxparser</url>
+    <name>TBXReader</name>
+    <url>${tbxurl}/tbxreader</url>
     <description>
-        TBXParser will parse a TBX file, parse the associated XCS file,
+        TBXReader will read a TBX file, parse the associated XCS file,
         and then deliver deliver each well-formed, valid, and XCS conforming
         termEntry element to the user of this library.
     </description>
-    <inceptionYear>2001</inceptionYear>
+    <inceptionYear>2010</inceptionYear>
     
     <!-- Build Settings -->
     <packaging>jar</packaging>

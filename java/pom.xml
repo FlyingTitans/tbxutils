@@ -15,7 +15,8 @@
     </dependencies>
     <modules>
         <module>codeanalysis</module>
-        <module>TBXParser</module>
+        <module>TBXReader</module>
+        <module>TBXCheck</module>
     </modules>
     
     <!-- Project Information -->

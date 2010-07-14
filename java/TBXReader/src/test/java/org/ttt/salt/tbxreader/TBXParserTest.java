@@ -33,6 +33,14 @@ public class TBXParserTest
     @BeforeClass
     public static void initialize() throws Exception
     {
+        if (true)
+        {
+            java.util.logging.Formatter simplefmt = new java.util.logging.SimpleFormatter();
+            java.util.logging.Handler handler = new java.util.logging.ConsoleHandler();
+            handler.setLevel(java.util.logging.Level.FINEST);
+            handler.setFormatter(simplefmt);
+            TBXReader.LOGGER.addHandler(handler);
+        }
         saxfactory = SAXParserFactory.newInstance();
     }
     
@@ -52,10 +60,11 @@ public class TBXParserTest
     @Test
     public void parseValidFileDTD() throws Exception
     {
+        TBXReader.LOGGER.setLevel(java.util.logging.Level.FINEST);
         InputStream in = getClass().getResourceAsStream("/org/ttt/salt/tbxreader/ValidDTD.xml");
         assertNotNull(in);
         TBXParser parser = new TBXParser(saxfactory.newSAXParser(), in);
-        
+        parser.join(100);
     }
 }
 

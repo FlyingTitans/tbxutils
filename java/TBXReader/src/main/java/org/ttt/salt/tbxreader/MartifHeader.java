@@ -15,6 +15,7 @@
  */
 package org.ttt.salt.tbxreader;
 
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -27,7 +28,25 @@ import java.util.logging.Level;
  */
 public class MartifHeader
 {
-    /** The reader that generated this object. */
-    private TBXReader reader;
+    /** TBX title statement. */
+    private String title;
+    
+    /** TBX publication statement. */
+    private String publication;
+    
+    /** List of source descriptions. */
+    private List<String> sources = new java.util.ArrayList<String>();
+    
+    /** List of encoding descriptions. */
+    private List<String> encodings = new java.util.ArrayList<String>();
+    
+    /** List of revision changes. */
+    private List<String> revisions = new java.util.ArrayList<String>();
+    
+    /**
+     */
+    public MartifHeader()
+    {
+    }
 }
 

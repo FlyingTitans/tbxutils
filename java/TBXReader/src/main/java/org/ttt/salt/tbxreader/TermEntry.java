@@ -31,10 +31,7 @@ import org.xml.sax.Locator;
  * @license Licensed under the Apache License, Version 2.0.
  */
 public class TermEntry
-{
-    /** The reader that generated this object. */
-    private TBXReader reader;
-    
+{    
     /** The location in the XML file where this term entry starts. */
     private Locator locator;
         

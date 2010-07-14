@@ -15,9 +15,13 @@
  */
 package org.ttt.salt.tbxreader;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
+import java.util.Stack;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
@@ -51,18 +55,71 @@ class TBXParser extends DefaultHandler implements Runnable
         names2rsrc.put("ISO 30042:2008A//DTD TBX XCS//EN", "/xml/tbxxcsdtd.dtd");                
     }
     
+    private class Element
+    {
+        /** Name of the current element. */
+        private String localName;
+        
+        /** Attributes of the current element. */
+        private Attributes attrs;
+        
+        /** Text for the current element. */
+        private StringBuilder text;
+        
+        /** Children elements. */
+        private List<Element> elements;
+        
+        public Element(String uri, String localName, String qName, Attributes atts)
+        {
+            this.localName = localName;
+        }
+        
+        public void addElement(Element child)
+        {
+            if (elements == null)
+                elements = new java.util.ArrayList<Element>();
+            elements.add(child);
+        }
+        
+        public void removeElement(Element child)
+        {
+            if (elements != null)
+                elements.remove(child);
+        }
+        
+        public void addText(char[] ch, int start, int length)
+        {
+            if (text == null)
+                text = new StringBuilder();
+            text.append(ch, start, length);
+        }
+        
+        public void addWhitespace(char[] ch, int start, int length)
+        {
+        }
+    }
+    
     /** XML data source to parse. */
     private InputStream source;
     
     /** SAX parser that will handle XML parsing and validation. */
     private SAXParser parser;
     
+    /** SAX locator for finding where errors occur. */
+    private Locator locator;
+    
+    /** Current element node. */
+    private Element element;
+    
+    /** Element stack. */
+    private Stack<Element> elements = new Stack<Element>();
+    
     /** Thread that will handle the parsing of the XML file. */
     private Thread thread;
     
     /** Indicator that the thread should be stopped. */
     private boolean stop;
-    
+        
     /** The martif header element. */
     private MartifHeader martifheader;
     
@@ -176,6 +233,32 @@ class TBXParser extends DefaultHandler implements Runnable
         }
     }
     
+    /**
+     * Wait for the parser to completly finish parsing the XML document.
+     *
+     * @param ms Maximum number of milliseconds to wait for thread to finish.
+     */
+    public synchronized void join(long ms) throws InterruptedException
+    {
+        if (thread != null)
+            thread.join(ms);
+    }
+    
+    /**
+     * Check to see if I need to stop.
+     *
+     * @throws SAXException The exception that can be thrown through the
+     *  parser to the top of the run loop to indicate that I am stopped.
+     */
+    private void checkStop() throws SAXException
+    {
+        if (stop)
+        {
+            Exception ie = new InterruptedException();
+            throw new SAXException("", ie);
+        }
+    }
+    
     //===========================================
     // org.xml.sax.EntityResolver
     //===========================================
@@ -184,7 +267,66 @@ class TBXParser extends DefaultHandler implements Runnable
     public InputSource resolveEntity(String publicId, String systemId)
         throws IOException, SAXException
     {
-        throw new UnsupportedOperationException();
+        TBXReader.LOGGER.entering("TBXParser", "resolveEntity", 
+            String.format("PublicID='%s' SystemId='%s'", publicId, systemId));
+        checkStop();
+        java.io.InputStreamReader reader = null;
+        try
+        {
+            InputStream input = null;
+            if (names2rsrc.containsKey(publicId))
+            {   //Check to see if it is a named resource
+                TBXReader.LOGGER.info("Entity is a known publicId: " + publicId);
+                systemId = names2rsrc.get(publicId);
+                input = getClass().getResourceAsStream(names2rsrc.get(publicId));
+            }
+            else if (systemId.matches("\\w+:.+"))
+            {   //Do the full URI parsing
+                TBXReader.LOGGER.info("Entity is a URI: " + systemId);
+                URI uri = new URI(systemId);
+                input = uri.toURL().openStream();
+            }
+            else
+            {   //Check the relative URI location
+                TBXReader.LOGGER.fine("Unknown schema systemId: " + systemId);
+                if (systemId.startsWith("/"))
+                {
+                    TBXReader.LOGGER.info("Entity is an absolute path: " + systemId);
+                    File file = new File(systemId);
+                    if (file.exists())
+                        input = new java.io.FileInputStream(file);
+                    else
+                        input = getClass().getResourceAsStream(systemId);
+                }                
+                if (input == null)
+                    throw new java.io.FileNotFoundException();
+            }
+            if (!input.markSupported())
+                input = new java.io.BufferedInputStream(input);
+            String enc = Utility.getEncoding(input);
+            reader = new java.io.InputStreamReader(input, enc);
+        }
+        catch (java.io.FileNotFoundException err)
+        {
+            String msg = String.format("Entity could not be resolved:\n  PUBLIC: '%s'\n  SYSTEM: '%s'\n  BUILT IN: %s",
+                publicId, systemId,
+                names2rsrc.containsKey(publicId) ? names2rsrc.get(publicId) : "NONE");
+            throw new java.io.FileNotFoundException(msg);
+        }
+        catch (java.io.UnsupportedEncodingException err)
+        {
+            throw new java.io.UnsupportedEncodingException(
+                    String.format("PUBLIC %s SYSTEM %s", publicId, systemId));
+        }
+        catch (java.net.URISyntaxException err)
+        {
+            throw new SAXException("Invalid System ID format", err);
+        }
+        InputSource ret = new InputSource(reader);
+        ret.setPublicId(publicId);
+        ret.setSystemId(systemId);
+        TBXReader.LOGGER.exiting("TBXParser", "resolveEntity", ret);
+        return ret;
     }
     
     //===========================================
@@ -195,6 +337,8 @@ class TBXParser extends DefaultHandler implements Runnable
     public void notationDecl(String name, String publicId, String systemId)
         throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "notationDecl");
+        checkStop();
         throw new UnsupportedOperationException();
     }
     
@@ -202,6 +346,8 @@ class TBXParser extends DefaultHandler implements Runnable
     public void unparsedEntityDecl(String name, String publicId,
         String systemId, String notationName) throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "unparsedEntityDecl");
+        checkStop();
         throw new UnsupportedOperationException();
     }
     
@@ -212,30 +358,41 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void setDocumentLocator(Locator locator)
     {
-        throw new UnsupportedOperationException();
+        this.locator = locator;
     }
     
     /** {@inheritDoc} */
     public void startDocument() throws SAXException
     {
-        throw new UnsupportedOperationException();
+        TBXReader.LOGGER.entering("TBXParser", "startDocument");
+        checkStop();
+        martifheader = null;
+        martifheaderexception = null;
+        termentries.clear();
+        fatalerror = null;
     }
     
     /** {@inheritDoc} */
     public void endDocument() throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "endDocument");
+        checkStop();
         throw new UnsupportedOperationException();
     }
     
     /** {@inheritDoc} */
     public void startPrefixMapping(String prefix, String uri) throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "startPrefixMapping");
+        checkStop();
         throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
     public void endPrefixMapping(String prefix) throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "endPrefixMapping");
+        checkStop();
         throw new UnsupportedOperationException();
     }
     
@@ -243,39 +400,73 @@ class TBXParser extends DefaultHandler implements Runnable
     public void startElement(String uri, String localName, String qName,
         Attributes atts) throws SAXException
     {
-        throw new UnsupportedOperationException();
+        TBXReader.LOGGER.entering("TBXParser", "startElement", new Object[]{uri, localName, qName});
+        checkStop();
+        elements.push(element);
+        element = new Element(uri, localName, qName, atts);        
     }
     
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName)
          throws SAXException
     {
-        throw new UnsupportedOperationException();
+        TBXReader.LOGGER.entering("TBXParser", "endElement", new Object[]{uri, localName, qName});
+        checkStop();
+        Element child = element;
+        element = elements.pop();
+        element.addElement(child);
+        
+        if (localName.equals("martifHeader"))
+        {
+            element.removeElement(child);
+            synchronized (this)
+            {
+                martifheader = new MartifHeader();
+                notifyAll();
+            }
+        }
+        //else if (localName.equals("p"))
+        //{
+        //    paragraph.append(text);
+        //    paragraph.append("\u2029");
+        //}
+        else
+        {
+            throw new UnsupportedOperationException();
+        }
     }
     
     /** {@inheritDoc} */
     public void characters(char[] ch, int start, int length) throws SAXException
     {
-        throw new UnsupportedOperationException();
+        TBXReader.LOGGER.entering("TBXParser", "characters", new Object[]{ch, start, length});
+        checkStop();
+        element.addText(ch, start, length);
     }
 
     /** {@inheritDoc} */
     public void ignorableWhitespace(char[] ch, int start, int length)
         throws SAXException
     {
-        throw new UnsupportedOperationException();
+        TBXReader.LOGGER.entering("TBXParser", "ignorableWhitespace", length);
+        checkStop();
+        element.addWhitespace(ch, start, length);
     }
     
     /** {@inheritDoc} */
     public void processingInstruction(String target, String data)
         throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "processingInstruction", new Object[]{target, data});
+        checkStop();
         throw new UnsupportedOperationException();
     }
     
     /** {@inheritDoc} */
     public void skippedEntity(String name) throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "skippedEntity", new Object[]{name});
+        checkStop();
         throw new UnsupportedOperationException();
     }
 
@@ -287,18 +478,21 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void warning(SAXParseException exception) throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "warning");
         throw new UnsupportedOperationException();
     }
     
     /** {@inheritDoc} */
     public void error(SAXParseException exception) throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "error");
         throw new UnsupportedOperationException();
     }
     
     /** {@inheritDoc} */
     public void fatalError(SAXParseException exception) throws SAXException
     {
+        TBXReader.LOGGER.entering("TBXParser", "fatalError");
         throw new UnsupportedOperationException();
     }
 }

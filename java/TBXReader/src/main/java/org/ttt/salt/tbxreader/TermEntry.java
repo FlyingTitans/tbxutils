@@ -18,6 +18,7 @@ package org.ttt.salt.tbxreader;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import org.w3c.dom.Element;
 import org.xml.sax.Locator;
 
 /**
@@ -31,9 +32,15 @@ import org.xml.sax.Locator;
  * @license Licensed under the Apache License, Version 2.0.
  */
 public class TermEntry
-{    
-    /** The location in the XML file where this term entry starts. */
-    private Locator locator;
+{
+    /** The DOM element that produced this term entry. */
+    private Element element;
+    
+    /** The line where the term entry starts. */
+    private int line;
+    
+    /** The column where the term entry starts. */
+    private int column;
         
     /** The list of exceptions that have occurred in building this term entry. */
     private List<TBXException> exceptions = new java.util.ArrayList<TBXException>();
@@ -41,23 +48,45 @@ public class TermEntry
     /**
      * Create a new term entry.
      *
+     * @param elem The DOM element that contains all of the validated
+     *  information for the term entry.
      * @param loc The Locator in the XML this term entry is starting at.
      */
-    public TermEntry(Locator loc)
+    TermEntry(Element elem, Locator loc)
     {
-        locator = loc;
+        element = elem;
+        line = loc.getLineNumber();
+        column = loc.getColumnNumber();        
     }
     
     /**
-     * Get the XML location where this term entry started.
-     *
-     * @return The XML location.
+     * The term entry is complete and can be built from DOM element.
      */
-    public Locator getLocation()
+    void init()
     {
-        return locator;
+        element.getParentNode().removeChild(element);
     }
     
+    /**
+     * Get the line number this entry starts at.
+     *
+     * @return The line number in the XML file.
+     */
+    public int getLineNumber()
+    {
+        return line;
+    }
+    
+    /**
+     * Get the column number this entry starts at.
+     *
+     * @return The column number in the XML file.
+     */
+    public int getColumnNumber()
+    {
+        return column;
+    }
+        
     /**
      * Get the list of exceptions that occurred while creating the term entry.
      *
@@ -67,7 +96,7 @@ public class TermEntry
      */
     public List<TBXException> getExceptions()
     {
-        return java.util.Collections.unmodifiableList(exceptions);
+        return exceptions;
     }
 }
 

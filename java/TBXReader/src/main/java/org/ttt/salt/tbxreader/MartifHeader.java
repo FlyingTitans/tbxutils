@@ -18,6 +18,7 @@ package org.ttt.salt.tbxreader;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import org.w3c.dom.Element;
 
 /**
  * This represents the entire TBX martif header from a TBX file.
@@ -44,8 +45,10 @@ public class MartifHeader
     private List<String> revisions = new java.util.ArrayList<String>();
     
     /**
+     * @param elem The DOM element that contains all of the validated
+     *  information for the martif header.
      */
-    public MartifHeader()
+    MartifHeader(Element elem)
     {
     }
 }

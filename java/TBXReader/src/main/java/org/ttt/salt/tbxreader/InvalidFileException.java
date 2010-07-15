@@ -15,35 +15,22 @@
  */
 package org.ttt.salt.tbxreader;
 
+import org.xml.sax.Locator;
+
 /**
- * This is the base class for all TBX exceptions that can occur when parsing,
- * validating, and checking conformance of a TBX file.
+ * This indicates that there are serious problems with the file.
  *
  * @author Lance Finn Helsten
  * @version 2.0-SNAPSHOT
  * @license Licensed under the Apache License, Version 2.0.
  */
-public class TBXException extends Exception
+public class InvalidFileException extends TBXParseException
 {
     /**
      */
-    public TBXException(String message)
+    public InvalidFileException(Locator locator, String message)
     {
-        super(message);
-    }
-    
-    /**
-     */
-    public TBXException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-    
-    /**
-     */
-    public TBXException(Throwable cause)
-    {
-        super(cause);
-    }
+        super(locator, message);
+    }    
 }
 

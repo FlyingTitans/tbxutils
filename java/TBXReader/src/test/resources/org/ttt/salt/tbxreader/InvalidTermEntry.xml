@@ -1,5 +1,7 @@
 <?xml version='1.0'?>
-<!-- copied from SALT DXLT doc -->
+<!--
+    The term entry is not valid according to the DTD.
+-->
 <!DOCTYPE martif
     PUBLIC
         "ISO 30042:2008A//DTD TBX core//EN"
@@ -17,6 +19,11 @@
     </martifHeader>
     <text>
         <body>
+            <termEntry id='emptyTermEntry'/>
+
+            <termEntry id='emptyTermEntryAlt'>
+            </termEntry>
+            
             <termEntry id='ID67'>
                 <descrip type='subjectField'>manufacturing</descrip>
                 <descrip type='definition'>A value <hi>hello</hi> between 0 and 1 used in ...</descrip>

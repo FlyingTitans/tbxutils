@@ -33,14 +33,13 @@ public class TBXParserTest
     @BeforeClass
     public static void initialize() throws Exception
     {
-        if (true)
-        {
-            java.util.logging.Formatter simplefmt = new java.util.logging.SimpleFormatter();
-            java.util.logging.Handler handler = new java.util.logging.ConsoleHandler();
-            handler.setLevel(java.util.logging.Level.FINEST);
-            handler.setFormatter(simplefmt);
-            TBXReader.LOGGER.addHandler(handler);
-        }
+        java.util.logging.Formatter simplefmt = new java.util.logging.SimpleFormatter();
+        java.util.logging.Handler handler = new java.util.logging.ConsoleHandler();
+        handler.setLevel(java.util.logging.Level.FINEST);
+        handler.setFormatter(simplefmt);
+        TBXParser.PARSE_LOG.addHandler(handler);
+        //TBXParser.PARSE_LOG.setLevel(java.util.logging.Level.FINEST);
+
         saxfactory = SAXParserFactory.newInstance();
     }
     
@@ -48,6 +47,7 @@ public class TBXParserTest
     public void setUp() throws Exception
     {
         TBXReader.LOGGER.setLevel(java.util.logging.Level.INFO);
+        TBXParser.PARSE_LOG.setLevel(java.util.logging.Level.WARNING);
         saxfactory.setNamespaceAware(true);
         saxfactory.setValidating(true);
     }
@@ -64,7 +64,37 @@ public class TBXParserTest
         InputStream in = getClass().getResourceAsStream("/org/ttt/salt/tbxreader/ValidDTD.xml");
         assertNotNull(in);
         TBXParser parser = new TBXParser(saxfactory.newSAXParser(), in);
+        MartifHeader header = parser.getMartifHeader();
         parser.join(100);
+    }
+    
+    @Test
+    public void parseInvalidTermEntry() throws Exception
+    {
+        //TBXParser.PARSE_LOG.setLevel(java.util.logging.Level.FINEST);
+        InputStream in = getClass().getResourceAsStream("/org/ttt/salt/tbxreader/InvalidTermEntry.xml");
+        assertNotNull(in);
+        TBXParser parser = new TBXParser(saxfactory.newSAXParser(), in);
+        MartifHeader header = parser.getMartifHeader();
+        
+        TermEntry entry;
+        TBXParseException except;
+        
+        entry = parser.getNextTermEntry();
+        assertEquals(22, entry.getLineNumber());
+        assertEquals(45, entry.getColumnNumber());
+        assertEquals(1, entry.getExceptions().size());
+        except = (TBXParseException) entry.getExceptions().get(0);
+        assertEquals(22, except.getLineNumber());
+        assertEquals(45, except.getColumnNumber());
+
+        entry = parser.getNextTermEntry();
+        assertEquals(24, entry.getLineNumber());
+        assertEquals(47, entry.getColumnNumber());
+        assertEquals(1, entry.getExceptions().size());
+        except = (TBXParseException) entry.getExceptions().get(0);
+        assertEquals(25, except.getLineNumber());
+        assertEquals(25, except.getColumnNumber());
     }
 }
 

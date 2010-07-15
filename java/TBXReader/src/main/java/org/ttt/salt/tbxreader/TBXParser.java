@@ -20,13 +20,18 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Stack;
+import java.util.Set;
 import java.util.List;
+import java.util.Stack;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -35,6 +40,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 //import org.xml.sax.ext.DefaultHandler2;
+import org.w3c.dom.*;
 
 /**
  * This is used by TBXReader to do the parsing of the TBX XML stream.
@@ -45,60 +51,47 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class TBXParser extends DefaultHandler implements Runnable
 {
+    /*
+     * This users the DOM object system to build objects, but it does not
+     * use the DOM document builder because that attempts to build the
+     * entire document at once, and this needs to handle very large files
+     * with event driven term entry construction.
+     */
+
+    /** Logger for all classes in this package. */
+    static final Logger PARSE_LOG = Logger.getLogger("org.ttt.salt.tbxreader.parser");
+
     /** Map of PUBLIC names to entities. */
-    private static Map<String, String> names2rsrc
-            = new java.util.HashMap<String, String>();
+    private static Map<String, String> names2rsrc = new java.util.HashMap<String, String>();
+    
+    /** Set of known element names that can be ignored by the parser. */
+    private static Set<String> knownTagNames = new java.util.TreeSet<String>();
     
     static
     {
+        PARSE_LOG.setLevel(Level.WARNING);
+    
         names2rsrc.put("ISO 30042:2008A//DTD TBX core//EN", "/xml/TBXcoreStructV02.dtd");
-        names2rsrc.put("ISO 30042:2008A//DTD TBX XCS//EN", "/xml/tbxxcsdtd.dtd");                
+        names2rsrc.put("ISO 30042:2008A//DTD TBX XCS//EN", "/xml/tbxxcsdtd.dtd");
+
+        knownTagNames.add("martif");        
+        knownTagNames.add("sourceDesc");        
+        knownTagNames.add("fileDesc");        
+        knownTagNames.add("encodingDesc");        
+        knownTagNames.add("p");
+        knownTagNames.add("hi");
+        knownTagNames.add("tig");
+        knownTagNames.add("langSet");
+        knownTagNames.add("term");
+        knownTagNames.add("text");
+        knownTagNames.add("descrip");
+        knownTagNames.add("descripGrp");
+        knownTagNames.add("descripNote");
     }
     
-    private class Element
-    {
-        /** Name of the current element. */
-        private String localName;
+    /** Document builder to generate new documents. */
+    private DocumentBuilder documentbuilder;
         
-        /** Attributes of the current element. */
-        private Attributes attrs;
-        
-        /** Text for the current element. */
-        private StringBuilder text;
-        
-        /** Children elements. */
-        private List<Element> elements;
-        
-        public Element(String uri, String localName, String qName, Attributes atts)
-        {
-            this.localName = localName;
-        }
-        
-        public void addElement(Element child)
-        {
-            if (elements == null)
-                elements = new java.util.ArrayList<Element>();
-            elements.add(child);
-        }
-        
-        public void removeElement(Element child)
-        {
-            if (elements != null)
-                elements.remove(child);
-        }
-        
-        public void addText(char[] ch, int start, int length)
-        {
-            if (text == null)
-                text = new StringBuilder();
-            text.append(ch, start, length);
-        }
-        
-        public void addWhitespace(char[] ch, int start, int length)
-        {
-        }
-    }
-    
     /** XML data source to parse. */
     private InputStream source;
     
@@ -108,6 +101,12 @@ class TBXParser extends DefaultHandler implements Runnable
     /** SAX locator for finding where errors occur. */
     private Locator locator;
     
+    /** DOM document for all new nodes. */
+    private Document document;
+
+    /** Default language for document. */
+    private String defaultlang = "en";
+        
     /** Current element node. */
     private Element element;
     
@@ -123,12 +122,18 @@ class TBXParser extends DefaultHandler implements Runnable
     /** The martif header element. */
     private MartifHeader martifheader;
     
-    /** The martif header exception. */
-    private TBXException martifheaderexception;
+    /** An exception occurred before the martif header was fully parsed. */
+    private TBXException martifexception;
     
     /** Queue of term entry elements that have been parsed. */
     private BlockingQueue<TermEntry> termentries
             = new java.util.concurrent.ArrayBlockingQueue<TermEntry>(32);
+    
+    /**
+     * Current term entry being built: this will be the last term entry
+     * built until a new {@link startElement} is called for a new termEntry.
+     */
+    private TermEntry currentTermEntry;
     
     /** The fatal parse exception that occurred after last TermEntry in the queue. */
     private SAXParseException fatalerror;
@@ -144,6 +149,7 @@ class TBXParser extends DefaultHandler implements Runnable
     {
         source = data;
         parser = saxparser;
+                
         thread = new Thread(this);
         thread.setName("TBXParser");
         thread.setDaemon(true);
@@ -177,15 +183,15 @@ class TBXParser extends DefaultHandler implements Runnable
     public synchronized MartifHeader getMartifHeader()
         throws TBXException, InterruptedException
     {
-        while (martifheader == null && martifheaderexception == null)
+        while (martifheader == null && martifexception == null)
         {
             if (!stop)
                 wait();
             if (stop)
                 throw new InterruptedException();
         }
-        if (martifheaderexception != null)
-            throw martifheaderexception;
+        if (martifexception != null)
+            throw martifexception;
         return martifheader;
     }
     
@@ -195,10 +201,25 @@ class TBXParser extends DefaultHandler implements Runnable
      *
      * @return The term entry object from the TBX file or <code>null</code>
      *  if there are no more entries.
+     * @throws InterruptedException While waiting for a term entry to
+     *  become available this thread was interrupted.
      */
-    public TermEntry getNextTermEntry()
+    public TermEntry getNextTermEntry() throws InterruptedException
     {
-        return termentries.poll();
+        return termentries.poll(100, TimeUnit.MILLISECONDS);
+    }
+    
+    /**
+     * Offer the current term entry to the queue.
+     */
+    private void offerTermEntry()
+    {
+        if (currentTermEntry != null)
+        {
+            currentTermEntry.init();
+            termentries.add(currentTermEntry);
+            currentTermEntry = null;
+        }
     }
     
     /** {@inheritDoc} */
@@ -210,7 +231,9 @@ class TBXParser extends DefaultHandler implements Runnable
         }
         catch (SAXException err)
         {
-            if (err.getCause() instanceof InterruptedException)
+            if (err.getCause() instanceof TBXException)
+                martifexception = (TBXException) err.getCause();
+            else if (err.getCause() instanceof InterruptedException)
                 TBXReader.LOGGER.info("TBXParser thread interrupted.");
             else
                 TBXReader.LOGGER.log(Level.SEVERE, "TBXParser had unhandled SAXException.", err);
@@ -259,6 +282,7 @@ class TBXParser extends DefaultHandler implements Runnable
         }
     }
     
+    
     //===========================================
     // org.xml.sax.EntityResolver
     //===========================================
@@ -267,8 +291,10 @@ class TBXParser extends DefaultHandler implements Runnable
     public InputSource resolveEntity(String publicId, String systemId)
         throws IOException, SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "resolveEntity", 
+        PARSE_LOG.entering("TBXParser", "resolveEntity", 
             String.format("PublicID='%s' SystemId='%s'", publicId, systemId));
+        TBXReader.LOGGER.info(
+            String.format("Resolve Entity for PublicID='%s' SystemId='%s'", publicId, systemId));
         checkStop();
         java.io.InputStreamReader reader = null;
         try
@@ -325,7 +351,7 @@ class TBXParser extends DefaultHandler implements Runnable
         InputSource ret = new InputSource(reader);
         ret.setPublicId(publicId);
         ret.setSystemId(systemId);
-        TBXReader.LOGGER.exiting("TBXParser", "resolveEntity", ret);
+        PARSE_LOG.exiting("TBXParser", "resolveEntity", ret);
         return ret;
     }
     
@@ -337,7 +363,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void notationDecl(String name, String publicId, String systemId)
         throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "notationDecl");
+        PARSE_LOG.entering("TBXParser", "notationDecl");
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -346,7 +372,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void unparsedEntityDecl(String name, String publicId,
         String systemId, String notationName) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "unparsedEntityDecl");
+        PARSE_LOG.entering("TBXParser", "unparsedEntityDecl");
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -364,26 +390,42 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void startDocument() throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "startDocument");
+        PARSE_LOG.entering("TBXParser", "startDocument");
         checkStop();
         martifheader = null;
-        martifheaderexception = null;
+        martifexception = null;
         termentries.clear();
         fatalerror = null;
+
+        if (documentbuilder == null)
+        {
+            try
+            {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                //factory.setSchema
+                //factory.setValidating(true);
+                documentbuilder = factory.newDocumentBuilder();
+            }
+            catch (ParserConfigurationException err)
+            {
+                throw new SAXException("Unable to initialize DOM document.", err);
+            }
+        }
+        document = documentbuilder.newDocument();
     }
     
     /** {@inheritDoc} */
     public void endDocument() throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "endDocument");
+        PARSE_LOG.entering("TBXParser", "endDocument");
         checkStop();
-        throw new UnsupportedOperationException();
     }
     
     /** {@inheritDoc} */
     public void startPrefixMapping(String prefix, String uri) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "startPrefixMapping");
+        PARSE_LOG.entering("TBXParser", "startPrefixMapping");
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -391,7 +433,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void endPrefixMapping(String prefix) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "endPrefixMapping");
+        PARSE_LOG.entering("TBXParser", "endPrefixMapping");
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -400,72 +442,114 @@ class TBXParser extends DefaultHandler implements Runnable
     public void startElement(String uri, String localName, String qName,
         Attributes atts) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "startElement", new Object[]{uri, localName, qName});
+        PARSE_LOG.entering("TBXParser", "startElement",
+                String.format("ns='%s' QName='%s' LocalName='%s'", uri, qName, localName));
         checkStop();
         elements.push(element);
-        element = new Element(uri, localName, qName, atts);        
+        
+        if (uri.isEmpty())
+            element = document.createElement(qName);
+        else
+            element = document.createElementNS(uri, qName);
+
+        for (int i = 0; i < atts.getLength(); i++)
+        {
+            String ns = atts.getURI(i);
+            String qname = atts.getQName(i);
+            String value = atts.getValue(i);
+            
+            Attr attr;
+            if (ns.isEmpty())
+                attr = document.createAttribute(qname);
+            else
+                attr = document.createAttributeNS(ns, qname);
+            attr.setValue(value);
+            PARSE_LOG.finer("Attribute: " + attr);
+            element.setAttributeNode(attr);
+        }
+        
+        if (qName.equals("martif"))
+        {
+            String type = element.getAttribute("type");
+            if (!type.equals("TBX"))
+                throw new SAXException(new InvalidFileException(locator, "NotTBXFile"));
+            String defaultlang = element.getAttributeNS("http://www.w3.org/XML/1998/namespace", "lang");
+            if (defaultlang.isEmpty())
+                throw new SAXException(new InvalidFileException(locator, "NoDefaultLang"));
+        }
+        else if (qName.equals("termEntry"))
+        {
+            offerTermEntry();
+            currentTermEntry = new TermEntry(element, locator);
+        }
     }
     
     /** {@inheritDoc} */
     public void endElement(String uri, String localName, String qName)
          throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "endElement", new Object[]{uri, localName, qName});
+        PARSE_LOG.entering("TBXParser", "endElement",
+                String.format("ns='%s' QName='%s' LocalName='%s'", uri, qName, localName));
         checkStop();
         Element child = element;
         element = elements.pop();
-        element.addElement(child);
         
-        if (localName.equals("martifHeader"))
+        assert element != null || qName.equals("martif");
+        if (element != null)
+            element.appendChild(child);
+
+        if (qName.equals("martifHeader"))
         {
-            element.removeElement(child);
             synchronized (this)
             {
-                martifheader = new MartifHeader();
+                martifheader = new MartifHeader(child);
                 notifyAll();
             }
         }
-        //else if (localName.equals("p"))
-        //{
-        //    paragraph.append(text);
-        //    paragraph.append("\u2029");
-        //}
-        else
+        else if (qName.equals("body"))
         {
-            throw new UnsupportedOperationException();
+            offerTermEntry();
+        }
+        else if (qName.equals("termEntry"))
+        {
+        }
+        else if (!knownTagNames.contains(qName))
+        {
+            PARSE_LOG.warning("Unknown element: " + qName);
         }
     }
     
     /** {@inheritDoc} */
     public void characters(char[] ch, int start, int length) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "characters", new Object[]{ch, start, length});
+        PARSE_LOG.entering("TBXParser", "characters", new String(ch, start, length));
         checkStop();
-        element.addText(ch, start, length);
+        Text text = document.createTextNode(new String(ch, start, length));
+        element.appendChild(text);
     }
 
     /** {@inheritDoc} */
     public void ignorableWhitespace(char[] ch, int start, int length)
         throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "ignorableWhitespace", length);
+        PARSE_LOG.entering("TBXParser", "ignorableWhitespace", String.format("Width: %d", length));
         checkStop();
-        element.addWhitespace(ch, start, length);
     }
     
     /** {@inheritDoc} */
     public void processingInstruction(String target, String data)
         throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "processingInstruction", new Object[]{target, data});
+        PARSE_LOG.entering("TBXParser", "processingInstruction", new Object[]{target, data});
         checkStop();
-        throw new UnsupportedOperationException();
+        ProcessingInstruction pi = document.createProcessingInstruction(target, data);
+        element.appendChild(pi);
     }
     
     /** {@inheritDoc} */
     public void skippedEntity(String name) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "skippedEntity", new Object[]{name});
+        PARSE_LOG.entering("TBXParser", "skippedEntity", new Object[]{name});
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -478,21 +562,29 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void warning(SAXParseException exception) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "warning");
+        PARSE_LOG.entering("TBXParser", "warning", exception);
         throw new UnsupportedOperationException();
     }
     
     /** {@inheritDoc} */
     public void error(SAXParseException exception) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "error");
-        throw new UnsupportedOperationException();
+        PARSE_LOG.entering("TBXParser", "error", exception);
+        if (currentTermEntry != null)
+        {
+            InvalidTermEntryException err = new InvalidTermEntryException(locator, exception.getLocalizedMessage(), exception);
+            currentTermEntry.getExceptions().add(err);
+        }
+        else
+        {
+            throw new SAXException("Unhandled SAX error.", exception);
+        }
     }
     
     /** {@inheritDoc} */
     public void fatalError(SAXParseException exception) throws SAXException
     {
-        TBXReader.LOGGER.entering("TBXParser", "fatalError");
+        PARSE_LOG.entering("TBXParser", "fatalError", exception);
         throw new UnsupportedOperationException();
     }
 }

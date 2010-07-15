@@ -15,35 +15,23 @@
  */
 package org.ttt.salt.tbxreader;
 
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+
 /**
- * This is the base class for all TBX exceptions that can occur when parsing,
- * validating, and checking conformance of a TBX file.
+ * This indicates a term entry failed XML validation.
  *
  * @author Lance Finn Helsten
  * @version 2.0-SNAPSHOT
  * @license Licensed under the Apache License, Version 2.0.
  */
-public class TBXException extends Exception
+public class InvalidTermEntryException extends TBXParseException
 {
     /**
      */
-    public TBXException(String message)
+    public InvalidTermEntryException(Locator locator, String message, SAXParseException cause)
     {
-        super(message);
-    }
-    
-    /**
-     */
-    public TBXException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-    
-    /**
-     */
-    public TBXException(Throwable cause)
-    {
-        super(cause);
+        super(locator, message, cause);
     }
 }
 

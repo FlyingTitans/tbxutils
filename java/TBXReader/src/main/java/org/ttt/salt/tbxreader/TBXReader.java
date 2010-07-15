@@ -48,10 +48,8 @@ public class TBXReader
     
     /**
      * Get an XML parser that is properly configured to parse a TBX file.
-     *
-     * @return The SAXParser for TBX files.
      */
-    static SAXParser getTBXFileSAXParser() throws SAXException
+    static SAXParser getTBXFileSAXParser()
     {
         SAXParser ret;
         synchronized (saxfactory)
@@ -64,7 +62,11 @@ public class TBXReader
             }
             catch (ParserConfigurationException err)
             {
-                throw new SAXException(err);
+                throw new RuntimeException("Unable to initialize XML parser.", err);
+            }
+            catch (SAXException err)
+            {
+                throw new RuntimeException("Unable to initialize XML parser.", err);
             }
         }
         return ret;

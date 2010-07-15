@@ -52,7 +52,10 @@ import org.w3c.dom.*;
 class TBXParser extends DefaultHandler implements Runnable
 {
     /*
-     * This users the DOM object system to build objects, but it does not
+     * Much of the encasing an exception in a SAXException is to allow that
+     * exception through the XML parser where it can be handled directly.
+     *
+     * This uses the DOM object system to build objects, but it does not
      * use the DOM document builder because that attempts to build the
      * entire document at once, and this needs to handle very large files
      * with event driven term entry construction.
@@ -60,6 +63,9 @@ class TBXParser extends DefaultHandler implements Runnable
 
     /** Logger for all classes in this package. */
     static final Logger PARSE_LOG = Logger.getLogger("org.ttt.salt.tbxreader.parser");
+    
+    /** Maximum queue size. */
+    static final int QUEUE_SIZE = 32;
 
     /** Map of PUBLIC names to entities. */
     private static Map<String, String> names2rsrc = new java.util.HashMap<String, String>();
@@ -118,26 +124,26 @@ class TBXParser extends DefaultHandler implements Runnable
     
     /** Indicator that the thread should be stopped. */
     private boolean stop;
+    
+    /** An exception occurred in parsing that is not recoverable. */
+    private TBXException fatalerror;
         
     /** The martif header element. */
     private MartifHeader martifheader;
     
-    /** An exception occurred before the martif header was fully parsed. */
-    private TBXException martifexception;
+    /** Number of term entries that have been processed. */
+    private int termentrycount;
     
     /** Queue of term entry elements that have been parsed. */
     private BlockingQueue<TermEntry> termentries
-            = new java.util.concurrent.ArrayBlockingQueue<TermEntry>(32);
+            = new java.util.concurrent.ArrayBlockingQueue<TermEntry>(QUEUE_SIZE);
     
     /**
      * Current term entry being built: this will be the last term entry
      * built until a new {@link startElement} is called for a new termEntry.
      */
     private TermEntry currentTermEntry;
-    
-    /** The fatal parse exception that occurred after last TermEntry in the queue. */
-    private SAXParseException fatalerror;
-        
+            
     /**
      * Create a new TBX parser.
      *
@@ -157,23 +163,13 @@ class TBXParser extends DefaultHandler implements Runnable
     }
     
     /**
-     * Stop all parsing of the XML file and interrupt any threads that are
-     * waiting for something to become available (e.g. {@link getMartifHeader}.
-     */
-    public synchronized void stop()
-    {
-        stop = true;
-        if (thread != null)
-            thread.interrupt();
-    }
-    
-    /**
      * Get the {@link MartifHeader} from the XML after it has been parsed.
      * This may block the first time until the header has been parsed. If this
      * is called a second time it will not block and will either return the
      * same object or throw the same exception as the first call.
      *
      * @return The martif header object for the TBX file.
+     * @throws IOException An I/O exception occurred while parsing the file.
      * @throws TBXException Indicates a well-formed or validation error in
      *  the XML has occurred.
      * @throws InterruptedException While waiting for the martif header to
@@ -181,17 +177,21 @@ class TBXParser extends DefaultHandler implements Runnable
      *  been stopped without the header being parsed.
      */
     public synchronized MartifHeader getMartifHeader()
-        throws TBXException, InterruptedException
+        throws IOException, TBXException, InterruptedException
     {
-        while (martifheader == null && martifexception == null)
+        while (martifheader == null && fatalerror == null)
         {
-            if (!stop)
-                wait();
             if (stop)
                 throw new InterruptedException();
+            wait();
         }
-        if (martifexception != null)
-            throw martifexception;
+        if (fatalerror != null)
+        {
+            if (fatalerror.getCause() instanceof IOException)
+                throw (IOException) fatalerror.getCause();
+            else
+                throw fatalerror;
+        }
         return martifheader;
     }
     
@@ -210,18 +210,59 @@ class TBXParser extends DefaultHandler implements Runnable
     }
     
     /**
-     * Offer the current term entry to the queue.
+     * Get the current queue size.
      */
-    private void offerTermEntry()
+    boolean isTermEntryQueueFull()
+    {
+        return termentries.size() == QUEUE_SIZE;
+    }
+    
+    /**
+     * Get the number of term entries processed.
+     */
+    int getTermEntriesProcessed()
+    {
+        return termentrycount;
+    }
+    
+    /**
+     * Put the current term entry to the queue.
+     *
+     * @throws SAXException The thread was interrupted while putting
+     *  the current term entry.
+     */
+    private void offerTermEntry() throws SAXException
     {
         if (currentTermEntry != null)
         {
-            currentTermEntry.init();
-            termentries.add(currentTermEntry);
-            currentTermEntry = null;
+            try
+            {
+                currentTermEntry.init();
+                termentries.put(currentTermEntry);
+                termentrycount++;
+                currentTermEntry = null;
+            }
+            catch (TBXException err)
+            {
+                throw new SAXException(err);
+            }
+            catch (InterruptedException err)
+            {
+                throw new SAXException(err);
+            }
         }
     }
     
+    /**
+     * Stop all parsing of the XML file and interrupt any threads that are
+     * waiting for something to become available (e.g. {@link getMartifHeader}.
+     */
+    public synchronized void stop()
+    {
+        stop = true;
+        thread.interrupt();
+    }
+
     /** {@inheritDoc} */
     public void run()
     {
@@ -232,7 +273,9 @@ class TBXParser extends DefaultHandler implements Runnable
         catch (SAXException err)
         {
             if (err.getCause() instanceof TBXException)
-                martifexception = (TBXException) err.getCause();
+                fatalerror = (TBXException) err.getCause();
+            else if (err.getCause() instanceof SAXParseException)
+                fatalerror = new TBXException(err.getCause());
             else if (err.getCause() instanceof InterruptedException)
                 TBXReader.LOGGER.info("TBXParser thread interrupted.");
             else
@@ -240,7 +283,7 @@ class TBXParser extends DefaultHandler implements Runnable
         }
         catch (IOException err)
         {
-            TBXReader.LOGGER.log(Level.SEVERE, "TBXParser had unhandled IOException.", err);
+            fatalerror = new TBXException("I/O Exception", err);
         }
         catch (Throwable err)
         {
@@ -248,25 +291,24 @@ class TBXParser extends DefaultHandler implements Runnable
         }
         finally
         {
-            thread = null;
             synchronized (this)
             {
+                stop = true;
                 notifyAll();
             }
         }
     }
     
     /**
-     * Wait for the parser to completly finish parsing the XML document.
+     * Get the thread that is parsing this XML document.
      *
-     * @param ms Maximum number of milliseconds to wait for thread to finish.
+     * @return Thread of control.
      */
-    public synchronized void join(long ms) throws InterruptedException
+    Thread getThread()
     {
-        if (thread != null)
-            thread.join(ms);
+        return thread;
     }
-    
+        
     /**
      * Check to see if I need to stop.
      *
@@ -392,10 +434,9 @@ class TBXParser extends DefaultHandler implements Runnable
     {
         PARSE_LOG.entering("TBXParser", "startDocument");
         checkStop();
-        martifheader = null;
-        martifexception = null;
-        termentries.clear();
         fatalerror = null;
+        martifheader = null;
+        termentries.clear();
 
         if (documentbuilder == null)
         {
@@ -563,7 +604,8 @@ class TBXParser extends DefaultHandler implements Runnable
     public void warning(SAXParseException exception) throws SAXException
     {
         PARSE_LOG.entering("TBXParser", "warning", exception);
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            String.format("TBXParser#warning %s: %s", exception.getClass(), exception.getMessage()));
     }
     
     /** {@inheritDoc} */
@@ -585,7 +627,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void fatalError(SAXParseException exception) throws SAXException
     {
         PARSE_LOG.entering("TBXParser", "fatalError", exception);
-        throw new UnsupportedOperationException();
+        throw new SAXException("FatalError", exception);
     }
 }
 

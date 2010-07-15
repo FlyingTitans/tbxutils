@@ -57,24 +57,87 @@ public class TBXParserTest
     {
     }
     
+    private TBXParser buildParser(String testfile) throws Exception
+    {
+        String file = String.format("/org/ttt/salt/tbxreader/TBXParserTest/%s", testfile);
+        InputStream in = getClass().getResourceAsStream(file);
+        assertNotNull("Unable to get stream for " + file, in);
+        TBXParser parser = new TBXParser(saxfactory.newSAXParser(), in);
+        return parser;
+    }
+    
+    private void errorChecking(String testfile) throws Exception
+    {
+        try
+        {
+            TBXParser parser = buildParser(testfile);
+            MartifHeader header = parser.getMartifHeader();
+            parser.getThread().join(100);
+        }
+        catch (TBXException err)
+        {
+            if (err.getCause() instanceof SAXParseException)
+                throw (SAXParseException) err.getCause();
+            else
+                throw err;
+        }
+    }
+    
+    @Test(expected=SAXParseException.class)
+    public void emptyFile() throws Exception
+    {
+        errorChecking("EmptyFile.xml");
+    }
+    
+    @Test(expected=IOException.class)
+    public void badDTDPath() throws Exception
+    {
+        errorChecking("BadDTDPath.xml");
+    }
+    
+    @Test(expected=SAXParseException.class)
+    public void corruptStreamEOF() throws Exception
+    {
+        errorChecking("CorruptStreamEOF.xml");
+    }
+    
+    @Test(expected=SAXParseException.class)
+    public void corruptStreamIllform() throws Exception
+    {
+        errorChecking("CorruptStreamIllform.xml");
+    }
+    
+    @Test(expected=SAXParseException.class)
+    public void corruptStreamNoXml() throws Exception
+    {
+        errorChecking("CorruptStreamNoXml.xml");
+    }
+    
+    @Test(expected=InvalidFileException.class)
+    public void martifHeaderNotTBX() throws Exception
+    {
+        errorChecking("MartifHeaderNotTBX.xml");
+    }
+    
+    @Test(expected=InvalidFileException.class)
+    public void martifHeaderNoLang() throws Exception
+    {
+        errorChecking("MartifHeaderNoLang.xml");
+    }
+    
     @Test
     public void parseValidFileDTD() throws Exception
     {
-        TBXReader.LOGGER.setLevel(java.util.logging.Level.FINEST);
-        InputStream in = getClass().getResourceAsStream("/org/ttt/salt/tbxreader/ValidDTD.xml");
-        assertNotNull(in);
-        TBXParser parser = new TBXParser(saxfactory.newSAXParser(), in);
+        TBXParser parser = buildParser("ValidDTD.xml");
         MartifHeader header = parser.getMartifHeader();
-        parser.join(100);
+        parser.getThread().join(100);
     }
     
     @Test
     public void parseInvalidTermEntry() throws Exception
     {
         //TBXParser.PARSE_LOG.setLevel(java.util.logging.Level.FINEST);
-        InputStream in = getClass().getResourceAsStream("/org/ttt/salt/tbxreader/InvalidTermEntry.xml");
-        assertNotNull(in);
-        TBXParser parser = new TBXParser(saxfactory.newSAXParser(), in);
+        TBXParser parser = buildParser("InvalidTermEntry.xml");
         MartifHeader header = parser.getMartifHeader();
         
         TermEntry entry;
@@ -96,5 +159,26 @@ public class TBXParserTest
         assertEquals(25, except.getLineNumber());
         assertEquals(25, except.getColumnNumber());
     }
+    
+    @Test
+    public void threadManagement() throws Exception
+    {
+        TBXParser parser = buildParser("BlockingFile.xml");
+        assertNotNull(parser.getMartifHeader());
+        while (!parser.isTermEntryQueueFull())
+            Thread.currentThread().sleep(1);
+        assertEquals(TBXParser.QUEUE_SIZE, parser.getTermEntriesProcessed());
+        Thread.currentThread().sleep(10);
+        assertTrue(parser.getThread().isAlive());
+        assertNotNull(parser.getNextTermEntry());
+        Thread.currentThread().sleep(1);
+        assertEquals(TBXParser.QUEUE_SIZE + 1, parser.getTermEntriesProcessed());
+        parser.stop();
+        
+        
+        for (int i = 0; i < TBXParser.QUEUE_SIZE; i++)
+            assertNotNull(parser.getNextTermEntry());
+        assertNull(parser.getNextTermEntry());
+    }    
 }
 

@@ -62,7 +62,7 @@ public class TermEntry
     /**
      * The term entry is complete and can be built from DOM element.
      */
-    void init()
+    void init() throws TBXException
     {
         element.getParentNode().removeChild(element);
     }

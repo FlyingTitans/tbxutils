@@ -178,7 +178,7 @@ public class TBXParserTest
         int count = 0;
         while (parser.getNextTermEntry() != null)
             count++;
-        assertTrue(TBXParser.QUEUE_SIZE <= count);
+        assertTrue(count < TBXParser.QUEUE_SIZE + 2);
     }    
 }
 

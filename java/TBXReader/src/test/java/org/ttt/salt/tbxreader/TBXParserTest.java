@@ -33,11 +33,7 @@ public class TBXParserTest
     @BeforeClass
     public static void initialize() throws Exception
     {
-        java.util.logging.Formatter simplefmt = new java.util.logging.SimpleFormatter();
-        java.util.logging.Handler handler = new java.util.logging.ConsoleHandler();
-        handler.setLevel(java.util.logging.Level.FINEST);
-        handler.setFormatter(simplefmt);
-        TBXParser.PARSE_LOG.addHandler(handler);
+        TBXReaderTest.configureLoggers("TBXParserTest");
         //TBXParser.PARSE_LOG.setLevel(java.util.logging.Level.FINEST);
 
         saxfactory = SAXParserFactory.newInstance();

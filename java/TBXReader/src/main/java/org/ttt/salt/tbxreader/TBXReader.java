@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
  * @license Licensed under the Apache License, Version 2.0.
  */
 public class TBXReader
-{    
+{
     /** Logger for all classes in this package. */
     static final Logger LOGGER = Logger.getLogger("org.ttt.salt.tbxreader");
     

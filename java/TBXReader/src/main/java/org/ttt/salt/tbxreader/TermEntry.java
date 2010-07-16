@@ -52,7 +52,7 @@ public class TermEntry
      *  information for the term entry.
      * @param loc The Locator in the XML this term entry is starting at.
      */
-    TermEntry(Element elem, Locator loc)
+    public TermEntry(Element elem, Locator loc)
     {
         element = elem;
         line = loc.getLineNumber();
@@ -62,7 +62,7 @@ public class TermEntry
     /**
      * The term entry is complete and can be built from DOM element.
      */
-    void init() throws TBXException
+    public void init() throws TBXException
     {
         element.getParentNode().removeChild(element);
     }

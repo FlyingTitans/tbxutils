@@ -1,6 +1,4 @@
 ^/\*$
-^ \* \$Id.*\$$
-^ \*-{77}$
 ^ \* Copyright \d{4} Lance Finn Helsten \(helsten@acm.org\)$
 ^ \*$
 ^ \* Licensed under the Apache License, Version 2.0 \(the "License"\);$

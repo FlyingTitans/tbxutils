@@ -25,8 +25,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * A TBX reader that will check that a file is well-formed, valid, and
- * conforms to the associated XCS file.
+ * TBXReader is the system used to read TBX files and check to see if it
+ * is XML well-formed, XML valid against schema, and XCS conformant.
  *
  * @author Lance Finn Helsten
  * @version 2.0-SNAPSHOT
@@ -72,20 +72,14 @@ public class TBXReader
         return ret;
     }
     
-    /** URL to the TBX file to be parsed. */
-    private URL url;
-    
     /** Properties for this parser. */
     private Map<String, Object> properties;
     
     /**
-     * Create a new TBX parser.
-     *
-     * @param tbx URL to the TBX file to process.
+     * 
      */
-    public TBXReader(URL tbx)
+    private TBXReader()
     {
-        url = tbx;
         properties = new java.util.HashMap<String, Object>();
     }
     
@@ -129,19 +123,6 @@ public class TBXReader
      *  header could not be returned.
      */
     public MartifHeader getMartifHeader() throws TBXException
-    {
-        throw new UnsupportedOperationException();
-    }
-    
-    /**
-     * Get the next {@link TermEntry} for the next <code>termEntry</code>
-     * element in the TBX file.
-     *
-     * @return The next term object.
-     * @throws TBXException Contains the information on why the next term
-     *  entry could not be returned.
-     */
-    public TermEntry getNextTermEntry() throws TBXException
     {
         throw new UnsupportedOperationException();
     }

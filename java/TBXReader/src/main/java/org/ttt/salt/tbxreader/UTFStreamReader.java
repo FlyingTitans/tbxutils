@@ -15,32 +15,107 @@
  */
 package org.ttt.salt.tbxreader;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.Reader;
 import java.io.InputStream;
+import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URISyntaxException;
-import java.util.Map;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import org.xml.sax.InputSource;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.SAXException;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 
 /**
- * This contains static utilty functions.
+ * This will look at an input stream and determine the Unicode Transformation
+ * Format and build itself as a {@link java.io.Reader} that will properly
+ * transform the stream.
  *
  * @author Lance Finn Helsten
  * @version 2.0-SNAPSHOT
  * @license Licensed under the Apache License, Version 2.0.
  */
-class Utility
-{    
+public class UTFStreamReader extends Reader
+{
+    /** The character set that represents the streams tranform format.*/
+    private Charset format;
+    
+    /** The input stream reader that backs this reader. */
+    private InputStreamReader insr;
+    
+    /**
+     * Create a new UTFStreamReader from the input stream.
+     *
+     * @param in The input stream.
+     */
+    public UTFStreamReader(InputStream in) throws IOException
+    {
+        super();
+        if (!in.markSupported())
+            in = new BufferedInputStream(in);
+        String fmt = getTransformationFormat(in);
+        format = Charset.forName(fmt);
+        insr = new InputStreamReader(in, format);
+    }
+    
+    /** {@inheritDoc} */
+    public void close() throws IOException
+    {
+        insr.close();
+    }
+
+    /** {@inheritDoc} */
+    public void mark(int readAheadLimit) throws IOException
+    {
+        insr.mark(readAheadLimit);
+    }
+    
+    /** {@inheritDoc} */
+    public boolean markSupported()
+    {
+        return insr.markSupported();
+    }
+    
+    /** {@inheritDoc} */
+    public int read() throws IOException
+    {
+        return insr.read();
+    }
+    
+    /** {@inheritDoc} */
+    public int read(char[] cbuf) throws IOException
+    {
+        return insr.read(cbuf);
+    }
+    
+    /** {@inheritDoc} */
+    public int read(char[] cbuf, int off, int len) throws IOException
+    {
+        return insr.read(cbuf, off, len);
+    }
+    
+    /** {@inheritDoc} */
+    public int read(CharBuffer target) throws IOException
+    {
+        return insr.read(target);
+    }
+    
+    /** {@inheritDoc} */
+    public boolean ready() throws IOException
+    {
+        return insr.ready();
+    }
+    
+    /** {@inheritDoc} */
+    public void reset() throws IOException
+    {
+        insr.reset();
+    }
+    
+    /** {@inheritDoc} */
+    public long skip(long len) throws IOException
+    {
+        return insr.skip(len);
+    }
+    
     /**
      * Find out if the file is UTF-16 or UTF-8 encoded. If there is no
      * Byte Order Mark (BOM) at the start of the file, but the "<?xml"
@@ -55,7 +130,7 @@ class Utility
      * @throws IOException Any unhandled I/O exceptions.
      */
     //CHECKSTYLE: RedundantThrows unchecked OFF
-    public static String getEncoding(InputStream input)
+    private String getTransformationFormat(InputStream input)
             throws UnsupportedEncodingException, IOException
     {
         //CHECKSTYLE: MagicNumber OFF

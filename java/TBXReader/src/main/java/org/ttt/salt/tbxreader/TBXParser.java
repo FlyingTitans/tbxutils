@@ -16,12 +16,11 @@
 package org.ttt.salt.tbxreader;
 
 import java.io.File;
+import java.io.Reader;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Set;
-import java.util.List;
 import java.util.Stack;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -32,7 +31,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
@@ -40,7 +38,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 //import org.xml.sax.ext.DefaultHandler2;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Text;
+import org.w3c.dom.ProcessingInstruction;
 
 /**
  * This is used by TBXReader to do the parsing of the TBX XML stream.
@@ -66,6 +68,9 @@ class TBXParser extends DefaultHandler implements Runnable
     
     /** Maximum queue size. */
     static final int QUEUE_SIZE = 32;
+    
+    /** Maximum queue poll wait time. */
+    static final long QUEUE_TIMEOUT = 100;
 
     /** Map of PUBLIC names to entities. */
     private static Map<String, String> names2rsrc = new java.util.HashMap<String, String>();
@@ -105,7 +110,7 @@ class TBXParser extends DefaultHandler implements Runnable
     private SAXParser parser;
     
     /** SAX locator for finding where errors occur. */
-    private Locator locator;
+    private Locator saxlocator;
     
     /** DOM document for all new nodes. */
     private Document document;
@@ -206,7 +211,7 @@ class TBXParser extends DefaultHandler implements Runnable
      */
     public TermEntry getNextTermEntry() throws InterruptedException
     {
-        return termentries.poll(100, TimeUnit.MILLISECONDS);
+        return termentries.poll(QUEUE_TIMEOUT, TimeUnit.MILLISECONDS);
     }
     
     /**
@@ -285,10 +290,12 @@ class TBXParser extends DefaultHandler implements Runnable
         {
             fatalerror = new TBXException("I/O Exception", err);
         }
+        //CHECKSTYLE: IllegalCatch OFF
         catch (Throwable err)
         {
             TBXReader.LOGGER.log(Level.SEVERE, "Exception in TBXParser thread.", err);
         }
+        //CHECKSTYLE: IllegalCatch ON
         finally
         {
             synchronized (this)
@@ -338,15 +345,17 @@ class TBXParser extends DefaultHandler implements Runnable
         TBXReader.LOGGER.info(
             String.format("Resolve Entity for PublicID='%s' SystemId='%s'", publicId, systemId));
         checkStop();
-        java.io.InputStreamReader reader = null;
+        Reader reader = null;
         try
         {
             InputStream input = null;
             if (names2rsrc.containsKey(publicId))
             {   //Check to see if it is a named resource
+                //CHECKSTYLE: ParameterAssignment OFF
                 TBXReader.LOGGER.info("Entity is a known publicId: " + publicId);
                 systemId = names2rsrc.get(publicId);
                 input = getClass().getResourceAsStream(names2rsrc.get(publicId));
+                //CHECKSTYLE: ParameterAssignment ON
             }
             else if (systemId.matches("\\w+:.+"))
             {   //Do the full URI parsing
@@ -369,10 +378,7 @@ class TBXParser extends DefaultHandler implements Runnable
                 if (input == null)
                     throw new java.io.FileNotFoundException();
             }
-            if (!input.markSupported())
-                input = new java.io.BufferedInputStream(input);
-            String enc = Utility.getEncoding(input);
-            reader = new java.io.InputStreamReader(input, enc);
+            reader = new UTFStreamReader(input);
         }
         catch (java.io.FileNotFoundException err)
         {
@@ -426,7 +432,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void setDocumentLocator(Locator locator)
     {
-        this.locator = locator;
+        saxlocator = locator;
     }
     
     /** {@inheritDoc} */
@@ -513,15 +519,15 @@ class TBXParser extends DefaultHandler implements Runnable
         {
             String type = element.getAttribute("type");
             if (!type.equals("TBX"))
-                throw new SAXException(new InvalidFileException(locator, "NotTBXFile"));
-            String defaultlang = element.getAttributeNS("http://www.w3.org/XML/1998/namespace", "lang");
+                throw new SAXException(new InvalidFileException(saxlocator, "NotTBXFile"));
+            defaultlang = element.getAttributeNS("http://www.w3.org/XML/1998/namespace", "lang");
             if (defaultlang.isEmpty())
-                throw new SAXException(new InvalidFileException(locator, "NoDefaultLang"));
+                throw new SAXException(new InvalidFileException(saxlocator, "NoDefaultLang"));
         }
         else if (qName.equals("termEntry"))
         {
             offerTermEntry();
-            currentTermEntry = new TermEntry(element, locator);
+            currentTermEntry = new TermEntry(element, saxlocator);
         }
     }
     
@@ -614,7 +620,7 @@ class TBXParser extends DefaultHandler implements Runnable
         PARSE_LOG.entering("TBXParser", "error", exception);
         if (currentTermEntry != null)
         {
-            InvalidTermEntryException err = new InvalidTermEntryException(locator, exception.getLocalizedMessage(), exception);
+            InvalidTermEntryException err = new InvalidTermEntryException(saxlocator, exception.getLocalizedMessage(), exception);
             currentTermEntry.getExceptions().add(err);
         }
         else

@@ -18,10 +18,10 @@
     <modelVersion>4.0.0</modelVersion>
     
     <!-- POM Relationships -->
-    <groupId>org.ttt.salt.utils</groupId>
-    <artifactId>analysis</artifactId>
+    <groupId>org.ttt.salt</groupId>
+    <artifactId>codeanalysis</artifactId>
     <version>2.0-SNAPSHOT</version>
-    <name>TBX :: Utils :: Analysis</name>
+    <name>TBX :: Code Analysis</name>
     <description>
         Contains TBX source code policy and enforcement configuration files.
     </description>

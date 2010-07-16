@@ -48,7 +48,7 @@ public class MartifHeader
      * @param elem The DOM element that contains all of the validated
      *  information for the martif header.
      */
-    MartifHeader(Element elem)
+    public MartifHeader(Element elem)
     {
     }
 }

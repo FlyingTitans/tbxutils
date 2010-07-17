@@ -13,25 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ttt.salt.tbxreader;
-
-import org.xml.sax.Locator;
-import org.xml.sax.SAXParseException;
-
-/**
- * This indicates a term entry failed XML validation.
- *
- * @author Lance Finn Helsten
- * @version 2.0-SNAPSHOT
- * @license Licensed under the Apache License, Version 2.0.
- */
-public class InvalidTermEntryException extends TBXParseException
-{
-    /**
-     */
-    public InvalidTermEntryException(Locator locator, String message, SAXParseException cause)
-    {
-        super(locator, message, cause);
-    }
-}
-
+package org.ttt.salt.tbxcheck;

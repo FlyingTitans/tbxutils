@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Lance Finn Helsten (helsten@acm.org)
+ * Copyright 2000 Lance Finn Helsten (helsten@acm.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 /**
- * A TBX observable that will send each processed <code>termEntry</code>
- * element as a {@link TermEntry} object to all observers.
+ * A TBX observable, for use in an observer design pattern, that will send
+ * each processed <code>termEntry</code> element as a {@link TermEntry}
+ * object to all observers.
  * 
  * <h4>Objects</h4>
  * <p>
@@ -64,6 +65,38 @@ import java.util.logging.Level;
  *         contain the exceptions.</li>
  * </ol>
  *
+ * <h4>Example</h4>
+ * To receive each <code>termEntry</code> element as a {@link TermEntry}
+ * object, with full parsing, validation, and conformance checks in place,
+ * the following would be sufficient.
+ * <code><pre>
+ *
+ * public void update(Observable o, Object arg)
+ * {
+ *     TBXObservable tbxo = (TBXObservable) o;
+ *     if (arg == null)
+ *     {
+ *         …The TBX file has completed processing.
+ *     }
+ *     else if (arg instanceof TBXException)
+ *     {
+ *         …A fatal error has occurred and processing is complete.
+ *     }
+ *     else if (arg instanceof TermEntry)
+ *     {
+ *         …Process the TermEntry
+ *     }
+ * }
+ *
+ *
+ * public void initReader(URL url)
+ * {
+ *     TBXObservable tbxo = new TBXObservable(url, null);
+ *     tbxo.addObserver(this);
+ *     tbxo.start();
+ * }
+ * </pre></code>
+ *
  * @author Lance Finn Helsten
  * @version 2.0-SNAPSHOT
  * @license Licensed under the Apache License, Version 2.0.
@@ -92,6 +125,14 @@ public class TBXObservable extends Observable implements Runnable
         url = tbx;
         throw new UnsupportedOperationException();
     }
+	
+	/**
+	 * Start delivering term entry objects to the observers.
+	 */
+	public void start()
+	{
+        throw new UnsupportedOperationException();
+	}
         
     /**
      * Get the {@link MartifHeader} for the TBX file's <code>martifHeader</code>

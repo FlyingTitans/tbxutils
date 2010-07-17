@@ -25,7 +25,26 @@
     <description>
         Contains TBX source code policy and enforcement configuration files.
     </description>
+
+    <!-- Project Information -->
     
     <!-- Build Settings -->
     <packaging>jar</packaging>
+
+    <!-- Build Environment -->
+    <!-- Environment Information -->
+    <distributionManagement>
+        <site>
+            <id>TBX :: Site :: Localhost</id>
+            <url>file://${basedir}/target/sitedeploy</url>
+        </site>
+        <snapshotRepository>
+            <id>TBX :: Snapshot :: Localhost</id>
+            <url>file://${basedir}/target/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>TBX :: Repository :: Files</id>
+            <url>file://${basedir}/target/deploy</url>
+        </repository>
+    </distributionManagement>
 </project>

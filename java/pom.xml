@@ -105,31 +105,31 @@
                 </dependencies>
             </plugin>
             <!--
-            <plugin>
-                <groupId>net.objectlab</groupId>
-                <artifactId>mvn-qalab-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <id>merge-all</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>merge-all</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>qalab-movers</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>movers</goal>
-                        </goals>
-                        <configuration>
-                            <startTimeHoursOffset>480</startTimeHoursOffset>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
+			 <plugin>
+			 <groupId>net.objectlab</groupId>
+			 <artifactId>mvn-qalab-plugin</artifactId>
+			 <version>2.2</version>
+			 <executions>
+			 <execution>
+			 <id>merge-all</id>
+			 <phase>site</phase>
+			 <goals>
+			 <goal>merge-all</goal>
+			 </goals>
+			 </execution>
+			 <execution>
+			 <id>qalab-movers</id>
+			 <phase>site</phase>
+			 <goals>
+			 <goal>movers</goal>
+			 </goals>
+			 <configuration>
+			 <startTimeHoursOffset>480</startTimeHoursOffset>
+			 </configuration>
+			 </execution>
+			 </executions>
+			 </plugin>
+			 -->
         </plugins>
     </build>
     <reporting>
@@ -228,47 +228,47 @@
                 </reportSets>
             </plugin>
             <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>changes-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>changelog-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-            </plugin>
-            -->
+			 <plugin>
+			 <groupId>org.codehaus.mojo</groupId>
+			 <artifactId>changes-maven-plugin</artifactId>
+			 </plugin>
+			 <plugin>
+			 <groupId>org.codehaus.mojo</groupId>
+			 <artifactId>changelog-maven-plugin</artifactId>
+			 </plugin>
+			 <plugin>
+			 <groupId>org.codehaus.mojo</groupId>
+			 <artifactId>taglist-maven-plugin</artifactId>
+			 </plugin>
+			 -->
             
             
             <!-- Other reports -->
             <!--
-            <plugin>
-                <groupId>net.sf</groupId>
-                <artifactId>stat-scm</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.pdf</exclude>
-                        <exclude>**/qalab.xml</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.objectlab</groupId>
-                <artifactId>mvn-qalab-plugin</artifactId>
-                <version>2.2</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>report-merge-chart</report>
-                            <report>report-movers-all</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            -->
+			 <plugin>
+			 <groupId>net.sf</groupId>
+			 <artifactId>stat-scm</artifactId>
+			 <configuration>
+			 <excludes>
+			 <exclude>**/*.pdf</exclude>
+			 <exclude>**/qalab.xml</exclude>
+			 </excludes>
+			 </configuration>
+			 </plugin>
+			 <plugin>
+			 <groupId>net.objectlab</groupId>
+			 <artifactId>mvn-qalab-plugin</artifactId>
+			 <version>2.2</version>
+			 <reportSets>
+			 <reportSet>
+			 <reports>
+			 <report>report-merge-chart</report>
+			 <report>report-movers-all</report>
+			 </reports>
+			 </reportSet>
+			 </reportSets>
+			 </plugin>
+			 -->
         </plugins>
     </reporting>
     
@@ -291,17 +291,28 @@
         </mailingList>
     </mailingLists>
     <!--
-    <scm>
-        <connection>scm:hg:https://tbxutil.googlecode.com/hg/</connection>
-        <developerConnection>scm:hg:https://tbxutil.googlecode.com/hg/</developerConnection>
-        <url>scm:hg:https://tbxutil.googlecode.com/hg/</url>
-    </scm>
-    -->
+	 <scm>
+	 <connection>scm:hg:https://tbxutil.googlecode.com/hg/</connection>
+	 <developerConnection>scm:hg:https://tbxutil.googlecode.com/hg/</developerConnection>
+	 <url>scm:hg:https://tbxutil.googlecode.com/hg/</url>
+	 </scm>
+	 -->
     <!-- Maven Environment -->
-    <!-- NOT ALLOWED FOR MAVEN CENTRAL REPOSITORY
-     <repositories></repositories>
-     <pluginRepositories></pluginRepositories>
-     -->
+	<repositories>
+        <repository>
+            <id>java.net_2</id>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+	</repositories>
+	<pluginRepositories>
+        <pluginRepository>
+            <id>java.net_1.plugins</id>
+            <url>http://download.java.net/maven/1</url>
+            <layout>legacy</layout>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </pluginRepository>
+	</pluginRepositories>
     <distributionManagement>
         <!-- site>
          <id>TBX :: SourceForge :: Site</id>
@@ -309,20 +320,20 @@
          <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/htdocs</url>
          </site -->
         <site>
-            <id>TBX :: Files :: Localhost</id>
+            <id>TBX :: Site :: Localhost</id>
             <name>SourceForge Website</name>
-            <url>file://${basedir}/target/sitedeploy</url>
+            <url>file:///Library/WebServer/Documents/tbxutil</url>
             <!-- url>scp://localhost/Library/WebServer/Documents/tbxutil</url -->
         </site>
         <snapshotRepository>
-            <id>TBX :: Site :: Localhost</id>
+            <id>TBX :: Snapshots :: Localhost</id>
             <name>SourceForge Local</name>
-            <url>file://${basedir}/target/snapshots</url>
+            <url>file:///Library/WebServer/Documents/tbxutil/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>TBX :: SourceForge :: Files</id>
+            <id>TBX :: Repository :: Files</id>
             <name>SourceForge FRS</name>
-            <url>file://${basedir}/target/deploy</url>
+            <url>file:///Library/WebServer/Documents/tbxutil/deploy</url>
             <!-- Need the above until the maven relase plugin is fixed for SourceForge. -->
             <!-- url>sftp://frs.sourceforge.net/uploads/</url -->
             <layout>default</layout>

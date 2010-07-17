@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Lance Finn Helsten (helsten@acm.org)
+ * Copyright 2000 Lance Finn Helsten (helsten@acm.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 /**
- * A TBX iterator that deliver each processed <code>termEntry</code>
- * element as a {@link TermEntry} object from an iterator.
+ * A TBX iterator, for use in an iterator design patter, that deliver
+ * each processed <code>termEntry</code> element as a {@link TermEntry}
+ * object from an iterator.
  * 
  * <h4>TBX Problems</h4>
  * <ol>

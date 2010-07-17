@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Lance Finn Helsten (helsten@acm.org)
+ * Copyright 2000 Lance Finn Helsten (helsten@acm.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.xml.sax.Locator;
 
 /**
  * This is the base class for all TBX exceptions that can occur when parsing,
- * validating, and checking conformance of a TBX file.
+ * and validating a TBX file.
  *
  * @author Lance Finn Helsten
  * @version 2.0-SNAPSHOT

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000 Lance Finn Helsten (helsten@acm.org)
+ * Copyright 2010 Lance Finn Helsten (helsten@acm.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,9 +62,12 @@ class TBXParser extends DefaultHandler implements Runnable
      * entire document at once, and this needs to handle very large files
      * with event driven term entry construction.
      */
-
+	
     /** Logger for all classes in this package. */
     static final Logger PARSE_LOG = Logger.getLogger("org.ttt.salt.tbxreader.parser");
+	
+	/** Logger entering source. */
+	private static final String LOG_SOURCE = "TBXParser";
     
     /** Maximum queue size. */
     static final int QUEUE_SIZE = 32;
@@ -148,6 +151,14 @@ class TBXParser extends DefaultHandler implements Runnable
      * built until a new {@link startElement} is called for a new termEntry.
      */
     private TermEntry currentTermEntry;
+	
+	/**
+	 * Create a TBX parser that allows testing of methods that do not directly
+	 * depend on parsing being active.
+	 */
+	TBXParser()
+	{
+	}
             
     /**
      * Create a new TBX parser.
@@ -340,7 +351,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public InputSource resolveEntity(String publicId, String systemId)
         throws IOException, SAXException
     {
-        PARSE_LOG.entering("TBXParser", "resolveEntity", 
+        PARSE_LOG.entering(LOG_SOURCE, "resolveEntity", 
             String.format("PublicID='%s' SystemId='%s'", publicId, systemId));
         TBXReader.LOGGER.info(
             String.format("Resolve Entity for PublicID='%s' SystemId='%s'", publicId, systemId));
@@ -399,7 +410,7 @@ class TBXParser extends DefaultHandler implements Runnable
         InputSource ret = new InputSource(reader);
         ret.setPublicId(publicId);
         ret.setSystemId(systemId);
-        PARSE_LOG.exiting("TBXParser", "resolveEntity", ret);
+        PARSE_LOG.exiting(LOG_SOURCE, "resolveEntity", ret);
         return ret;
     }
     
@@ -411,7 +422,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void notationDecl(String name, String publicId, String systemId)
         throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "notationDecl");
+        PARSE_LOG.entering(LOG_SOURCE, "notationDecl");
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -420,7 +431,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void unparsedEntityDecl(String name, String publicId,
         String systemId, String notationName) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "unparsedEntityDecl");
+        PARSE_LOG.entering(LOG_SOURCE, "unparsedEntityDecl");
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -438,7 +449,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void startDocument() throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "startDocument");
+        PARSE_LOG.entering(LOG_SOURCE, "startDocument");
         checkStop();
         fatalerror = null;
         martifheader = null;
@@ -465,14 +476,14 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void endDocument() throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "endDocument");
+        PARSE_LOG.entering(LOG_SOURCE, "endDocument");
         checkStop();
     }
     
     /** {@inheritDoc} */
     public void startPrefixMapping(String prefix, String uri) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "startPrefixMapping");
+        PARSE_LOG.entering(LOG_SOURCE, "startPrefixMapping");
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -480,7 +491,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void endPrefixMapping(String prefix) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "endPrefixMapping");
+        PARSE_LOG.entering(LOG_SOURCE, "endPrefixMapping");
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -489,7 +500,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void startElement(String uri, String localName, String qName,
         Attributes atts) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "startElement",
+        PARSE_LOG.entering(LOG_SOURCE, "startElement",
                 String.format("ns='%s' QName='%s' LocalName='%s'", uri, qName, localName));
         checkStop();
         elements.push(element);
@@ -535,7 +546,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void endElement(String uri, String localName, String qName)
          throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "endElement",
+        PARSE_LOG.entering(LOG_SOURCE, "endElement",
                 String.format("ns='%s' QName='%s' LocalName='%s'", uri, qName, localName));
         checkStop();
         Element child = element;
@@ -557,9 +568,6 @@ class TBXParser extends DefaultHandler implements Runnable
         {
             offerTermEntry();
         }
-        else if (qName.equals("termEntry"))
-        {
-        }
         else if (!knownTagNames.contains(qName))
         {
             PARSE_LOG.warning("Unknown element: " + qName);
@@ -569,7 +577,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void characters(char[] ch, int start, int length) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "characters", new String(ch, start, length));
+        PARSE_LOG.entering(LOG_SOURCE, "characters", new String(ch, start, length));
         checkStop();
         Text text = document.createTextNode(new String(ch, start, length));
         element.appendChild(text);
@@ -579,7 +587,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void ignorableWhitespace(char[] ch, int start, int length)
         throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "ignorableWhitespace", String.format("Width: %d", length));
+        PARSE_LOG.entering(LOG_SOURCE, "ignorableWhitespace", String.format("Width: %d", length));
         checkStop();
     }
     
@@ -587,7 +595,7 @@ class TBXParser extends DefaultHandler implements Runnable
     public void processingInstruction(String target, String data)
         throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "processingInstruction", new Object[]{target, data});
+        PARSE_LOG.entering(LOG_SOURCE, "processingInstruction", new Object[]{target, data});
         checkStop();
         ProcessingInstruction pi = document.createProcessingInstruction(target, data);
         element.appendChild(pi);
@@ -596,7 +604,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void skippedEntity(String name) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "skippedEntity", new Object[]{name});
+        PARSE_LOG.entering(LOG_SOURCE, "skippedEntity", new Object[]{name});
         checkStop();
         throw new UnsupportedOperationException();
     }
@@ -609,7 +617,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void warning(SAXParseException exception) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "warning", exception);
+        PARSE_LOG.entering(LOG_SOURCE, "warning", exception);
         throw new UnsupportedOperationException(
             String.format("TBXParser#warning %s: %s", exception.getClass(), exception.getMessage()));
     }
@@ -617,7 +625,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void error(SAXParseException exception) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "error", exception);
+        PARSE_LOG.entering(LOG_SOURCE, "error", exception);
         if (currentTermEntry != null)
         {
             InvalidTermEntryException err = new InvalidTermEntryException(saxlocator, exception.getLocalizedMessage(), exception);
@@ -632,7 +640,7 @@ class TBXParser extends DefaultHandler implements Runnable
     /** {@inheritDoc} */
     public void fatalError(SAXParseException exception) throws SAXException
     {
-        PARSE_LOG.entering("TBXParser", "fatalError", exception);
+        PARSE_LOG.entering(LOG_SOURCE, "fatalError", exception);
         throw new SAXException("FatalError", exception);
     }
 }

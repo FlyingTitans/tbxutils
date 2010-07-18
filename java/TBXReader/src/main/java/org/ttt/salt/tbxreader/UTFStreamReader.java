@@ -1,5 +1,5 @@
 /*
- * Copyright 2000 Lance Finn Helsten (helsten@acm.org)
+ * Copyright 2010 Lance Finn Helsten (helsten@acm.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,13 +139,8 @@ public class UTFStreamReader extends Reader
         int b1 = input.read();
         int b2 = input.read();
         int b3 = input.read();
-        int b4 = input.read();
         input.reset();
-        
-        int b1utf = b1 & 0xC0;
-        int b2utf = b2 & 0xC0;
-        int b3utf = b3 & 0xC0;
-        
+                
         String ret = null;
         if (b0 == 0xEF && b1 == 0xBB && b2 == 0xBF)
         {   //UTF-8 BOM eliminate the first three bytes

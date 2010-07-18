@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE qalab [<!ELEMENT qalab (summary,file*)>
+<!ATTLIST qalab version CDATA #REQUIRED>
+<!ELEMENT summary (summaryresult*)>
+<!ELEMENT file (result+)>
+<!ATTLIST file id ID #REQUIRED>
+<!ATTLIST file path CDATA #REQUIRED>
+<!ELEMENT result EMPTY>
+<!ATTLIST result date CDATA #REQUIRED>
+<!ATTLIST result statvalue CDATA #REQUIRED>
+<!ATTLIST result type CDATA #REQUIRED>
+<!ELEMENT summaryresult EMPTY>
+<!ATTLIST summaryresult date CDATA #REQUIRED>
+<!ATTLIST summaryresult statvalue CDATA #REQUIRED>
+<!ATTLIST summaryresult filecount CDATA #REQUIRED>
+<!ATTLIST summaryresult type CDATA #REQUIRED>
+]>
+<qalab version="1.1">
+    <summary>
+        <summaryresult date="2010-07-18" filecount="14" statvalue="17" type="checkstyle"/>
+        <summaryresult date="2010-07-18" filecount="8" statvalue="23" type="pmd"/>
+        <summaryresult date="2010-07-18" filecount="2" statvalue="68" type="pmd-cpd"/>
+        <summaryresult date="2010-07-18" filecount="13" statvalue="47" type="cobertura-line"/>
+        <summaryresult date="2010-07-18" filecount="13" statvalue="28" type="cobertura-branch"/>
+    </summary>
+    <file id="org_ttt_salt_tbxreader_InvalidFileException.java" path="org/ttt/salt/tbxreader/InvalidFileException.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_InvalidTermEntryException.java" path="org/ttt/salt/tbxreader/InvalidTermEntryException.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_MartifHeader.java" path="org/ttt/salt/tbxreader/MartifHeader.java">
+        <result date="2010-07-18" statvalue="2" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="6" type="pmd"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_package-info.java" path="org/ttt/salt/tbxreader/package-info.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TBXDOMDocument.java" path="org/ttt/salt/tbxreader/TBXDOMDocument.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="2" type="pmd"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TBXException.java" path="org/ttt/salt/tbxreader/TBXException.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TBXIterator.java" path="org/ttt/salt/tbxreader/TBXIterator.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="2" type="pmd"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TBXObservable.java" path="org/ttt/salt/tbxreader/TBXObservable.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="2" type="pmd"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TBXParseException.java" path="org/ttt/salt/tbxreader/TBXParseException.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="71" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TBXParser.java" path="org/ttt/salt/tbxreader/TBXParser.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="2" type="pmd"/>
+        <result date="2010-07-18" statvalue="79" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="77" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TBXReader.java" path="org/ttt/salt/tbxreader/TBXReader.java">
+        <result date="2010-07-18" statvalue="3" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="1" type="pmd"/>
+        <result date="2010-07-18" statvalue="36" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TBXResolver.java" path="org/ttt/salt/tbxreader/TBXResolver.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="4" type="pmd"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_TermEntry.java" path="org/ttt/salt/tbxreader/TermEntry.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="100" type="cobertura-branch"/>
+    </file>
+    <file id="org_ttt_salt_tbxreader_UTFStreamReader.java" path="org/ttt/salt/tbxreader/UTFStreamReader.java">
+        <result date="2010-07-18" statvalue="1" type="checkstyle"/>
+        <result date="2010-07-18" statvalue="4" type="pmd"/>
+        <result date="2010-07-18" statvalue="42" type="cobertura-line"/>
+        <result date="2010-07-18" statvalue="5" type="cobertura-branch"/>
+    </file>
+</qalab>

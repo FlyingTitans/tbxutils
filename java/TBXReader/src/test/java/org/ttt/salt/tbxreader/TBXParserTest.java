@@ -1,5 +1,5 @@
 /*
- * Copyright 2000 Lance Finn Helsten (helsten@acm.org)
+ * Copyright 2010 Lance Finn Helsten (helsten@acm.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.ttt.salt.tbxreader;
 import org.junit.*;
 import static org.junit.Assert.*;
 import java.io.*;
+import java.nio.*;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 
@@ -28,13 +29,24 @@ import org.xml.sax.*;
  */
 public class TBXParserTest
 {
+	private static File cwd;
+	private static File xmldir;
+	private static File corestructfile;
+	private static File xcsstructfile;
     private static SAXParserFactory saxfactory;
+	
+	private TBXParser parser;
         
     @BeforeClass
     public static void initialize() throws Exception
     {
         TBXReaderTest.configureLoggers("TBXParserTest");
         //TBXParser.PARSE_LOG.setLevel(java.util.logging.Level.FINEST);
+
+		cwd = new File(System.getProperty("user.dir"));
+		xmldir = new File(cwd, "src/main/resources/xml/");
+		corestructfile = new File(xmldir, "TBXcoreStructV02.dtd");
+		xcsstructfile = new File(xmldir, "tbxxcsdtd.dtd");
 
         saxfactory = SAXParserFactory.newInstance();
     }
@@ -53,20 +65,29 @@ public class TBXParserTest
     {
     }
     
-    private TBXParser buildParser(String testfile) throws Exception
+    private void buildParser(String testfile) throws Exception
     {
         String file = String.format("/org/ttt/salt/tbxreader/TBXParserTest/%s", testfile);
         InputStream in = getClass().getResourceAsStream(file);
         assertNotNull("Unable to get stream for " + file, in);
-        TBXParser parser = new TBXParser(saxfactory.newSAXParser(), in);
-        return parser;
+        parser = new TBXParser(saxfactory.newSAXParser(), in);
     }
+	
+	private String readResource(String name) throws Exception
+	{
+		InputStream in = getClass().getResourceAsStream(name);
+		Reader reader = new InputStreamReader(in, "UTF-8");
+		CharBuffer text = CharBuffer.allocate(4096);
+		reader.read(text);
+		reader.close();
+		return text.toString();
+	}
     
     private void errorChecking(String testfile) throws Exception
     {
         try
         {
-            TBXParser parser = buildParser(testfile);
+            buildParser(testfile);
             MartifHeader header = parser.getMartifHeader();
             parser.getThread().join(100);
         }
@@ -79,6 +100,10 @@ public class TBXParserTest
         }
     }
     
+	//===========================================
+	// Error testing
+	//===========================================
+	
     @Test(expected=SAXParseException.class)
     public void emptyFile() throws Exception
     {
@@ -122,18 +147,10 @@ public class TBXParserTest
     }
     
     @Test
-    public void parseValidFileDTD() throws Exception
-    {
-        TBXParser parser = buildParser("ValidDTD.xml");
-        MartifHeader header = parser.getMartifHeader();
-        parser.getThread().join(100);
-    }
-    
-    @Test
     public void parseInvalidTermEntry() throws Exception
     {
         //TBXParser.PARSE_LOG.setLevel(java.util.logging.Level.FINEST);
-        TBXParser parser = buildParser("InvalidTermEntry.xml");
+        buildParser("InvalidTermEntry.xml");
         MartifHeader header = parser.getMartifHeader();
         
         TermEntry entry;
@@ -155,11 +172,29 @@ public class TBXParserTest
         assertEquals(25, except.getLineNumber());
         assertEquals(25, except.getColumnNumber());
     }
-    
+
+
+	//===========================================
+	// Valid file testing
+	//===========================================
+
+    @Test
+    public void validDTD() throws Exception
+    {
+        buildParser("ValidDTD.xml");
+        MartifHeader header = parser.getMartifHeader();
+        parser.getThread().join(100);
+    }
+	
+	
+	//===========================================
+	// Infrastructure Testing
+	//===========================================
+
     @Test
     public void threadManagement() throws Exception
     {
-        TBXParser parser = buildParser("BlockingFile.xml");
+        buildParser("BlockingFile.xml");
         assertNotNull(parser.getMartifHeader());
         while (!parser.isTermEntryQueueFull())
             Thread.currentThread().sleep(1);
@@ -175,6 +210,81 @@ public class TBXParserTest
         while (parser.getNextTermEntry() != null)
             count++;
         assertTrue(count < TBXParser.QUEUE_SIZE + 2);
-    }    
+    }
+	
+	
+	//===========================================
+	// Entity Resolution Testing
+	//===========================================
+
+	private String readEntity(String publicId, String systemId) throws Exception
+	{
+		InputSource src = parser.resolveEntity(publicId, systemId);
+		Reader reader = src.getCharacterStream();
+		CharBuffer text = CharBuffer.allocate(4096);
+		reader.read(text);
+		reader.close();
+		return text.toString();
+	}
+    
+    @Test
+    public void xmlResolveEntity() throws Exception
+    {
+		parser = new TBXParser();
+		String corestruct = readResource("/xml/TBXcoreStructV02.dtd");
+		String xcsstruct = readResource("/xml/tbxxcsdtd.dtd");
+		
+		assertEquals(corestruct,
+			readEntity("ISO 30042:2008A//DTD TBX core//EN", null));
+		assertEquals(corestruct,
+			readEntity("ISO 30042:2008A//DTD TBX core//EN", "http://www.flyingtitans.com/"));
+		assertEquals(corestruct,
+			readEntity("ISO 30042:2008A//DTD TBX core//EN", "/myfile"));
+		assertEquals(corestruct, readEntity(null, "/xml/TBXcoreStructV02.dtd"));
+		assertEquals(corestruct, readEntity(null, corestructfile.getCanonicalPath()));
+		
+		assertEquals(xcsstruct,
+			readEntity("ISO 30042:2008A//DTD TBX XCS//EN", null));
+		assertEquals(xcsstruct,
+			readEntity("ISO 30042:2008A//DTD TBX XCS//EN", "http://www.flyingtitans.com/"));
+		assertEquals(xcsstruct,
+			readEntity("ISO 30042:2008A//DTD TBX XCS//EN", "/myfile"));
+		
+    }
+
+    @Test(expected=FileNotFoundException.class)
+    public void xmlResolveEntityFileNotFoundURI() throws Exception
+    {
+		parser = new TBXParser();
+		parser.resolveEntity("NOT IN SYSTEM", "file:///spam/eggs/bloodyvikings.xml");
+    }
+
+    @Test(expected=FileNotFoundException.class)
+    public void xmlResolveEntityFileNotFoundResource() throws Exception
+    {
+		parser = new TBXParser();
+		parser.resolveEntity("NOT IN SYSTEM", "/xml/spam.dtd");
+    }
+
+    @Test(expected=FileNotFoundException.class)
+    public void xmlResolveEntityFileNotFoundRelativePath() throws Exception
+    {
+		parser = new TBXParser();
+		parser.resolveEntity("NOT IN SYSTEM", "xml/spam.dtd");
+    }
+
+    @Test(expected=java.net.URISyntaxException.class)
+    public void xmlResolveEntityURISyntax() throws Exception
+    {
+		try
+		{
+			parser = new TBXParser();
+			parser.resolveEntity("NOT IN SYSTEM", "http://www.flyingtitans.com/a%b");
+		}
+		catch (org.xml.sax.SAXException err)
+		{
+			throw (java.net.URISyntaxException) err.getCause();
+		}
+    }
 }
 

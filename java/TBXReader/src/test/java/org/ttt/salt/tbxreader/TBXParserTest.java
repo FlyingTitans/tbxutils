@@ -33,7 +33,6 @@ public class TBXParserTest
 	private static File xmldir;
 	private static File corestructfile;
 	private static File xcsstructfile;
-    private static SAXParserFactory saxfactory;
 	
 	private TBXParser parser;
         
@@ -47,8 +46,6 @@ public class TBXParserTest
 		xmldir = new File(cwd, "src/main/resources/xml/");
 		corestructfile = new File(xmldir, "TBXcoreStructV02.dtd");
 		xcsstructfile = new File(xmldir, "tbxxcsdtd.dtd");
-
-        saxfactory = SAXParserFactory.newInstance();
     }
     
     @Before
@@ -56,8 +53,6 @@ public class TBXParserTest
     {
         TBXReader.LOGGER.setLevel(java.util.logging.Level.INFO);
         TBXParser.PARSE_LOG.setLevel(java.util.logging.Level.WARNING);
-        saxfactory.setNamespaceAware(true);
-        saxfactory.setValidating(true);
     }
     
     @After
@@ -70,7 +65,7 @@ public class TBXParserTest
         String file = String.format("/org/ttt/salt/tbxreader/TBXParserTest/%s", testfile);
         InputStream in = getClass().getResourceAsStream(file);
         assertNotNull("Unable to get stream for " + file, in);
-        parser = new TBXParser(saxfactory.newSAXParser(), in);
+        parser = new TBXParser(TBXReader.getInstance().getTBXFileSAXParser(null), in);
     }
 	
 	private String readResource(String name) throws Exception
@@ -203,7 +198,7 @@ public class TBXParserTest
         assertTrue(parser.getThread().isAlive());
         assertNotNull(parser.getNextTermEntry());
         Thread.currentThread().sleep(1);
-        assertEquals(TBXParser.QUEUE_SIZE + 1, parser.getTermEntriesProcessed());
+        assertTrue(TBXParser.QUEUE_SIZE + 1 >= parser.getTermEntriesProcessed());
         parser.stop();
         
         int count = 0;

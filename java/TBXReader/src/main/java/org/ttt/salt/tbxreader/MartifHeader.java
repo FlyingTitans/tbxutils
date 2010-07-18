@@ -18,6 +18,12 @@ package org.ttt.salt.tbxreader;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
+import javax.xml.xpath.XPathExpressionException;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 
 /**
@@ -30,7 +36,10 @@ import org.w3c.dom.Element;
 public class MartifHeader
 {
 	/** The W3C DOM Element that holds the <code>martifHeader</code> information. */
-	private Element martifHeaderElement;
+	private Element element;
+	
+	/** The single XPath expression handler I will use for this header. */
+	private XPath xpath;
 	
     /**
      * @param elem The DOM element that contains all of the validated
@@ -38,7 +47,8 @@ public class MartifHeader
      */
     public MartifHeader(Element elem)
     {
-		martifHeaderElement = elem;
+		element = elem;
+		xpath = TBXReader.getInstance().getXPath();
     }
 	
 	/**
@@ -49,7 +59,7 @@ public class MartifHeader
 	 */
 	public String getTitle()
 	{
-		throw new UnsupportedOperationException();
+		return getXPathString("//title");
 	}
 	
 	/**
@@ -94,6 +104,45 @@ public class MartifHeader
 	public List<String> getRevisions()
 	{
 		throw new UnsupportedOperationException();
+	}
+	
+	/**
+	 * Evaluate an XPath expression and return a node.
+	 *
+	 * @param exp The XPath expression that should result in a node value.
+	 * @return The value of the expression.
+	 */
+	private Node getXPathNode(String exp)
+	{
+		try
+		{
+			return (Node) xpath.evaluate(exp, element, XPathConstants.NODE);
+		}
+		catch (XPathExpressionException err)
+		{
+			TBXReader.LOGGER.severe("Invalid Node XPath expression: " + exp);
+			throw new RuntimeException("Invalid Node XPath expression.", err);
+		}
+	}
+	 
+	
+	/**
+	 * Evaluate an XPath expression in the martif header context.
+	 *
+	 * @param exp The XPath expression that should result in a string value.
+	 * @return The value of the expression.
+	 */
+	private String getXPathString(String exp)
+	{
+		try
+		{
+			return xpath.evaluate(exp, element);
+		}
+		catch (XPathExpressionException err)
+		{
+			TBXReader.LOGGER.severe("Invalid String XPath expression: " + exp);
+			throw new RuntimeException("Invalid String XPath expression.", err);
+		}
 	}
 }
 

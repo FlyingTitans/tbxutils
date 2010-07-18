@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import java.io.*;
 import java.util.logging.*;
 import javax.xml.parsers.*;
+import javax.xml.xpath.*;
 import org.xml.sax.*;
 
 /**
@@ -29,15 +30,12 @@ import org.xml.sax.*;
  */
 public class TBXReaderTest
 {
+    private static SAXParserFactory saxfactory;
+
     @BeforeClass
     public static void initialize() throws Exception
     {
         configureLoggers("TBXReaderTest");
-    }
-    
-    @Test
-    public void configureParsers() throws Exception
-    {
     }
 
     /**
@@ -66,5 +64,30 @@ public class TBXReaderTest
         TBXReader.LOGGER.setLevel(Level.INFO);
         TBXReader.LOGGER.addHandler(handler);
     }
+    
+    @Test
+    public void configureParsers() throws Exception
+    {
+    }
+	
+	@Test
+	public void tbxsaxparser() throws Exception
+	{
+		SAXParser parse0 = TBXReader.getInstance().getTBXFileSAXParser(null);
+		SAXParser parse1 = TBXReader.getInstance().getTBXFileSAXParser(null);
+		assertNotNull(parse0);
+		assertNotNull(parse1);
+		assertNotSame(parse0, parse1);
+	}
+	
+	@Test
+	public void xpath() throws Exception
+	{
+		XPath xpath0 = TBXReader.getInstance().getXPath();
+		XPath xpath1 = TBXReader.getInstance().getXPath();
+		assertNotNull(xpath0);
+		assertNotNull(xpath1);
+		assertNotSame(xpath0, xpath1);
+	}
 }
 

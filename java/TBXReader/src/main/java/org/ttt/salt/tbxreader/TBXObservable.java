@@ -1,17 +1,19 @@
 /*
- * Copyright 2010 Lance Finn Helsten (helsten@acm.org)
+ * TermBase eXchange conformance checker library.
+ * Copyright (C) 2010 Lance Finn Helsten (helsten@acm.org)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.ttt.salt.tbxreader;
 
@@ -24,8 +26,9 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 
 /**
- * A TBX observable that will send each processed <code>termEntry</code>
- * element as a {@link TermEntry} object to all observers.
+ * A TBX observable, for use in an observer design pattern, that will send
+ * each processed <code>termEntry</code> element as a {@link TermEntry}
+ * object to all observers.
  * 
  * <h4>Objects</h4>
  * <p>
@@ -64,6 +67,38 @@ import java.util.logging.Level;
  *         contain the exceptions.</li>
  * </ol>
  *
+ * <h4>Example</h4>
+ * To receive each <code>termEntry</code> element as a {@link TermEntry}
+ * object, with full parsing, validation, and conformance checks in place,
+ * the following would be sufficient.
+ * <code><pre>
+ *
+ * public void update(Observable o, Object arg)
+ * {
+ *     TBXObservable tbxo = (TBXObservable) o;
+ *     if (arg == null)
+ *     {
+ *         …The TBX file has completed processing.
+ *     }
+ *     else if (arg instanceof TBXException)
+ *     {
+ *         …A fatal error has occurred and processing is complete.
+ *     }
+ *     else if (arg instanceof TermEntry)
+ *     {
+ *         …Process the TermEntry
+ *     }
+ * }
+ *
+ *
+ * public void initReader(URL url)
+ * {
+ *     TBXObservable tbxo = new TBXObservable(url, null);
+ *     tbxo.addObserver(this);
+ *     tbxo.start();
+ * }
+ * </pre></code>
+ *
  * @author Lance Finn Helsten
  * @version 2.0-SNAPSHOT
  * @license Licensed under the Apache License, Version 2.0.
@@ -92,6 +127,14 @@ public class TBXObservable extends Observable implements Runnable
         url = tbx;
         throw new UnsupportedOperationException();
     }
+	
+	/**
+	 * Start delivering term entry objects to the observers.
+	 */
+	public void start()
+	{
+        throw new UnsupportedOperationException();
+	}
         
     /**
      * Get the {@link MartifHeader} for the TBX file's <code>martifHeader</code>

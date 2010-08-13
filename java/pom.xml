@@ -33,6 +33,10 @@
         on-line in XHTML format.
     </description>
     <inceptionYear>2001</inceptionYear>
+    <organization>
+		<name>Flying Titans, Inc.</name>
+		<url>http://www.flyingtitans.com/</url>
+	</organization>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -55,8 +59,6 @@
     </developers>
     <contributors>
     </contributors>
-    <organization>
-    </organization>
     
     <!-- Build Settings -->
     <packaging>pom</packaging>
@@ -74,8 +76,31 @@
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
+				
+				<!-- Code analysis and reporting plugins. -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>2.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>net.objectlab</groupId>
+					<artifactId>mvn-qalab-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
             </plugins>
         </pluginManagement>
+		
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -90,12 +115,10 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.5</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.5</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.ttt.salt</groupId>
@@ -104,36 +127,44 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>net.objectlab</groupId>
-                <artifactId>mvn-qalab-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <id>merge-all</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>merge-all</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>qalab-movers</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>movers</goal>
-                        </goals>
-                        <configuration>
-                            <startTimeHoursOffset>480</startTimeHoursOffset>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>net.objectlab</groupId>
+				<artifactId>mvn-qalab-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>merge-all</id>
+						<phase>site</phase>
+						<goals>
+							<goal>merge-all</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>qalab-movers</id>
+						<phase>site</phase>
+						<goals>
+							<goal>movers</goal>
+						</goals>
+						<configuration>
+							<startTimeHoursOffset>480</startTimeHoursOffset>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
     </build>
     <reporting>
         <plugins>
+			<!-- Report generation plugins. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>dashboard-maven-plugin</artifactId>
+			</plugin>
+		
             <!-- Code analysis and reporting plugins. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -148,7 +179,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>2.3</version>
                 <configuration>
                     <rulesets>
                         <ruleset>/rulesets/unusedcode.xml</ruleset>
@@ -169,6 +199,10 @@
                     <minimumTokens>100</minimumTokens>
                 </configuration>
             </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+			</plugin>
             
             
             <!-- Test reporting plugins. -->
@@ -227,48 +261,48 @@
                     </reportSet>
                 </reportSets>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>changes-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>changelog-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-            </plugin>
-            -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>changes-maven-plugin</artifactId>
+			</plugin>
+			<!--
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>changelog-maven-plugin</artifactId>
+			</plugin>
+			-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+			</plugin>
             
             
             <!-- Other reports -->
-            <!--
-            <plugin>
-                <groupId>net.sf</groupId>
-                <artifactId>stat-scm</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.pdf</exclude>
-                        <exclude>**/qalab.xml</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.objectlab</groupId>
-                <artifactId>mvn-qalab-plugin</artifactId>
-                <version>2.2</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>report-merge-chart</report>
-                            <report>report-movers-all</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            -->
+			<!-- Stat-SCM is not available for Mercurial yet
+			 <plugin>
+			 <groupId>net.sf</groupId>
+			 <artifactId>stat-scm</artifactId>
+			 <configuration>
+			 <excludes>
+			 <exclude>**/*.pdf</exclude>
+			 <exclude>**/qalab.xml</exclude>
+			 </excludes>
+			 </configuration>
+			 </plugin>
+			 -->
+			<plugin>
+				<groupId>net.objectlab</groupId>
+				<artifactId>mvn-qalab-plugin</artifactId>
+				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>report-merge-chart</report>
+							<report>report-movers-all</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
         </plugins>
     </reporting>
     
@@ -279,55 +313,83 @@
         <system>Bugzilla</system>
         <url>http://sourceforge.net/tracker/?group_id=228851&amp;atid=1075205</url>
     </issueManagement>
-    <!-- ciManagement>
-     </ciManagement -->
-    <mailingLists>
-        <mailingList>
-            <name>TBX Utilities Developers Mailing List</name>
-            <subscribe>tbxutil-developers-join@lists.sourceforge.net</subscribe>
-            <unsubscribe>tbxutil-developers-leave@lists.sourceforge.net</unsubscribe>
-            <post>tbxutil-developers@lists.sourceforge.net</post>
-            <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=tbxutil-developers</archive>
-        </mailingList>
-    </mailingLists>
-    <!--
-    <scm>
-        <connection>scm:hg:https://tbxutil.googlecode.com/hg/</connection>
-        <developerConnection>scm:hg:https://tbxutil.googlecode.com/hg/</developerConnection>
-        <url>scm:hg:https://tbxutil.googlecode.com/hg/</url>
-    </scm>
-    -->
-    <!-- Maven Environment -->
-    <!-- NOT ALLOWED FOR MAVEN CENTRAL REPOSITORY
-     <repositories></repositories>
-     <pluginRepositories></pluginRepositories>
-     -->
-    <distributionManagement>
-        <!-- site>
-         <id>TBX :: SourceForge :: Site</id>
-         <name>SourceForge Website</name>
-         <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/htdocs</url>
-         </site -->
-        <site>
-            <id>TBX :: Files :: Localhost</id>
-            <name>SourceForge Website</name>
-            <url>file://${basedir}/target/sitedeploy</url>
-            <!-- url>scp://localhost/Library/WebServer/Documents/tbxutil</url -->
-        </site>
-        <snapshotRepository>
-            <id>TBX :: Site :: Localhost</id>
-            <name>SourceForge Local</name>
-            <url>file://${basedir}/target/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>TBX :: SourceForge :: Files</id>
-            <name>SourceForge FRS</name>
-            <url>file://${basedir}/target/deploy</url>
-            <!-- Need the above until the maven relase plugin is fixed for SourceForge. -->
-            <!-- url>sftp://frs.sourceforge.net/uploads/</url -->
-            <layout>default</layout>
-        </repository>
-    </distributionManagement>
-    
+	<!--
+	 <ciManagement>
+	 <system>continuum</system>
+	 <url>http://localhost:8080/continuum</url>
+	 <notifiers>
+	 <notifier>
+	 <type>mail</type>
+	 <configuration>
+	 <address>youremail@yourdomain.com</address>
+	 </configuration>
+	 </notifier>
+	 </notifiers>
+	 </ciManagement>
+	 -->
+	<mailingLists>
+		<mailingList>
+			<name>TBX Utilities Developers Mailing List</name>
+			<subscribe>tbxutil-developers-join@lists.sourceforge.net</subscribe>
+			<unsubscribe>tbxutil-developers-leave@lists.sourceforge.net</unsubscribe>
+			<post>tbxutil-developers@lists.sourceforge.net</post>
+			<archive>http://sourceforge.net/mailarchive/forum.php?forum_name=tbxutil-developers</archive>
+		</mailingList>
+	</mailingLists>
+	<scm>
+		<connection>scm:hg:file:///Users/lance/Projects/tbx/tbxutil-2/java</connection>
+		<developerConnection>scm:hg:file:///Users/lance/Projects/tbx/tbxutil-2/java</developerConnection>
+		<url>scm:hg:file:///Users/lance/Projects/tbx/tbxutil-2/java</url>
+		<!--
+		 <connection>scm:hg:https://tbxutil.googlecode.com/hg/</connection>
+		 <developerConnection>scm:hg:https://tbxutil.googlecode.com/hg/</developerConnection>
+		 <url>scm:hg:https://tbxutil.googlecode.com/hg/</url>
+		 -->
+	</scm>
+	
+	
+	<!-- Maven Environment -->
+	<repositories>
+		<repository>
+			<id>java.net_2</id>
+			<url>http://download.java.net/maven/2</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>java.net_1.plugins</id>
+			<url>http://download.java.net/maven/1</url>
+			<layout>legacy</layout>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	<distributionManagement>
+		<!-- site>
+		 <id>TBX :: SourceForge :: Site</id>
+		 <name>SourceForge Website</name>
+		 <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/htdocs</url>
+		 </site -->
+		<site>
+			<id>TBX :: Site :: Localhost</id>
+			<name>SourceForge Website</name>
+			<url>file:///Library/WebServer/Documents/tbxutil</url>
+			<!-- url>scp://localhost/Library/WebServer/Documents/tbxutil</url -->
+		</site>
+		<snapshotRepository>
+			<id>TBX :: Snapshots :: Localhost</id>
+			<name>SourceForge Local</name>
+			<url>file:///Library/WebServer/Documents/tbxutil/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>TBX :: Repository :: Files</id>
+			<name>SourceForge FRS</name>
+			<url>file:///Library/WebServer/Documents/tbxutil/deploy</url>
+			<!-- Need the above until the maven relase plugin is fixed for SourceForge. -->
+			<!-- url>sftp://frs.sourceforge.net/uploads/</url -->
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
+	
 </project>
 

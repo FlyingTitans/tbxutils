@@ -1,4 +1,3 @@
-$Id$
 TBXCheck README
 
 

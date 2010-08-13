@@ -1,5 +1,4 @@
-$Id$
-TBXCheck README
+TBXReader README
 
 
 

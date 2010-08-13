@@ -1,0 +1,34 @@
+Release Processes
+
+This describes the full release process for all TBX Utilities. This is
+mainly so the original developer could forget how to do it and not need
+to worry about relearning the process.
+
+
+REFERENCES
+http://maven.apache.org/scm/plugins/index.html
+http://maven.apache.org/plugins/maven-release-plugin/
+
+ENVIRONMENT
+The //project/scm/connection element is the read/write repository
+location.
+
+PROCESS
+1. Make sure all code has been pulled into the public repository.
+
+2. Do a dry run release build to make sure everything will build
+correctly. Before doing the deploy and site-deploy change the repository
+tags to a local location in pom.xml—this will be eliminated when the
+release is cleaned.
+    mvn release:prepare -DdryRun
+    mvn clean
+    mvn site
+    mvn deploy
+    mvn site-deploy
+    mvn release:clean
+
+3. Fix any problems in the dry run and push to the public repository.
+
+4. Do the release.
+    mvn release:prepare
+    mvn release:stage

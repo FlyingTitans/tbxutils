@@ -16,36 +16,3 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.ttt.salt.tbxreader;
-
-/**
- * This is the base class for all TBX exceptions that can occur when parsing,
- * validating, and checking conformance of a TBX file.
- *
- * @author Lance Finn Helsten
- * @version 2.0-SNAPSHOT
- * @license Licensed under the Apache License, Version 2.0.
- */
-public class TBXException extends Exception
-{
-    /**
-     */
-    public TBXException(String message)
-    {
-        super(message);
-    }
-    
-    /**
-     */
-    public TBXException(String message, Throwable cause)
-    {
-        super(message, cause);
-    }
-    
-    /**
-     */
-    public TBXException(Throwable cause)
-    {
-        super(cause);
-    }
-}
-

@@ -28,6 +28,15 @@ import org.xml.sax.SAXException;
  * TBXReader is the system used to read TBX files and check to see if it
  * is XML well-formed, XML valid against schema, and XCS conformant.
  *
+ * <h4>Properties</h4>
+ * <ul>
+ *   <li><strong>tbx:EntityResolver</strong>: A custom entity resolver for use
+ *     while parsing the TBX and XCS files. This must conform to the
+ *     {@link org.xml.sax.EntityResolver} interface. If the given resolver
+ *     is not set or if a resolution fails then the built in resolver will
+ *     be used.</li>
+ * </ul>
+ *
  * @author Lance Finn Helsten
  * @version 2.0-SNAPSHOT
  * @license Licensed under the Apache License, Version 2.0.

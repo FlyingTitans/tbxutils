@@ -33,6 +33,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
@@ -109,6 +110,9 @@ class TBXParser extends DefaultHandler implements Runnable
 	
 	/** Document builder to generate new documents. */
 	private DocumentBuilder documentbuilder;
+	
+	/** Entity resolver delegate for custom entity resolution. */
+	private EntityResolver entityResolverDelegate;
 	
 	/** XML data source to parse. */
 	private InputStream source;
@@ -360,60 +364,66 @@ class TBXParser extends DefaultHandler implements Runnable
 		TBXReader.LOGGER.info(
 							  String.format("Resolve Entity for PublicID='%s' SystemId='%s'", publicId, systemId));
 		checkStop();
-		Reader reader = null;
-		try
-		{
-			InputStream input = null;
-			if (names2rsrc.containsKey(publicId))
-			{   //Check to see if it is a named resource
-				//CHECKSTYLE: ParameterAssignment OFF
-				TBXReader.LOGGER.info("Entity is a known publicId: " + publicId);
-				systemId = names2rsrc.get(publicId);
-				input = getClass().getResourceAsStream(names2rsrc.get(publicId));
-				//CHECKSTYLE: ParameterAssignment ON
+		InputSource ret = null;
+		if (entityResolverDelegate != null)
+			ret = entityResolverDelegate.resolveEntity(publicId, systemId);
+		if (ret == null)
+		{	//Do normal internal resolution if no delegate or delegate did not handle
+			Reader reader = null;
+			try
+			{
+				InputStream input = null;
+				if (names2rsrc.containsKey(publicId))
+				{   //Check to see if it is a named resource
+					//CHECKSTYLE: ParameterAssignment OFF
+					TBXReader.LOGGER.info("Entity is a known publicId: " + publicId);
+					systemId = names2rsrc.get(publicId);
+					input = getClass().getResourceAsStream(names2rsrc.get(publicId));
+					//CHECKSTYLE: ParameterAssignment ON
+				}
+				else if (systemId.matches("\\w+:.+"))
+				{   //Do the full URI parsing
+					TBXReader.LOGGER.info("Entity is a URI: " + systemId);
+					URI uri = new URI(systemId);
+					input = uri.toURL().openStream();
+				}
+				else
+				{   //Check the relative URI location
+					TBXReader.LOGGER.fine("Unknown schema systemId: " + systemId);
+					if (systemId.startsWith("/"))
+					{
+						TBXReader.LOGGER.info("Entity is an absolute path: " + systemId);
+						File file = new File(systemId);
+						if (file.exists())
+							input = new java.io.FileInputStream(file);
+						else
+							input = getClass().getResourceAsStream(systemId);
+					}                
+					if (input == null)
+						throw new java.io.FileNotFoundException();
+				}
+				reader = new UTFStreamReader(input);
 			}
-			else if (systemId.matches("\\w+:.+"))
-			{   //Do the full URI parsing
-				TBXReader.LOGGER.info("Entity is a URI: " + systemId);
-				URI uri = new URI(systemId);
-				input = uri.toURL().openStream();
+			catch (java.io.FileNotFoundException err)
+			{
+				String msg = String.format("Entity could not be resolved:\n  PUBLIC: '%s'\n  SYSTEM: '%s'\n  BUILT IN: %s",
+										   publicId, systemId,
+										   names2rsrc.containsKey(publicId) ? names2rsrc.get(publicId) : "NONE");
+				throw new java.io.FileNotFoundException(msg);
 			}
-			else
-			{   //Check the relative URI location
-				TBXReader.LOGGER.fine("Unknown schema systemId: " + systemId);
-				if (systemId.startsWith("/"))
-				{
-					TBXReader.LOGGER.info("Entity is an absolute path: " + systemId);
-					File file = new File(systemId);
-					if (file.exists())
-						input = new java.io.FileInputStream(file);
-					else
-						input = getClass().getResourceAsStream(systemId);
-				}                
-				if (input == null)
-					throw new java.io.FileNotFoundException();
+			catch (java.io.UnsupportedEncodingException err)
+			{
+				throw new java.io.UnsupportedEncodingException(
+															   String.format("PUBLIC %s SYSTEM %s", publicId, systemId));
 			}
-			reader = new UTFStreamReader(input);
+			catch (java.net.URISyntaxException err)
+			{
+				throw new SAXException("Invalid System ID format", err);
+			}
+			ret = new InputSource(reader);
+			ret.setPublicId(publicId);
+			ret.setSystemId(systemId);
 		}
-		catch (java.io.FileNotFoundException err)
-		{
-			String msg = String.format("Entity could not be resolved:\n  PUBLIC: '%s'\n  SYSTEM: '%s'\n  BUILT IN: %s",
-									   publicId, systemId,
-									   names2rsrc.containsKey(publicId) ? names2rsrc.get(publicId) : "NONE");
-			throw new java.io.FileNotFoundException(msg);
-		}
-		catch (java.io.UnsupportedEncodingException err)
-		{
-			throw new java.io.UnsupportedEncodingException(
-														   String.format("PUBLIC %s SYSTEM %s", publicId, systemId));
-		}
-		catch (java.net.URISyntaxException err)
-		{
-			throw new SAXException("Invalid System ID format", err);
-		}
-		InputSource ret = new InputSource(reader);
-		ret.setPublicId(publicId);
-		ret.setSystemId(systemId);
 		PARSE_LOG.exiting(LOG_SOURCE, "resolveEntity", ret);
 		return ret;
 	}

@@ -94,7 +94,7 @@ public class XCSParser
     private XMLReader reader;
     
     /** The entity resolver that I use. */
-    private TBXResolver resolver;
+    private EntityResolver resolver;
     
     /** Namespace mappings. */
     private Map<String, URI> namespace = new java.util.HashMap<String, URI>();
@@ -121,7 +121,7 @@ public class XCSParser
      * @throws SAXNotRecognizedException Requried parser feature is unavailable.
      * @throws SAXNotSupportedException Could not set required parser feature.
      */
-    public XCSParser(TBXResolver r) throws SAXNotRecognizedException, SAXNotSupportedException
+    public XCSParser(EntityResolver r) throws SAXNotRecognizedException, SAXNotSupportedException
     {
         resolver = r;
         try

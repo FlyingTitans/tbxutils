@@ -31,6 +31,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -230,7 +231,7 @@ public class XCSDocument extends DocumentImpl implements Document
      * @throws ParserConfigurationException Problems with building the parser.
      * @throws SAXException Any parse exceptions building this document.
      */
-    public XCSDocument(String xcsURI, TBXResolver resolver, Configuration c) throws IOException,
+    public XCSDocument(String xcsURI, EntityResolver resolver, Configuration c) throws IOException,
         ParserConfigurationException, SAXException
     {   //Open the input for the XCS file
         //Parse the XCS file

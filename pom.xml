@@ -305,7 +305,7 @@
             <id>TBX :: SourceForge :: Files</id>
             <name>SourceForge FRS</name>
             <url>file://${basedir}/target/deploy</url>
-            <!-- Need the above until the maven relase plugin is fixed for SourceForge. -->
+            <!-- Need the above until the maven release plugin is fixed for SourceForge. -->
             <!-- url>sftp://frs.sourceforge.net/uploads/</url -->
             <layout>default</layout>
         </repository>

@@ -17,6 +17,8 @@
  */
 package org.ttt.salt;
 
+import org.xml.sax.EntityResolver;
+
 /**
  * This holds validation and compliance options for working with TBX and XCS
  * documents.
@@ -32,6 +34,9 @@ public class Configuration implements Cloneable
     
     /** Should each termEntry be checked as it is built. */
     private boolean checkeachterm = true;
+	
+	/** Custom entity resolver for the XCS file, if required. */
+	private EntityResolver customEntityResolver = null;
     
     /**
      * Construct the options object.
@@ -80,6 +85,26 @@ public class Configuration implements Cloneable
         return checkeachterm;
     }
     
+	/**
+	 * Set the custom EntityResolver.
+	 *
+	 * @param er The new value for the resolver.
+	 */
+	public void setCustomEntityResolver(EntityResolver er)
+	{
+		customEntityResolver = er;
+	}
+	
+	/**
+	 * Get the custom EntityResolver.
+	 *
+	 * @return The current value of the resolver.
+	 */
+	public EntityResolver getCustomEntityResolver()
+	{
+		return customEntityResolver;
+	}
+	
     /** {@inheritDoc} */
     public Object clone()
     {

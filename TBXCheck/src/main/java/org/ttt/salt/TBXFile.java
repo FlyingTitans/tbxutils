@@ -40,6 +40,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -123,7 +124,7 @@ public class TBXFile
     private XCSDocument xcsDocument;
 
     /** The entity resolver that I use. */
-    private TBXResolver resolver;
+    private EntityResolver resolver;
         
     /** TBXParser that will build the TBXDocument. */
     private TBXParser tbxParser;
@@ -166,7 +167,10 @@ public class TBXFile
             throw new IllegalArgumentException("URL argument cannot be null");
         url = u;
         
-        resolver = new TBXResolver(url);
+		resolver = c.getCustomEntityResolver();
+		if ( resolver == null )
+			resolver = new TBXResolver(u);
+		
         tbxParser = new TBXParser(resolver, c);
         InputStream input = url.openStream();
         if (!input.markSupported())

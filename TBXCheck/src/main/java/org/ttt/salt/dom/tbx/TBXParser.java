@@ -49,7 +49,6 @@ import org.w3c.dom.Text;
 import org.w3c.dom.DOMException;
 import org.ttt.salt.Configuration;
 import org.ttt.salt.XCSDocument;
-import org.ttt.salt.TBXResolver;
 import org.ttt.salt.TBXException;
 import org.ttt.salt.XCSValidationException;
 
@@ -204,7 +203,7 @@ public class TBXParser
     private XMLReader reader;
     
     /** The entity resolver that I use. */
-    private TBXResolver resolver;
+    private EntityResolver resolver;
     
     /** Namespace mappings. */
     private Map<String, URI> namespace = new java.util.HashMap<String, URI>();
@@ -241,7 +240,7 @@ public class TBXParser
      * @throws SAXNotRecognizedException Requried parser feature is unavailable.
      * @throws SAXNotSupportedException Could not set required parser feature.
      */
-    public TBXParser(TBXResolver r, Configuration c) throws SAXNotRecognizedException,
+    public TBXParser(EntityResolver r, Configuration c) throws SAXNotRecognizedException,
         SAXNotSupportedException
     {
         resolver = r;

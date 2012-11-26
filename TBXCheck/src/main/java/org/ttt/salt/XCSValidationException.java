@@ -29,13 +29,21 @@ import org.ttt.salt.dom.tbx.TBXElement;
  * @version $Id$
  * @license Licensed under the Apache License, Version 2.0.
  */
-public class XCSValidationException extends Exception
+public class XCSValidationException
+extends Exception
+implements Comparable<XCSValidationException>
 {
     /*
      */
     
     /** SCM information. */
     public static final String RCSID = "$Id$";
+    
+    /** */
+    private static int exceptionCount;
+    
+    /** Orders the errors as they occur. */
+    private final int order;
     
     /** */
     private final Element elem;
@@ -46,6 +54,7 @@ public class XCSValidationException extends Exception
     public XCSValidationException(Element e)
     {
         super();
+        order = exceptionCount++;
         elem = e;
     }
     
@@ -69,6 +78,12 @@ public class XCSValidationException extends Exception
     {
         //TODO--localize the message
         return getMessage();
+    }
+    
+    /** {@inheritDoc} */
+    public int compareTo(XCSValidationException o)
+    {
+        return order - o.order;
     }
     
     /**

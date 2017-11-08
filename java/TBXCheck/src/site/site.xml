@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="${project.name}">
-    <body>
-        <menu inherit="bottom">
-            <item name="Examples" href="examples.html"/>
-            </menu>
-        </body>
-    </project>

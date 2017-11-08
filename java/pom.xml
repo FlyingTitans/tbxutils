@@ -1,28 +1,28 @@
-<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<!-- ======================================== -->
-	<!-- POM Relationships -->
-	<groupId>org.ttt.salt</groupId>
-	<artifactId>tbx</artifactId>
-	<version>1.2.10-SNAPSHOT</version>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.4</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-	<modules>
-		<module>TBXCheck</module>
-		<!-- module>TBXEdit</module -->
-	</modules>
-	<!-- ======================================== -->
-	<!-- Project Information -->
-	<name>TBX</name>
-	<url>${tbxurl}</url>
-	<description>
+    <modelVersion>4.0.0</modelVersion>
+    
+    <!-- POM Relationships -->
+    <groupId>org.ttt.salt</groupId>
+    <artifactId>tbx</artifactId>
+    <version>2.0-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <modules>
+        <module>codeanalysis</module>
+        <module>TBXReader</module>
+        <module>TBXCheck</module>
+    </modules>
+    
+    <!-- Project Information -->
+    <name>TBX</name>
+    <url>${tbxurl}</url>
+    <description>
         Term Base eXchange is the open, XML based standard for exchanging
         structured terminological data. TBX was submitted to the International
         Organization for Standardization (ISO) on February 21, 2007, for
@@ -32,267 +32,301 @@
         standard (DIS) in Q2 2008. The version submitted to ISO is available
         on-line in XHTML format.
     </description>
-	<inceptionYear>2001</inceptionYear>
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>LICENSE.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<developers>
-		<developer>
-			<id>lance</id>
-			<name>Lance Finn Helsten</name>
-			<email>lanhel@flyingtitans.com</email>
-			<roles>
-				<role>Architect</role>
-				<role>Lead Developer</role>
-			</roles>
-			<organization>Flying Titans, Inc.</organization>
-			<timezone>-7</timezone>
-		</developer>
-	</developers>
-	<contributors>
+    <inceptionYear>2001</inceptionYear>
+    <organization>
+		<name>Flying Titans, Inc.</name>
+		<url>http://www.flyingtitans.com/</url>
+	</organization>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>LICENSE.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>lance</id>
+            <name>Lance Finn Helsten</name>
+            <email>helsten@xmission.com</email>
+            <roles>
+                <role>Architect</role>
+                <role>Lead Developer</role>
+            </roles>
+            <organization>Flying Titans, Inc.</organization>
+            <timezone>-7</timezone>
+        </developer>         
+    </developers>
+    <contributors>
     </contributors>
-	<organization>
-    </organization>
-	<!-- ======================================== -->
-	<!-- Build Settings -->
-	<packaging>pom</packaging>
-	<properties>
-		<tbxurl>http://tbxutil.sourceforge.net/</tbxurl>
-	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<build>
-		<!--
-		<extensions>
-			<extension>
-				<groupId>org.ttt.salt.utils</groupId>
-				<artifactId>analysis</artifactId>
-				<version>1.1</version>
-			</extension>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>1.0-beta-2</version>
-			</extension>
-		</extensions>
-		-->
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-			</plugin>
-			<!--
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-		        <version>2.5.2</version>
-			</plugin>
-			-->
-			<!--
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-			-->
-			<!--
+    
+    <!-- Build Settings -->
+    <packaging>pom</packaging>
+    <properties>
+        <tbxurl>http://tbxutil.sourceforge.net/</tbxurl>
+    </properties>    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <configuration>
+                        <sourceEncoding>utf-8</sourceEncoding>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+				
+				<!-- Code analysis and reporting plugins. -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>2.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>net.objectlab</groupId>
+					<artifactId>mvn-qalab-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+            </plugins>
+        </pluginManagement>
+		
+        <plugins>
             <plugin>
-                <groupId>net.objectlab</groupId>
-                <artifactId>mvn-qalab-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <id>merge-all</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>merge-all</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>qalab-movers</id>
-                        <phase>site</phase>
-                        <goals>
-                            <goal>movers</goal>
-                        </goals>
-                        <configuration>
-                            <startTimeHoursOffset>480</startTimeHoursOffset>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
-		</plugins>
-	</build>
-	<reporting>
-		<plugins>
-			<!-- Code analysis and reporting plugins. -->
-			<!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-		        <version>2.9.1</version>
-				<configuration>
-					<configLocation>checkstyle/checkstyle.xml</configLocation>
-					<headerLocation>checkstyle/LICENSE.txt</headerLocation>
-					<suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
-					<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-				</configuration>
-			</plugin>
-			-->
-			<!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<rulesets>
-						<ruleset>/rulesets/unusedcode.xml</ruleset>
-						<ruleset>/rulesets/basic.xml</ruleset>
-						<ruleset>/rulesets/finalizers.xml</ruleset>
-						<ruleset>/rulesets/strings.xml</ruleset>
-					</rulesets>
-					<excludes>
-						<exclude>**/*Bean.java</exclude>
-						<exclude>**/generated/*.java</exclude>
-					</excludes>
-					<format>xml</format>
-					<targetJdk>1.6</targetJdk>
-					<linkXref>true</linkXref>
-					<sourceEncoding>utf-8</sourceEncoding>
-					<minimumTokens>100</minimumTokens>
-				</configuration>
-			</plugin>
-			-->
-			<!-- Test reporting plugins. -->
-			<plugin>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-		        <version>2.12.4</version>
-			</plugin>
-			<!--
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-		        <version>2.5.2</version>
-				<configuration>
-					<formats>
-						<format>xml</format>
-						<format>html</format>
-					</formats>
-				</configuration>
-			</plugin>
-			-->
-			<!--
-			<plugin>
-				<artifactId>maven-jxr-plugin</artifactId>
-		        <version>2.3</version>
-			</plugin>
-			-->
-			<!-- Documentation plugins. -->
-			<!--
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-		        <version>2.9</version>
-				<configuration>
-					<linksource>true</linksource>
-					<links>
-						<link>http://java.sun.com/javase/6/docs/api/</link>
-						<link>http://java.sun.com/javaee/5/docs/api/</link>
-					</links>
-					<tags>
-						<tag>
-							<name>license</name>
-							<placement>opt</placement>
-							<head>License:</head>
-						</tag>
-					</tags>
-				</configuration>
-				<reportSets>
-					<reportSet>
-						<id>non-aggregate</id>
-						<configuration>
-                        </configuration>
-						<reports>
-							<report>javadoc</report>
-						</reports>
-					</reportSet>
-					<reportSet>
-						<id>aggregate</id>
-						<configuration>
-                        </configuration>
-						<reports>
-							<report>aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			-->
-			<!--
-			<plugin>
-		        <artifactId>maven-changes-plugin</artifactId>
-		        <version>2.8</version>
-			</plugin>
-			-->
-			<!--
-			<plugin>
-		        <artifactId>maven-changelog-plugin</artifactId>
-		        <version>2.2</version>
-			</plugin>
-			-->
-			<!--
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>taglist-maven-plugin</artifactId>
-		        <version>2.4</version>
-			</plugin>
-			-->
-			<!-- Other reports -->
-			<!--
-            <plugin>
-                <groupId>net.sf</groupId>
-                <artifactId>stat-scm</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>**/*.pdf</exclude>
-                        <exclude>**/qalab.xml</exclude>
-                    </excludes>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>net.objectlab</groupId>
-                <artifactId>mvn-qalab-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ttt.salt</groupId>
+                        <artifactId>codeanalysis</artifactId>
+                        <version>2.0-SNAPSHOT</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>net.objectlab</groupId>
+				<artifactId>mvn-qalab-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>merge-all</id>
+						<phase>site</phase>
+						<goals>
+							<goal>merge-all</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>qalab-movers</id>
+						<phase>site</phase>
+						<goals>
+							<goal>movers</goal>
+						</goals>
+						<configuration>
+							<startTimeHoursOffset>480</startTimeHoursOffset>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+			<!-- Report generation plugins. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>dashboard-maven-plugin</artifactId>
+			</plugin>
+		
+            <!-- Code analysis and reporting plugins. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>checkstyle/checkstyle.xml</configLocation>
+                    <headerLocation>checkstyle/LICENSE.txt</headerLocation>
+                    <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
+                    <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <rulesets>
+                        <ruleset>/rulesets/unusedcode.xml</ruleset>
+                        <ruleset>/rulesets/basic.xml</ruleset>
+                        <ruleset>/rulesets/finalizers.xml</ruleset>
+                        <!-- ruleset>/rulesets/optimizations.xml</ruleset -->
+                        <ruleset>/rulesets/strings.xml</ruleset>
+                        <!-- ruleset>/rulesets/controversial.xml</ruleset -->
+                    </rulesets>
+                    <excludes>
+                        <exclude>**/*Bean.java</exclude>
+                        <exclude>**/generated/*.java</exclude>
+                    </excludes>
+                    <format>xml</format>
+                    <targetJdk>1.6</targetJdk>
+                    <linkXref>true</linkXref>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <minimumTokens>100</minimumTokens>
+                </configuration>
+            </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+			</plugin>
+            
+            
+            <!-- Test reporting plugins. -->
+            <plugin>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <formats>
+                        <format>xml</format> 
+                        <format>html</format> 
+                    </formats>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
+            
+            
+            <!-- Documentation plugins. -->
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <linksource>true</linksource>
+                    <links>
+                        <link>http://java.sun.com/javase/6/docs/api/</link>
+                        <link>http://java.sun.com/javaee/5/docs/api/</link>
+                    </links>
+                    <tags>
+                        <tag>
+                            <name>license</name>
+                            <placement>opt</placement>
+                            <head>License:</head>
+                        </tag>
+                    </tags>
+                </configuration>
                 <reportSets>
                     <reportSet>
+                        <id>non-aggregate</id>
+                        <configuration>
+                        </configuration>
                         <reports>
-                            <report>report-merge-chart</report>
-                            <report>report-movers-all</report>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <configuration>
+                        </configuration>
+                        <reports>
+                            <report>aggregate</report>
                         </reports>
                     </reportSet>
                 </reportSets>
             </plugin>
-            -->
-		</plugins>
-	</reporting>
-	<!-- ======================================== -->
-	<!-- Build Environment -->
-	<!-- ======================================== -->
-	<!-- Environment Information -->
-	<issueManagement>
-		<system>Bugzilla</system>
-		<url>http://sourceforge.net/tracker/?group_id=228851&amp;atid=1075205</url>
-	</issueManagement>
-	<!-- ciManagement>
-     </ciManagement -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>changes-maven-plugin</artifactId>
+			</plugin>
+			<!--
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>changelog-maven-plugin</artifactId>
+			</plugin>
+			-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+			</plugin>
+            
+            
+            <!-- Other reports -->
+			<!-- Stat-SCM is not available for Mercurial yet
+			 <plugin>
+			 <groupId>net.sf</groupId>
+			 <artifactId>stat-scm</artifactId>
+			 <configuration>
+			 <excludes>
+			 <exclude>**/*.pdf</exclude>
+			 <exclude>**/qalab.xml</exclude>
+			 </excludes>
+			 </configuration>
+			 </plugin>
+			 -->
+			<plugin>
+				<groupId>net.objectlab</groupId>
+				<artifactId>mvn-qalab-plugin</artifactId>
+				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>report-merge-chart</report>
+							<report>report-movers-all</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+        </plugins>
+    </reporting>
+    
+    
+    <!-- Build Environment -->
+    <!-- Environment Information -->
+    <issueManagement>
+        <system>Bugzilla</system>
+        <url>http://sourceforge.net/tracker/?group_id=228851&amp;atid=1075205</url>
+    </issueManagement>
+	<!--
+	 <ciManagement>
+	 <system>continuum</system>
+	 <url>http://localhost:8080/continuum</url>
+	 <notifiers>
+	 <notifier>
+	 <type>mail</type>
+	 <configuration>
+	 <address>youremail@yourdomain.com</address>
+	 </configuration>
+	 </notifier>
+	 </notifiers>
+	 </ciManagement>
+	 -->
 	<mailingLists>
 		<mailingList>
 			<name>TBX Utilities Developers Mailing List</name>
@@ -303,55 +337,59 @@
 		</mailingList>
 	</mailingLists>
 	<scm>
-		<connection>scm:svn:http://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</connection>
-		<developerConnection>scm:svn:https://tbxutil.svn.sourceforge.net/svnroot/tbxutil/trunk</developerConnection>
-		<url>http://tbxutil.svn.sourceforge.net/viewvc/tbxutil/trunk</url>
+		<connection>scm:hg:file:///Users/lance/Projects/tbx/tbxutil-2/java</connection>
+		<developerConnection>scm:hg:file:///Users/lance/Projects/tbx/tbxutil-2/java</developerConnection>
+		<url>scm:hg:file:///Users/lance/Projects/tbx/tbxutil-2/java</url>
+		<!--
+		 <connection>scm:hg:https://tbxutil.googlecode.com/hg/</connection>
+		 <developerConnection>scm:hg:https://tbxutil.googlecode.com/hg/</developerConnection>
+		 <url>scm:hg:https://tbxutil.googlecode.com/hg/</url>
+		 -->
 	</scm>
-	<!-- ======================================== -->
+	
+	
 	<!-- Maven Environment -->
 	<repositories>
 		<repository>
-			<id>codehaus</id>
-			<name>Codehaus Release Repo</name>
-			<url>http://dist.codehaus.org/</url>
+			<id>java.net_2</id>
+			<url>http://download.java.net/maven/2</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>codehaus</id>
-			<name>Codehaus Release Repo</name>
-			<url>http://repository.codehaus.org</url>
+			<id>java.net_1.plugins</id>
+			<url>http://download.java.net/maven/1</url>
+			<layout>legacy</layout>
+			<releases><enabled>true</enabled></releases>
+			<snapshots><enabled>false</enabled></snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 	<distributionManagement>
-		<!--
-        <site>
-            <id>TBX-SourceForge-Site</id>
-            <name>SourceForge Website</name>
-            <url>
-                scp://shell.sourceforge.net/home/groups/t/tb/tbxutil/htdocs
-            </url>
-        </site>
-        -->
+		<!-- site>
+		 <id>TBX :: SourceForge :: Site</id>
+		 <name>SourceForge Website</name>
+		 <url>sftp://web.sourceforge.net/home/groups/t/tb/tbxutil/htdocs</url>
+		 </site -->
 		<site>
-			<id>TBX-Files-Localhost</id>
+			<id>TBX :: Site :: Localhost</id>
 			<name>SourceForge Website</name>
-			<url>file://${basedir}/target/sitedeploy</url>
+			<url>file:///Library/WebServer/Documents/tbxutil</url>
+			<!-- url>scp://localhost/Library/WebServer/Documents/tbxutil</url -->
 		</site>
 		<snapshotRepository>
-			<id>TBX-Site-Localhost</id>
+			<id>TBX :: Snapshots :: Localhost</id>
 			<name>SourceForge Local</name>
-			<url>file://${basedir}/target/snapshots</url>
+			<url>file:///Library/WebServer/Documents/tbxutil/snapshots</url>
 		</snapshotRepository>
-		<!--
 		<repository>
-			<id>TBX-SourceForge-Files</id>
+			<id>TBX :: Repository :: Files</id>
 			<name>SourceForge FRS</name>
-			<url>file://${basedir}/target/deploy</url>
+			<url>file:///Library/WebServer/Documents/tbxutil/deploy</url>
+			<!-- Need the above until the maven relase plugin is fixed for SourceForge. -->
+			<!-- url>sftp://frs.sourceforge.net/uploads/</url -->
 			<layout>default</layout>
 		</repository>
-    -->
-	<!-- Need the above until the maven release plugin is fixed for SourceForge. -->
-	<!-- url>sftp://frs.sourceforge.net/uploads/</url -->
 	</distributionManagement>
+	
 </project>
+

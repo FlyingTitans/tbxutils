@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    
+    <!-- POM Relationships -->
+    <groupId>org.ttt.salt</groupId>
+    <artifactId>codeanalysis</artifactId>
+    <version>2.0-SNAPSHOT</version>
+    <name>TBX :: Code Analysis</name>
+    <description>
+        Contains TBX source code policy and enforcement configuration files.
+    </description>
+
+    <!-- Project Information -->
+    
+    <!-- Build Settings -->
+    <packaging>jar</packaging>
+
+    <!-- Build Environment -->
+    <!-- Environment Information -->
+    <distributionManagement>
+        <site>
+            <id>TBX :: Site :: Localhost</id>
+            <url>file://${basedir}/target/sitedeploy</url>
+        </site>
+        <snapshotRepository>
+            <id>TBX :: Snapshot :: Localhost</id>
+            <url>file://${basedir}/target/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>TBX :: Repository :: Files</id>
+            <url>file://${basedir}/target/deploy</url>
+        </repository>
+    </distributionManagement>
+</project>

@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <!-- POM Relationships -->
+    <groupId>org.ttt.salt</groupId>
+    <artifactId>tbxreader</artifactId>
+    <version>2.0-SNAPSHOT</version>
+    <parent>
+        <groupId>org.ttt.salt</groupId>
+        <artifactId>tbx</artifactId>
+        <version>2.0-SNAPSHOT</version>
+    </parent>
+    <dependencies>
+    </dependencies>
+    <modules>
+    </modules>
+    
+    <!-- Project Information -->
+    <name>TBXReader</name>
+    <url>${tbxurl}/tbxreader</url>
+    <description>
+        TBXReader will read a TBX file, parse the associated XCS file,
+        and then deliver deliver each well-formed, valid, and XCS conforming
+        termEntry element to the user of this library.
+    </description>
+    <inceptionYear>2010</inceptionYear>
+    
+    <!-- Build Settings -->
+    <packaging>jar</packaging>
+</project>

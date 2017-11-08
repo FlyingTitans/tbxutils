@@ -1,0 +1,31 @@
+syntax: glob
+
+###
+### Editor generated files
+###
+*~
+.\#*
+.*.swp
+
+
+###
+### Compiler generated files
+###
+*.o
+*.class
+*.pyc
+*.pyo
+
+
+###
+### Specific file names
+###
+.DS_Store
+
+
+
+###
+### Specific directories
+###
+build
+target

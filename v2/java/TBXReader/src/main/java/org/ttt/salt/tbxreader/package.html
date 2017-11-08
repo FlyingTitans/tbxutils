@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	</head>
+	<body>
+		TBXReader is meant to be used in reading TBX and XCS files, and
+		will handle the associated parsing, validation, and conformance
+		checking of those files.
+		<p>
+		TBXReader may be used with various design patterns for maximum
+		flexibility in integrating the package within your system. It can
+		build objects for use with the observer or iterator design patterns.
+		It can deliver a W3C DOM Document that may be changed with XCS
+		conformance being performed before a change to the document is
+		allowed.</p>
+		<p>
+		TBXReader is designed to handle small to very large, greater than
+		4 GiB, TBX files—through the use of the {@link TBXObserver} and
+		{@link TBXIterator} objects.</p>
+		
+		<h2>Design Patterns</h2>
+		<ul>
+			<li>
+			<strong>Observer:</strong> Use the {@link TBXObserver} to implement
+			the <a href="http://en.wikipedia.org/wiki/Observer_pattern">Observer</a>
+			design pattern.</li>
+			<li>
+			<strong>Iterator:</strong> Use the {@link TBXIterator} to implement
+			the <a href="http://en.wikipedia.org/wiki/Iterator_pattern">Iterator</a>
+			design pattern.</li>
+		</ul>		
+	</body>
+</html>

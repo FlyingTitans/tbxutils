@@ -1,0 +1,39 @@
+<?xml version='1.0'?>
+<!-- copied from SALT DXLT doc -->
+<!DOCTYPE martif
+        "ISO 30042:2008A//DTD TBX core//EN"
+        "/xml/TBXcoreStructV02.dtd">
+<martif type='SXLT' xml:lang='en'>
+    <martifHeader>
+        <fileDesc>
+            <sourceDesc>
+                <p>from an Oracle termBase</p>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p type='DCSName'>Demo XCS</p>
+            <p type='DCSName'>/xml/TBXDCSv05.xml</p>
+        </encodingDesc>
+    </martifHeader>
+    <text>
+        <body>
+            <termEntry id='ID67'>
+                <!-- Here is the invalid tag -->
+                <descripp type='subjectField'>manufacturing</descripp>
+                <descrip type='definition'>A value <hi>hello</hi> between 0 and 1 used in ...</descrip>
+                <langSet xml:lang='en'>
+                <tig>
+                    <term>alpha smoothing factor</term>
+                </tig>
+                </langSet>
+                <langSet xml:lang='hu'>
+                    <tig>
+                        <term>
+                            Alfa sim$#x00ED;t$#x00E1;si t$#x00E9;nyez$#x00F5;
+                        </term>
+                    </tig>
+                </langSet>
+            </termEntry>
+        </body>
+    </text>
+</martif>

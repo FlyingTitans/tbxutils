@@ -1,0 +1,613 @@
+<?xml version="1.0"?>
+<XLTDCS name='master' version="0.4" lang='en'  xmlns="x-schema:XLTdsV04.xml">
+
+<!-- ======Latest edits, 2000.Sept.14 by MDR ===== -->
+<!-- ======Latest edits, 2000.May.24 by akm ===== -->
+
+<!-- This is a DCS file -->
+
+<!-- MTFdsVnn is Version nn of the specification schema that
+defines the structure of DCS files for XLT documents
+(both DXF-compliant, including subsets, and non-DXF-compliant) -->
+
+<!-- note that as of version 0.3 of the DCS schema, datCat names must be unique,
+     regardless of meta data-category -->
+
+<!-- Note: format for DCS file revised in early October 1999 -->
+<!-- and adjusted for August 1999 Innsbruck decisions -->
+
+<!-- Default content is text (plain for termNote, note for descrip) with no targets -->
+
+<header>
+<title>DXF master DCS (data constraint specification) file</title>
+</header>
+
+<languages>
+  <langInfo>
+    <langCode>en</langCode>
+    <langName>English</langName>
+  </langInfo>
+  <langInfo>
+    <langCode>hu</langCode>
+    <langName>Hungarian</langName>
+  </langInfo>
+</languages>
+
+<!-- country codes from Geneter DTD:
+
+g-ad g-ae g-af g-ag g-al g-am g-an g-ao g-aq g-ar g-as g-at g-au g-az g-ba g-bb g-bd g-be g-bg g-bh g-bi g-bj g-bm g-bn g-bo g-br g-bs g-bt g-bu g-bv g-bw g-by g-bz g-ca g-cc g-cf g-cg g-ch g-ci g-ck g-cl g-cm g-cn g-co g-cr g-cs g-ct g-cu g-cv g-cx g-cy g-cz g-de g-dj g-dk g-dm g-do g-dz g-ec g-eg g-eh g-es g-et g-fi g-fj g-fk g-fo g-fr g-ga g-gb g-gd g-gf g-gg g-gh g-gi g-gl g-gm g-gn g-gp g-gq g-gr g-gu g-gt g-gw g-gy g-hk g-hm g-hn g-hr g-ht g-hu g-hv g-id g-ie g-il g-in g-io g-iq g-ir g-is g-it g-jm g-jo g-jp g-jt g-ke g-kg g-kh g-ki g-kk g-km g-kn g-kp g-kr g-kw g-ky g-la g-lb g-lc g-li g-lk g-lr g-ls g-lt g-lu g-lv g-ly g-ma g-mc g-md g-mg g-mi g-ml g-mn g-mo g-mq g-mr g-ms g-mt g-mu g-mv g-mw g-mx g-my g-mz g-na g-nc g-ne g-nf g-ng g-ni g-nl g-no g-np g-nq g-nr g-nt g-nu g-nz g-om g-pa g-pc g-pe g-pf g-pg g-ph g-pk g-pl g-pm g-pn g-pr g-pt g-pu g-py g-qa g-re g-ro g-ru g-rw g-sa g-sb g-sc g-sd g-se g-sg g-sh g-si g-sj g-sl g-sm g-sn g-so g-sq g-sr g-st g-su g-sv g-sy g-sz g-tc g-td g-tg g-th g-tj g-tk g-tm g-tn g-to g-tp g-tr g-tt g-tv g-tw g-tz g-ua g-ug g-us g-uy g-uz g-ye g-yd g-yu g-va g-ve g-vc g-vg g-vi g-vn g-vu g-wf g-wk g-ws g-za g-zm g-zr g-zw
+
+-->
+
+
+<datCatSet>
+
+<!-- Section 1 of 12620: term (not in DCS file: types distinguished by termNote) -->
+
+<!-- Section 2 of 12620 -->
+
+<termNoteSpec name="termType" position="2.1">
+<contents datatype="picklist" targetType="none">mainEntryTerm synonym internationalScientificTerm commonName internationalism fullForm abbreviatedFormOfTerm variant transliteratedForm transcribedForm symbol formula equation logicalExpression sku partNumber phraseologicalUnit standardText</contents>
+<levels>termGrp</levels>
+</termNoteSpec>
+
+<termNoteSpec name="commonNameFor" position="2.1.5">
+<contents datatype="basicText" targetType="term"/>
+</termNoteSpec>
+
+<termNoteSpec name="abbreviatedFormFor" position="2.1.8">
+<contents datatype="basicText" targetType="term"/>
+</termNoteSpec>
+
+<termNoteSpec name="partOfSpeech" position="2.2.1">
+<contents datatype="plainText" targetType="none" forTermComp="yes"/>
+</termNoteSpec>
+
+<termNoteSpec name="grammaticalGender" position="2.2.2">
+<contents datatype="picklist" targetType="none" forTermComp="yes">masculine feminine neuter other</contents>
+</termNoteSpec>
+
+<termNoteSpec name="grammaticalNumber" position="2.2.3">
+<contents datatype="picklist" targetType="none" forTermComp="yes">singular plural dual mass other</contents>
+</termNoteSpec>
+
+<termNoteSpec name="animacy" position="2.2.4">
+<contents datatype="picklist" targetType="none" forTermComp="yes">animate inanimate other</contents>
+</termNoteSpec>
+
+<termNoteSpec name="grammaticalValency" position="2.2.7">
+<contents datatype="plainText" targetType="none" forTermComp="yes"/>
+</termNoteSpec>
+
+<termNoteSpec name="usageNote" position="2.3.1">
+<contents datatype="noteText" targetType="none"/>
+</termNoteSpec>
+
+<termNoteSpec name="geographicalUsage" position="2.3.2">
+<contents datatype="geoList" targetType="none"/>
+</termNoteSpec>
+
+<termNoteSpec name="register" position="2.3.3">
+<contents datatype="picklist" targetType="none">neutralRegister technicalRegister in-houseRegister bench-levelRegister slangRegister vulgarRegister</contents>
+</termNoteSpec>
+
+<termNoteSpec name="frequency" position="2.3.4">
+<contents datatype="picklist" targetType="none">commonlyUsed infrequentlyUsed rarelyUsed</contents>
+</termNoteSpec>
+
+<termNoteSpec name="temporalQualifier" position="2.3.5">
+<contents datatype="picklist" targetType="none">archaicTerm outdatedTerm obsoleteTerm</contents>
+</termNoteSpec>
+
+<termNoteSpec name="timeRestriction" position="2.3.6">
+<contents datatype="noteText" targetType="none"/>
+</termNoteSpec>
+
+<termNoteSpec name="proprietaryRestriction" position="2.3.7">
+<contents datatype="picklist" targetType="none">trademark tradeName</contents>
+</termNoteSpec>
+
+<termNoteSpec name="termProvenance" position="2.4.1">
+<contents datatype="picklist" targetType="none">transdisciplinaryBorrowing translingualBorrowing loanTranslation neologism</contents>
+</termNoteSpec>
+
+<termNoteSpec name="etymology" position="2.4.2">
+<contents datatype="basicText" targetType="none" forTermComp="yes"/>
+</termNoteSpec>
+
+<termCompSpec name="pronunciation" position="2.5">
+<contents datatype="basicText" targetType="none" forTermComp="yes"/>
+</termCompSpec>
+
+<termCompSpec name="syllabification" position="2.6">
+<contents datatype="basicText" targetType="none" forTermComp="yes"/>
+</termCompSpec>
+
+<termCompSpec name="hyphenation" position="2.7">
+<contents datatype="basicText" targetType="none" forTermComp="yes"/>
+</termCompSpec>
+
+<termCompSpec name="morphologicalElement" position="2.8.1">
+<contents datatype="basicText" targetType="none" forTermComp="yes"/>
+</termCompSpec>
+
+<termCompSpec name="termElement" position="2.8.2">
+<contents datatype="basicText" targetType="none" forTermComp="yes"/>
+</termCompSpec>
+
+<!-- note: termStructure is not yet in 12620: should be in proposed amendment -->
+<!--        so position code 2.8.3 is tentative -->
+
+<termNoteSpec name="termStructure" position="2.8.3">
+<contents datatype="basicText" targetType="none" forTermComp="yes"/>
+</termNoteSpec>
+
+<termNoteSpec name="normativeAuthorization" position="2.9.1">
+<contents datatype="picklist" targetType="none">standardizedTerm preferredTerm admittedTerm deprecatedTerm supercededTerm legalTerm regulatedTerm</contents>
+</termNoteSpec>
+
+<termNoteSpec name="languagePlanningQualifier" position="2.9.2">
+<contents datatype="picklist" targetType="none">recommendedTerm nonstandardizedTerm proposedTerm newTerm</contents>
+</termNoteSpec>
+
+<termNoteSpec name="administrativeStatus" position="2.9.3">
+<contents datatype="picklist" targetType="none">standardizedTerm preferredTerm admittedTerm deprecatedTerm supercededTerm legalTerm regulatedTerm</contents>
+</termNoteSpec>
+
+<termNoteSpec name="processStatus" position="2.9.4">
+<contents datatype="picklist" targetType="none">unprocessed provisionallyProcessed finalized</contents>
+</termNoteSpec>
+
+
+<!-- Section 3 -->
+
+<termNoteSpec name="falseFriend" position="3.2">
+<contents datatype="basicText" targetType="term"/>
+</termNoteSpec>
+
+<termNoteSpec name="reliabilityCode" position="3.4">
+<contents datatype="picklist" targetType="none">1 2 3 4 5 6 7 8 9 10</contents>
+<comment>map source range of codes into 1 to 10 for blindness</comment>
+</termNoteSpec>
+
+<termNoteSpec name="transferComment" position="3.5">
+<contents datatype="noteText" targetType="term"/>
+</termNoteSpec>
+
+
+<!-- Section 4 -->
+
+<descripSpec name="subjectField" position="4">
+<contents datatype="plainText" targetType="none"/>
+<levels>termEntry</levels>
+</descripSpec>
+
+<descripSpec name="classificationNumber" position="4.1+4.2">
+<contents datatype="plainText" targetType="classSysDescrip"/>
+<comment>comtent of element is the position in system pointed to by target</comment>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+
+<!-- Section 5 -->
+
+<descripSpec name="definition" position="5.1">
+<contents datatype="noteText" targetType="none"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="explanation" position="5.2">
+<contents datatype="noteText" targetType="none"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="context" position="5.3">
+<contents datatype="noteText" targetType="none"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="example" position="5.4">
+<contents datatype="noteText" targetType="none"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="figure" position="5.5.1">
+<contents datatype="basicText" targetType="binaryData"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="audio" position="5.5.2">
+<contents datatype="noteText" targetType="binaryData"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="video" position="5.5.3">
+<contents datatype="noteText" targetType="binaryData"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="table" position="5.5.4">
+<contents datatype="noteText" targetType="binaryData"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="otherBinaryData" position="5.5.5">
+<contents datatype="noteText" targetType="binaryData"/>
+<levels>termEntry langSet term</levels>
+</descripSpec>
+
+<descripSpec name="unit" position="5.6">
+<contents datatype="basicText" targetType="none"/>
+<levels>term</levels>
+</descripSpec>
+
+<descripSpec name="range" position="5.7">
+<contents datatype="basicText" targetType="none"/>
+<levels>term</levels>
+</descripSpec>
+
+<descripSpec name="characteristic" position="5.8">
+<contents datatype="basicText" targetType="none"/>
+<levels>term</levels>
+</descripSpec>
+
+
+<!-- Section 6:  subsumed into Section A.7.1/2 -->
+
+<!-- Section 7 -->
+
+<descripSpec name="conceptPosition" position="7.1-A.7.2">
+<contents datatype="plainText" targetType="conceptSysDescrip"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+
+<!-- What levels should these be restricted to? -->
+
+<descripSpec name="broaderConceptGeneric" position="7.2.1">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="broaderConceptPartitive" position="7.2.1">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="superordinateConceptGeneric" position="7.2.2">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="superordinateConceptPartitive" position="7.2.2">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="subordinateConceptGeneric" position="7.2.3">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="subordinateConceptPartitive" position="7.2.3">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="coordinateConceptGeneric" position="7.2.4">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="coordinateConceptPartitive" position="7.2.4">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="relatedConceptBroader" position="7.2.5.1">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="relatedConceptNarrower" position="7.2.5.2">
+<contents datatype="basicText" targetType="entry"/>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="sequentiallyRelatedConcept" position="7.2.6">
+<contents datatype="basicText" targetType="entry"/>
+<comment>new position code based on 6.3</comment>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="temporallyRelatedConcept" position="7.2.7">
+<contents datatype="basicText" targetType="entry"/>
+<comment>new position code based on 6.3.1</comment>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="spatiallyRelatedConcept" position="7.2.8">
+<contents datatype="basicText" targetType="entry"/>
+<comment>new position code based on 6.3.2</comment>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+<descripSpec name="associatedConcept" position="7.2.9">
+<contents datatype="basicText" targetType="entry"/>
+<comment>new position code based on 6.4</comment>
+<levels>termEntry langSet</levels>
+</descripSpec>
+
+
+<!--note: antonym (10.18.16) also fits here  -->
+
+
+<!-- Section 8 -->
+
+<!-- note is not a meta data category -->
+
+<!-- note: the following three specialized notes need to be added to 12620 -->
+
+<descripNoteSpec name="descripType" position="A.8.1">
+<contents datatype="picklist" targetType="element">translation</contents>
+</descripNoteSpec>
+
+<descripNoteSpec name="definitionType" position="A.8.2">
+<contents datatype="picklist" targetType="element">intensionalDefinition extensionalDefinition partitiveDefinition</contents>
+</descripNoteSpec>
+
+<descripNoteSpec name="contextType" position="A.8.3">
+<contents datatype="picklist" targetType="element">definingContext explanatoryContext associativeContext linguisticContext metalinguisticContext</contents>
+</descripNoteSpec>
+
+
+<!-- Section 9 -->
+
+<descripSpec name="thesaurusDescriptor" position="9.1-9.2">
+<contents datatype="basicText" targetType="thesaurusDescrip"/>
+<levels>termEntry</levels>
+</descripSpec>
+
+<adminSpec name="keyword" position="9.4">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="indexHeading" position="9.5">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+
+
+<!-- Section 10 -->
+
+<!-- *** note: date is used only in transacGrp and gets its type from there -->
+
+<!-- split responsibility into person and organization
+     for interoperability w/ Geneter -->
+
+<transacNoteSpec name="responsiblePerson" position="10.2.2.1">
+<contents datatype="basicText" targetType="respPerson"/>
+<comment>new position code based on distinction between 10.22.1 and 10.22.2</comment>
+<levels>transacGrp</levels>
+</transacNoteSpec>
+
+<transacNoteSpec name="responsibleOrg" position="10.2.2.2">
+<contents datatype="basicText" targetType="respOrg"/>
+<comment>new position code based on distinction between 10.22.1 and 10.22.2</comment>
+</transacNoteSpec>
+
+<transacNoteSpec name="count" position="10.2.3">
+<contents datatype="plainText" targetType="none"/>
+</transacNoteSpec>
+
+
+<transacSpec name="transactionType" position="10.1">
+<contents datatype="picklist" targetType="none">origination input modification check approval withdrawl standardization exportation importation responsibility</contents>
+</transacSpec>
+
+
+<!-- subset identifiers -->
+
+<adminSpec name="customerSubset" position="10.3.1">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="projectSubset" position="10.3.3">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="productSubset" position="10.3.5">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="applicationSubset" position="10.3.5">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="environmentSubset" position="10.3.7">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="businessUnitSubset" position="10.3.8">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="securitySubset" position="10.3.9">
+<contents datatype="picklist" targetType="none">public confidential</contents>
+</adminSpec>
+
+
+<!-- other A.10.x datCats -->
+
+<adminSpec name="userSuggestion" position="10.5">
+<contents datatype="picklist" targetType="none">public confidential</contents>
+</adminSpec>
+
+<adminSpec name="sortKey" position="10.6.2">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="searchTerm" position="10.6.3">
+<contents datatype="basicText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="collatingSequence" position="10.9">
+<contents datatype="basicText" targetType="colSeqDescrip"/>
+</adminSpec>
+
+<descripSpec name="antonym" position="10.18.6">
+<contents datatype="basicText" targetType="term"/>
+<comment>also fits with concept relations (section 7)</comment>
+<levels>term</levels>
+</descripSpec>
+
+
+
+<refSpec name="crossReference" position="10.18">
+<contents datatype="noteText" targetType="element"/>
+</refSpec>
+
+<xrefSpec name="xCrossReference" position="10.18">
+<contents datatype="noteText" targetType="external"/>
+</xrefSpec>
+
+<termNoteSpec name="homograph" position="10.18.5">
+<contents datatype="basicText" targetType="term"/>
+</termNoteSpec>
+
+<adminSpec name="source" position="10.19">
+<contents datatype="noteText" targetType="none"/>
+</adminSpec>
+
+<adminSpec name="sourceIdentifier" position="10.20">
+<contents datatype="noteText" targetType="bibl"/>
+</adminSpec>
+
+<adminSpec name="originatingInstitution" position="10.22.1">
+<contents datatype="noteText" targetType="respOrg"/>
+</adminSpec>
+
+<adminSpec name="originatingDatabase" position="10.22.2">
+<contents datatype="noteText" targetType="respOrg"/>
+</adminSpec>
+
+<adminSpec name="sourceLanguage" position="10.23">
+<contents datatype="picklist" targetType="none">country codes</contents>
+</adminSpec>
+
+<adminSpec name="domainExpert" position="10.24">
+<contents datatype="plainText" targetType="none"/>
+</adminSpec>
+
+</datCatSet>
+
+
+<refObjectSet>
+
+<!-- note: list of valid refObject types is in DCS schema
+     in list of targetType attribute values -->
+
+<!-- Restrictions on item types in refObjects -->
+
+<refObjectDef>
+    <refObjectType>bibl</refObjectType>
+    <itemSet type="validItemTypes">
+      <item type="validItemType">author</item>
+      <item type="validItemType">category</item>
+      <item type="validItemType">biblType</item>
+      <item type="validItemType">city</item>
+      <item type="validItemType">CODEN</item>
+      <item type="validItemType">corpauth</item>
+      <item type="validItemType">cpyrtnme</item>
+      <item type="validItemType">country</item>
+      <item type="validItemType">publicationDate</item>
+      <item type="validItemType">edition</item>
+      <item type="validItemType">editor</item>
+      <item type="validItemType">extent</item>
+      <item type="validItemType">glossary</item>
+      <item type="validItemType">ISBN</item>
+      <item type="validItemType">ISSN</item>
+      <item type="validItemType">issueno</item>
+      <item type="validItemType">lccardno</item>
+      <item type="validItemType">pages</item>
+      <item type="validItemType">publisher</item>
+      <item type="validItemType">reportid</item>
+      <item type="validItemType">role</item>
+      <item type="validItemType">sertitle</item>
+      <item type="validItemType">title</item>
+      <item type="validItemType">volid</item>
+    </itemSet>
+</refObjectDef>
+
+<refObjectDef>
+    <refObjectType>respPerson</refObjectType>
+    <itemSet type="validItemTypes">
+      <item type="validItemType">fname</item>
+      <item type="validItemType">surname</item>
+      <item type="validItemType">email</item>
+      <item type="validItemType">role</item>
+      <item type="validItemType">name</item> <!-- use only when necessary -->
+    </itemSet>
+</refObjectDef>
+
+<refObjectDef>
+    <refObjectType>respOrg</refObjectType>
+    <itemSet type="validItemTypes">
+      <item type="validItemType">organizationName</item>
+      <item type="validItemType">email</item>
+      <item type="validItemType">role</item>
+      <item type="validItemType">name</item> <!-- use only when necessary -->
+    </itemSet>
+</refObjectDef>
+
+
+<refObjectDef>
+    <refObjectType>binaryData</refObjectType>
+    <itemSet type="validItemTypes">
+      <item type="validItemType">format</item>
+      <item type="validItemType">fileName</item>
+      <item type="validItemType">fileDateTime</item>
+      <item type="validItemType">fileAttributes</item>
+      <item type="validItemType">fileOSName</item>
+      <item type="validItemType">fileOSNumber</item>
+      <item type="validItemType">codePage</item>
+      <item type="validItemType">fileSize</item>
+      <item type="validItemType">data</item>
+      <item type="validItemType">description</item>
+    </itemSet>
+</refObjectDef>
+
+<refObjectDef>
+    <refObjectType>classSystemDescrip</refObjectType>
+    <itemSet type="validItemTypes">
+      <item type="validItemType">systemName</item>
+      <item type="validItemType">systemType</item>
+      <item type="validItemType">description</item>
+    </itemSet>
+</refObjectDef>
+
+<refObjectDef>
+    <refObjectType>conceptSysDescrip</refObjectType>
+    <itemSet type="validItemTypes">
+      <item type="validItemType">systemName</item>
+      <item type="validItemType">systemType</item>
+      <item type="validItemType">description</item>
+    </itemSet>
+</refObjectDef>
+
+
+<refObjectDef>
+    <refObjectType>thesaurusDescrip</refObjectType>
+    <itemSet type="validItemTypes">
+      <item type="validItemType">thesaurusName</item>
+      <item type="validItemType">description</item>
+      <item type="validItemType">location</item>
+    </itemSet>
+</refObjectDef>
+
+
+<!-- needed: refObjectDef for collating sequence description -->
+
+</refObjectSet>
+</XLTDCS>
+

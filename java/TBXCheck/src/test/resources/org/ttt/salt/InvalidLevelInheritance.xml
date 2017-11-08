@@ -1,0 +1,33 @@
+<?xml version='1.0'?>
+<!-- copied from SALT DXLT doc -->
+<!DOCTYPE martif PUBLIC "ISO 30042:2008A//DTD TBX core//EN" "TBXcoreStructV02.dtd">
+<martif type='SXLT' xml:lang='en'>
+    <martifHeader>
+        <fileDesc>
+            <sourceDesc>
+                <p>from an Oracle termBase</p>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <p type='DCSName'>Demo XCS</p>
+            <p type='DCSName'>/xml/TBXDCSv05.xml</p>
+        </encodingDesc>
+    </martifHeader>
+    <text>
+        <body>
+            <termEntry id='ID67'>
+                <descripGrp>
+                    <descrip type='unit'>tarfu</descrip>
+                </descripGrp>
+                <langSet xml:lang='en'>
+                <ntig>
+                    <termGrp>
+                        <term>alpha smoothing factor</term>
+                        <termNote type='termType'>fullForm</termNote>
+                    </termGrp>
+                </ntig>
+                </langSet>
+            </termEntry>
+        </body>
+    </text>
+</martif>

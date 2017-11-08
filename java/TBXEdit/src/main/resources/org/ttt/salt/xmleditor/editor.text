@@ -1,0 +1,199 @@
+File
+         New        		(Meta N)\
+        New From Stationary        (Meta Shift N)\
+        Open        		(Meta O)\
+        Open Selection        	(Meta Alt O)\
+        Insert        		(Meta Shift O)\
+        -\
+        Close        		(Meta W)\
+        Save        		(Meta S)\
+        Save As        		(Meta Shift S)\
+        Save a Copy\
+        Revert\
+        Backup\
+        -\
+        Page Setup\
+        Print        		(Meta P)\
+        Print Selection        	(Meta Shift P)\
+        -\
+        Quit        		(Meta Q)\
+    
+Edit
+        Undo        		(Meta Z)\
+        -\
+        Cut        		(Meta X)\
+        Copy        		(Meta C)\
+        Paste        		(Meta V)\
+        Clear\
+        Select All        	(Meta A)\
+        -\
+        Balance\
+        Shift Left\
+        Shift Right\
+        -\
+        Find\
+        -\
+        Preferences\
+
+Windows
+         Zoom Window        	F1\
+        Tile Windows        	F2\
+        Tile Verticle        	F3\
+        Stack Windows        	F4\
+        Collapse/Expand\
+        Save default\
+        -\
+        Browser Catalog\
+        Class Hierarhcy\
+        New Class Browser\
+        -\
+        Build Progress\
+        Errors & Warnings\
+        Project Inspector\
+        -\
+        Processes\
+        Expressions\
+        Global Variables\
+        Breakpoints\
+        Watchpoints\
+        Registers\
+        -\
+        Select Default Project        (Meta 0)\
+        Select Windows        	(Meta 1-9)\
+        Split window display
+
+Keyboard commands
+
+Cursor movement
+        Character left/right        (left/right arrow)\
+        Word left/right        	(Meta left/right arrow)\
+        Sub-word left/right\
+        Start/end of line        	(Home/End)\
+        Specified character next/previous\
+        Line up/down        	(up/down arrow)\
+        Top/bottom of page        (Pg Up/Pg Dn)\
+        Top/bottom of file        (Meta Home/End)\
+
+Deletion\
+        Delete character left/right\
+        Delete word left/right\
+        Delete start/end of line\
+        Delete line up/down\
+        Delete start/end of file\
+
+Selection
+         Select character left/right        (Shift left/right arrow)\
+        Select word left/right        (Shift Meta left/right arrow)\
+        Select sub-word left/right\
+        Select start/end of line        (Shift Home/End)\
+        Select to specified character next/previous\
+        Select line up/down        (Shift up/down arrow)\
+        Select to top/bottom of page    (Shift Pg Up/Pg Dn)\
+        Select to top/bottom of file    (Shift Meta Home/End)\
+
+Scrolling
+         Scroll character left/right        (Alt left/right arrow)\
+        Scroll word left/right        (Alt Meta left/right arrow)\
+        Scroll start/end of line        (Alt Home/End)\
+        Scroll to specified character next/previous\
+        Scroll line up/down        (Alt up/down arrow)\
+        Scroll page up/down        (Alt Pg Up/Pg Dn)\
+        Scroll top/bottom of file        (Alt Meta Home/End)\
+        Scroll to selection\
+
+Misc
+         Open related file (same prefix different extension)    (Alt Tab)\
+        Find symbols with text\
+        Find symbols with sub-string\
+        Find next symbol\
+        Find previous symbol\
+        Prefix key combinations (e.g. EMACS Ctrl-X Ctrl S for save)\
+        Previous/Next Error Message/Batch Search item\
+        GoTo line        	F5\
+
+        Find/Replace
+         Find    (Meta F)
+         Next        		(Meta G)\
+        Previous        	(Meta Shift G)\
+        Next file\
+        Previous file\
+     
+         Enter find string        (Meta E)
+        Enter replace string        (Meta Shift E)\
+        Replace
+         Replace & Find Next        (Meta L)\
+        Replace & Find Previous        (Meta Shift L)\
+        Replace All
+        
+        Find Definition\
+        Find Definition & Reference\
+        Find Reference\
+        Multi-file
+        Select files\
+        Select directory\
+        Recursive in a directory\
+
+Batch\
+    Case Sensitive\
+    Wrap\
+    Entire Word\
+    Grep\
+
+    Predefined patterns\
+    File sets\
+    Compare Files/Diff\
+    File diff\
+    Case Sensitive\
+    Ignore Extra Space\
+    Directory diff\
+    Recursive Directory/File diff\
+        Only show different files\
+        Compare file contents\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\fs24 \cf0     Apply difference\
+    Unapply difference\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\b\fs28 \cf0 Formatting\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\b0\fs24 \cf0     Balance\
+    Twidle\
+    Shift left/right\
+    Show opening group character\
+    Single keystroke to create code block (i.e. begin/end or \{\})\
+    Wrap/Unwrap\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\fs20 \cf0         Automatic wrap with continuation character\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\fs24 \cf0     Zap ªGremlinsº\
+    Entab/Detab\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\b\fs28 \cf0 Syntax Coloring\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\b0\fs24 \cf0     Keywords\
+    Comments\
+    Strings\
+    4 Sets of Custom words\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\b\fs28 \cf0 Extensionable\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\b0\fs24 \cf0     Possible extensions\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx5760\ri-3340\qj
+
+\fs20 \cf0         Columnize\
+        Hex Dump\
+        Automatic prototype/header file generator\
+        Prefix/sufix lines\
+        Project statistics\
+        Reverse lines\
+        Sort\
+}
+

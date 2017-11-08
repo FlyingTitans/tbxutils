@@ -1,7 +1,0 @@
-$Id$
-tbxutil README
-
-Build:
-
-
-

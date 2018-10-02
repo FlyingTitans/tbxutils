@@ -1,27 +1,93 @@
-*.py[co]
 
-# Packages
-*.egg
-*.egg-info
-dist
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
+# Python
+*.py[cod]
+*$py.class
+
+# Python Distribution / Packages
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
 .installed.cfg
+*.egg
+MANIFEST
+
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+VENV/
+env.bak/
+venv.bak/
+
 
 # Installer logs
 pip-log.txt
+
 
 # Unit test / coverage reports
 .coverage
 .tox
 
+
 #Translations
 *.mo
 
+
 #Mr Developer
 .mr.developer.cfg
+
+
+# Java
+*.class
+.project
+.settings
+.classpath
+errors.err
+
+
+# Pacakge Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+
+#Gradle
+.gradle
+/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+
+#Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+
+

@@ -72,7 +72,7 @@ public class XCSDocumentTest
         LogManager.getLogManager().reset();
         Formatter simplefmt = new SimpleFormatter();
         Handler logfile = new FileHandler(System.getProperty("user.dir")
-                + "/target/surefire-reports/"
+                + "/target/test-logs/"
                 + "org.ttt.salt.XCSDocumentTest.log");
         logfile.setLevel(Level.FINEST);
         logfile.setFormatter(simplefmt);
